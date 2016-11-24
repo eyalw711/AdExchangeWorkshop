@@ -1,3 +1,4 @@
 this repo is for the workshop
 first commit from git extensions
  - hi from ori
+ - hii pineapples! (from shani)
