@@ -6,9 +6,12 @@ Created on Sat Feb 18 18:24:52 2017
 """
 
 import SegmentClass as sc
+import pandas as pd
 import math
 
 class Campaign:
+    
+    statistic_campaigns = {}
     campaigns = {}
     
     def __init__(self, cid, startDay, endDay, segments, reach, 
@@ -26,12 +29,28 @@ class Campaign:
         self.assignee = None
         self.targetedImpressions = 0
         self.budget = 0
+        self.impressions_goal = 0
         
     
     def __repr__(self):
-        return "Campaign ID:{}, start:{} ends:{}, reach:{}".format(
-                self.cid, self.startDay, self.endDay, self.reach)
+        return "Campaign ID:{}, start:{} ends:{}, segments:{}, reach:{}".format(
+                self.cid, self.startDay, self.endDay, [seg.name for seg in self.segments], self.reach)
     
+    def statistic_campaigns_init():
+        camps = Campaign.statistic_campaigns
+        statistics = pd.read_csv('data//campaign_statistics.csv')
+        for index, row in statistics.iterrows():
+                day = row['day']
+                if not day in camps:
+                    newDictForDay = {}
+                    camps[day] = newDictForDay
+                dayDict = camps[day]
+                segmentName = row['segment']
+                dayDict[segmentName] = Campaign(row['cid'], row['start'],
+                       row['end'], [sc.MarketSegment.segments[segmentName]],
+                          row['reach'], row['vidCoeff'], row['mobCoeff'], row['publisher'])
+
+        
     def activeAtDay(self,d):
         if d >= self.startDay and d <= self.endDay:
             return True
@@ -75,6 +94,7 @@ class Campaign:
         demand = self.campaign_demand_temp()
         return (self.ERR(imps)*B - math.pow(B*demand*imps/R, alpha))*((1-eta)*Q_old + eta*self.ERR(imps))
     
-    
+    def sizeOfSegments(self):
+        return sum(seg.size for seg in self.segments)
     
     

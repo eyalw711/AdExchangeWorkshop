@@ -7,9 +7,9 @@ Created on Sat Feb 18 19:23:55 2017
 
 import CampaignClass as cc
 import SegmentClass as sc
-import numpy
+#import numpy
 from scipy import optimize
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 ''' log comments
 import logging
@@ -21,7 +21,8 @@ def init_logger():
     handler = logging.FileHandler('/logs/pineLog.log')
     formatter = '''
     
-def test1():
+def test_segments_and_demand():
+    print("\ntest_segments_and_demand:")
     #{O/Y}{M/F}{H/L}
     camps_segs = [['OMH','YFL'],['OMH'],['OMH','YFL']]#,['YML','OML','OFH']]
     for i in range(3):
@@ -38,7 +39,8 @@ def test1():
     for camp in cc.Campaign.getCampaignList():
         print("cid={}, demand={}".format(camp.cid, camp.campaign_demand_temp()))
     
-def test2():
+def test_ImpsOptimization():
+    print("\ntest_ImpsOptimization:")
     Q_old = 0.9
     camp = cc.Campaign.campaigns[2]
     camp.budget=1600
@@ -48,15 +50,24 @@ def test2():
     f = lambda x: -camp.campaign_profit_for_ImpsTarget_estim(x, Q_old)
     x0 = [camp.reach]
     res = optimize.basinhopping(f, x0, niter=1)
-    print(res)
+    print("optimal number of imps for camp is {}\n\n\n".format( res.x))
     
+def test_statisticalCampaigns():
+    for day in cc.Campaign.statistic_campaigns:
+        print("statistical campaigns for day = {}".format(day))
+        for seg in cc.Campaign.statistic_campaigns[day]:
+            print (seg, ':', cc.Campaign.statistic_campaigns[day][seg])
     
 def main():
     print("PineApple!")
     sc.MarketSegment.segments_init()
     print("segments initialized!")
-    test1()
-    test2()
+    cc.Campaign.statistic_campaigns_init()
+    print("statistic campaigns initialized!")
+    test_segments_and_demand()
+    test_ImpsOptimization()
+    test_statisticalCampaigns()
+    
     
 if __name__ == "__main__":
     main()
