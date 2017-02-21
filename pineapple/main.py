@@ -7,6 +7,7 @@ Created on Sat Feb 18 19:23:55 2017
 
 import CampaignClass as cc
 import SegmentClass as sc
+import UcsManagerClass as ucs
 #import numpy
 from scipy import optimize
 #import matplotlib.pyplot as plt
@@ -29,15 +30,22 @@ def test_segments_and_demand():
         camp_seg_list = [sc.MarketSegment.segments[name] for name in camps_segs[i]]
         camp = cc.Campaign(i, i, i+3, camp_seg_list, (i+1)*1000 , 1, 1, "WALLA")
         camp.assignCampaign("Eyal")
+    
     campaigns = cc.Campaign.getCampaignList()  
-    for segment in sc.MarketSegment.getSegmentsList():
-        print (segment.segment_demand_numer(3, campaigns))
-
-    for campaign in cc.Campaign.getCampaignList():
-        print(campaign)
+#    for segment in sc.MarketSegment.getSegmentsList():
+#        print (segment.segment_demand_numer(3, campaigns))
     
     for camp in cc.Campaign.getCampaignList():
-        print("cid={}, demand={}".format(camp.cid, camp.campaign_demand_temp()))
+        print(camp, "demand={}".format(camp.campaign_demand_temp()))
+
+def test_ucs_desired_level():
+    print ("test_ucs_desired_level")
+    seg = sc.MarketSegment.segments['OMH']
+    size = 6*seg.size
+    camp = cc.Campaign(0, 1, 4, [seg], size , 1, 1, "WALLA")
+    camp.targetedImpressions = size/2
+    camp.impressions_goal = size+100
+    print("desired level of UCS for campaigns = {}".format(ucs.ucsManager.get_desired_UCS_level(1, [camp])))
     
 def test_ImpsOptimization():
     print("\ntest_ImpsOptimization:")
@@ -66,7 +74,8 @@ def main():
     print("statistic campaigns initialized!")
     test_segments_and_demand()
     test_ImpsOptimization()
-    test_statisticalCampaigns()
+    test_ucs_desired_level()
+#    test_statisticalCampaigns()
     
     
 if __name__ == "__main__":
