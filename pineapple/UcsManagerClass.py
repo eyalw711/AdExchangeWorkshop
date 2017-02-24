@@ -12,7 +12,7 @@ class ucsManager:
     
     def get_desired_UCS_level(day, ongoing_camps):
         if len(ongoing_camps) == 0:
-            print ("empty list")
+            print ("No ongoing campaigns")
             return 8
         camp = sorted(ongoing_camps, key=lambda x: (x.impressions_goal - x.targetedImpressions)/((x.endDay - day  + 1)*x.sizeOfSegments()) , reverse=True)[0]
         level_no_round = (camp.impressions_goal - camp.targetedImpressions)/((camp.endDay - day + 1)*camp.sizeOfSegments())

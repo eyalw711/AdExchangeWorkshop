@@ -5,7 +5,7 @@ Created on Sat Feb 18 16:53:51 2017
 @author: Eyal
 """
 import pandas as pd
-
+import math
 import CampaignClass as cc
 
 class MarketSegment:
@@ -16,7 +16,7 @@ class MarketSegment:
         self.size = size
     
     def __repr__(self):
-        return "Segment {}, size {}".format(self.name,self.size)
+        return "[Segment {}, size {}]".format(self.name,self.size)
     
     def addSize(self, x):
         self.size += x
@@ -30,6 +30,7 @@ class MarketSegment:
                 segments[name] = MarketSegment(name, row['size'])
             else:
                 segments[name].addSize(row['size'])
+        print("segments initialized!")
      
     def getSegmentsList():
         return list(MarketSegment.segments.values())
@@ -51,9 +52,19 @@ class MarketSegment:
                       seg in MarketSegment.getSegmentsList())
         return numer/denumer
     
+#    def segment_set_demand_forDays(segmentList, dayStart, dayEnd, campaignList):
+#        D = dayEnd - dayStart + 1
+#        return (1/D)* sum( sum(seg.segment_demand(day, campaignList) for seg in segmentList)
+#                for day in range(dayStart, dayEnd+1))
+    
+    def segment_set_demand_forDay(segmentList, day, campaignList):
+        '''computes equivalent demand of a set of segments in parallel'''
+        equiv_demand_inv = sum(math.pow(seg.segment_demand(day, campaignList),-1) for seg in segmentList)
+        return math.pow(equiv_demand_inv,-1)
+    
     def segment_set_demand_forDays(segmentList, dayStart, dayEnd, campaignList):
         D = dayEnd - dayStart + 1
-        return (1/D)* sum( sum(seg.segment_demand(day, campaignList) for seg in segmentList)
-                for day in range(dayStart, dayEnd+1))
+        return math.pow(D,-1)*sum( MarketSegment.segment_set_demand_forDay(segmentList, day, campaignList) for day in range(dayStart, dayEnd+1))
+    
     
     

@@ -8,6 +8,7 @@ Created on Sat Feb 18 18:24:52 2017
 import SegmentClass as sc
 import pandas as pd
 import math
+import random
 
 class Campaign:
     
@@ -34,7 +35,7 @@ class Campaign:
     
     def __repr__(self):
         return "Campaign ID:{}, start:{} ends:{}, segments:{}, reach:{}".format(
-                self.cid, self.startDay, self.endDay, [seg.name for seg in self.segments], self.reach)
+                self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
     
     def statistic_campaigns_init():
         camps = Campaign.statistic_campaigns
@@ -49,6 +50,7 @@ class Campaign:
                 dayDict[segmentName] = Campaign(row['cid'], row['start'],
                        row['end'], [sc.MarketSegment.segments[segmentName]],
                           row['reach'], row['vidCoeff'], row['mobCoeff'], row['publisher'])
+        print("statistic campaigns initialized!")
 
         
     def activeAtDay(self,d):
@@ -96,5 +98,10 @@ class Campaign:
     
     def sizeOfSegments(self):
         return sum(seg.size for seg in self.segments)
+    
+    def initial_budget_bid(self):
+        alpha = 1#math.pow(random.gauss(1,0.1),2)
+        return self.campaign_demand_temp()*self.reach*alpha
+
     
     
