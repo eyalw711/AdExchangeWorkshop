@@ -7,6 +7,7 @@ Created on Sat Feb 18 18:24:52 2017
 
 import SegmentClass as sc
 import pandas as pd
+from scipy import optimize
 import math
 import random
 
@@ -27,10 +28,11 @@ class Campaign:
         self.videoCoeff = videoCoeff
         self.mobileCoeff = mobileCoeff
         self.publisher = publisher
-        self.assignee = None
+        self.agent = None
         self.targetedImpressions = 0
         self.budget = 0
         self.impressions_goal = 0
+        self.avg_p_per_imp = 0
         
     
     def __repr__(self):
@@ -71,10 +73,23 @@ class Campaign:
         return self.endDay - self.startDay + 1
     
     '''TODO: unfinished!!!'''
-    def assignCampaign(self, assigneeName, budget = 0):
-        self.assignee = assigneeName
+    def assignCampaign(self, agent, goalObject, budget = 0):
+        self.agent = agent
         Campaign.campaigns[self.cid] = self
-        self.budget = budget                
+        agent.my_campaigns[self.cid] = self
+        self.budget = budget
+        if not (goalObject is None):
+            Q_old = goalObject["Q_old"]
+            B = self.budget
+            demand = self.campaign_demand_temp()
+            R = self.reach
+            
+            f = lambda x: -self.campaign_profit_for_ImpsTarget_estim(x, Q_old)
+            x0 = [self.reach]
+            res = optimize.basinhopping(f, x0, niter=1)
+           
+            self.impressions_goal = res.x
+            self.avg_p_per_imp = B*demand*self.impressions_goal/R
         
     def getCampaignList():
         return list(Campaign.campaigns.values())

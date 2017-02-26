@@ -13,15 +13,18 @@ from scipy import optimize
 import matplotlib.pyplot as plt
 import pandas as pd
 import AgentClass as ac
-    
+
+agents = [ac.Agent('PineApple'), ac.Agent('Bob')]
+
 def test_segments_and_demand():
     #{O/Y}{M/F}{H/L}
-    PineAppleAgent = ac.Agent()
+    global agents
     camps_segs = [['OMH','YFL'],['OMH'],['OMH','YFL'],['YML','OML','OFH']]
     for i in range(4):
         camp_seg_list = [sc.MarketSegment.segments[name] for name in camps_segs[i]]
         camp = cc.Campaign(i, i, i+3, camp_seg_list, (i+1)*1000 , 1, 1, "WALLA")
-        camp.assignCampaign("agent{}".format(i%2))
+        camp.assignCampaign(agents[i%len(agents)], {'Q_old':0.9}, budget = (i+1)*0.9)
+        print("p_avg ",camp.avg_p_per_imp)
     print()
     print(">Campaigns:")
     for camp in cc.Campaign.getCampaignList():
@@ -30,12 +33,21 @@ def test_segments_and_demand():
     
     data = [{'a_cid':camp.cid, 'b_reach':camp.reach, 'c_demand': camp.campaign_demand_temp(),
              'd_initial budget bid': camp.initial_budget_bid(),
-             'e_camp opport bid': PineAppleAgent.campaignOpportunityBid(camp)} for camp in cc.Campaign.getCampaignList()]
+             'e_camp opport bid': agents[0].campaignOpportunityBid(camp)} for camp in cc.Campaign.getCampaignList()]
     df = pd.DataFrame(data)
     print(">Campaigns Data:")
     print(df)
-#    pd.DataFrame()
-#    print(camp, "demand={}, initial budget bid={}".format(camp.campaign_demand_temp(), camp.initial_budget_bid()))
+    
+def test_bidBundle():
+    global agents
+    for agent in agents:
+        print(agent.name)
+        data = agent.formBidBundle(4)
+        df = pd.DataFrame(data)
+        print(">Bid Bundle")
+        print (df)
+        print()
+        
 
 def test_ucs_desired_level():
     seg = sc.MarketSegment.segments['OMH']
@@ -61,6 +73,7 @@ def test_ImpsOptimization():
     res = optimize.basinhopping(f, x0, niter=1)
     print("optimal number of imps for camp is {}".format( res.x))
     
+    
 def test_statisticalCampaigns():
     for day in cc.Campaign.statistic_campaigns:
         print("statistical campaigns for day = {}".format(day))
@@ -73,7 +86,7 @@ def main():
     for action in init_actions:
         action()
     
-    tests = [test_segments_and_demand, test_ImpsOptimization, test_ucs_desired_level]# test_statisticalCampaigns]
+    tests = [test_segments_and_demand, test_ImpsOptimization, test_ucs_desired_level, test_bidBundle]# test_statisticalCampaigns]
     for test in tests:
         print()
         print ("Running test: {}".format(test.__name__))
