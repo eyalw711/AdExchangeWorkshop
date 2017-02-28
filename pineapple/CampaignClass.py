@@ -13,7 +13,7 @@ import random
 
 class Campaign:
     
-    statistic_campaigns = {}
+    statistic_campaigns = {}    # dummy campaigns <kay : <key:val>> = <day ,<segment name : campagin objcect>>
     campaigns = {}
     
     def __init__(self, cid, startDay, endDay, segments, reach, 
@@ -29,19 +29,21 @@ class Campaign:
         self.mobileCoeff = mobileCoeff
         self.publisher = publisher
         self.agent = None
-        self.targetedImpressions = 0
-        self.budget = 0
-        self.impressions_goal = 0
-        self.avg_p_per_imp = 0
+        self.targetedImpressions = 0 # how many impressions we have already aquired
+        self.budget = 0 
+        self.impressions_goal = 0 # as defined in the document (target number of impressions)
+        self.avg_p_per_imp = 0 # "p bar"
         
     
     def __repr__(self):
         return "Campaign ID:{}, start:{} ends:{}, segments:{}, reach:{}".format(
                 self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
     
+    ''' dummy campaigns '''
     def statistic_campaigns_init():
         camps = Campaign.statistic_campaigns
         statistics = pd.read_csv('data//campaign_statistics.csv')
+        # adding dummy campaings to dictionary sorted by day
         for index, row in statistics.iterrows():
                 day = row['day']
                 if not day in camps:
@@ -73,12 +75,12 @@ class Campaign:
         return self.endDay - self.startDay + 1
     
     '''TODO: unfinished!!!'''
-    def assignCampaign(self, agent, goalObject, budget = 0):
+    def assignCampaign(self, agent, goalObject = None, budget = 0):
         self.agent = agent
         Campaign.campaigns[self.cid] = self
         agent.my_campaigns[self.cid] = self
         self.budget = budget
-        if not (goalObject is None):
+        if not (goalObject is None): # compute average price per impression for this campaign
             Q_old = goalObject["Q_old"]
             B = self.budget
             demand = self.campaign_demand_temp()

@@ -13,7 +13,8 @@ class Agent:
         self.quality = 0.9
         self.my_campaigns = {}
     
-    def campaignOpportunityBid(self, campaign):
+    
+    def campaignOpportunityBid(self, campaign): # as defined in the document
         COB = campaign.initial_budget_bid()
         if (COB < campaign.reach*self.quality) and (COB > campaign.reach/(10*self.quality)):
                 return COB
@@ -31,15 +32,15 @@ class Agent:
         if ucs_level > 0:
             ucs_level -= 1
         lvl_accuracy = uc.ucsManager.level_accuracy(ucs_level)
-        
+        # query (sement, platform, adtype)
 #        public final void addQuery(final AdxQuery query, final double bid,
 #			final Ad ad, int campaignId, int weight, final double dailyLimit) {
         for cid, cmp in self.my_campaigns.items():
 #            print("forming bids for cid {}".format(cid))
             cmpSegmentsSize = cmp.sizeOfSegments()
-            #todo: think about this, this is min but the PineApple Spec says max
             goal_targeted_number_of_imps_for_day = min(cmpSegmentsSize*lvl_accuracy, \
                             (cmp.impressions_goal - cmp.targetedImpressions)*lvl_accuracy)
+            # sort segments of campaign based on segment demand
             cmpSegmentsList = sorted(cmp.segments, key = lambda x: x.segment_demand(day, cc.Campaign.getCampaignList()))
             bidSegments = []
             for i in range(len(cmpSegmentsList)):
@@ -63,8 +64,8 @@ class Agent:
                 bidBundle += [{'segment': x[0].name, 'adType': x[1], 
                         'adPlatform': x[2], 
                         'campID': cid, 
-                        'bid': (p*demand), 
-                        'spendLimit' : (p*demand*s*lvl_accuracy),
-                        'weight': demand}]
+                        'bid': (p*demand),  # TODO: don't just multiply by demand
+                        'spendLimit' : (p*demand*s*lvl_accuracy), # TODO: don't just multiply by demand. consider how to refer to each  ad type / mobie
+                        'weight': (cmp.impressions_goal-cmp.targetedImpressions)}]
                 
         return bidBundle
