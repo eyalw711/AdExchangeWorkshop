@@ -66,6 +66,6 @@ class Agent:
                         'campID': cid, 
                         'bid': (p*demand),  # TODO: don't just multiply by demand
                         'spendLimit' : (p*demand*s*lvl_accuracy), # TODO: don't just multiply by demand. consider how to refer to each  ad type / mobie
-                        'weight': (cmp.impressions_goal-cmp.targetedImpressions)}]
+                        'weight': (cmp.imps_to_go)}]
                 
         return bidBundle

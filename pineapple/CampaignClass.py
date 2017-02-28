@@ -120,5 +120,6 @@ class Campaign:
         alpha = 1#math.pow(random.gauss(1,0.1),2)
         return self.campaign_demand_temp()*self.reach*alpha
 
-    
+    def imps_to_go(self):
+        return self.impressions_goal - self.targetedImpressions
     
