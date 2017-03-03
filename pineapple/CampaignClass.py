@@ -10,11 +10,14 @@ import pandas as pd
 from scipy import optimize
 import math
 import random
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 class Campaign:
     
     statistic_campaigns = {}    # dummy campaigns <kay : <key:val>> = <day ,<segment name : campagin objcect>>
     campaigns = {}
+    bdt = None
     
     def __init__(self, cid, startDay, endDay, segments, reach, 
                  videoCoeff, mobileCoeff, publisher):
@@ -95,6 +98,17 @@ class Campaign:
         
     def getCampaignList():
         return list(Campaign.campaigns.values())
+
+    def getStatisticsCampaignListAtDay(day):
+        if not day in Campaign.statistic_campaigns:
+            return []
+        return list(Campaign.statistic_campaigns[day].values()) # TODO: check if day is integer or string
+    
+    def getStatisticsCampaignListAtDays(start_day, end_day):
+        campaings_list = []
+        for i in range(start_day, end_day):
+            campaings_list += Campaign.getStatisticsCampaignListAtDay(start_day) # TODO: check if day is integer or string
+        return campaings_list
     
     def campaign_demand_temp(self):
         return sc.MarketSegment.segment_set_demand_forDays(self.segments, self.startDay,
@@ -113,6 +127,12 @@ class Campaign:
         demand = self.campaign_demand_temp()
         return (self.ERR(imps)*B - math.pow(B*demand*imps/R, alpha))*((1-eta)*Q_old + eta*self.ERR(imps))
     
+    def contains_segment(self, segment_name):
+        if segment_name in [segment.name for segment in self.segments]:
+            return True
+        return False
+        
+    
     def sizeOfSegments(self):
         return sum(seg.size for seg in self.segments)
     
@@ -123,3 +143,20 @@ class Campaign:
     def imps_to_go(self):
         return self.impressions_goal - self.targetedImpressions
     
+    def initialize_campaign_profitability_predictor():
+        train = pd.read_csv('data//campaigns_profitability.csv')        
+        features = list(train.columns[1:-3])
+        Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME", n_estimators=200)
+        Campaign.bdt.fit(train[features], train["decision"])
+    
+    def predict_campaign_profitability(self, day):
+        campaigns = Campaign.getCampaignList() + Campaign.getStatisticsCampaignListAtDays(self.startDay, self.endDay)
+        test = [{"day":day, "budget":self.budget, "start":self.startDay, "end":self.endDay,
+                 "vidCoeff":self.videoCoeff, "mobCoeff":self.mobileCoeff, "reach":self.reach,
+                 "demand":sc.MarketSegment.segment_set_demand_forDays(self.segments,self.startDay,self.endDay,campaigns),
+                "publisher":self.publisher, "OML":self.contains_segment("OML"),"OMH":self.contains_segment("OMH"),
+                "OFL":self.contains_segment("OFL"),"OFH":self.contains_segment("OFH"),
+                "YML":self.contains_segment("YML"),"YMH":self.contains_segment("YMH"),
+                "YFL":self.contains_segment("YFL"),"YFH":self.contains_segment("YFH")}]                                          
+        
+        return Campaign.bdt.predict(pd.DataFrame(test))
