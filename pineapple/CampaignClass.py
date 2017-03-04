@@ -146,7 +146,8 @@ class Campaign:
     def initialize_campaign_profitability_predictor():
         train = pd.read_csv('data//campaigns_profitability.csv')        
         features = list(train.columns[1:-3])
-        Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME", n_estimators=200)
+        # TODO:  consider the value of n_estimators based on predict_proba
+        Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME.R", n_estimators=30)
         Campaign.bdt.fit(train[features], train["decision"])
     
     def predict_campaign_profitability(self, day):
@@ -158,5 +159,5 @@ class Campaign:
                 "OFL":self.contains_segment("OFL"),"OFH":self.contains_segment("OFH"),
                 "YML":self.contains_segment("YML"),"YMH":self.contains_segment("YMH"),
                 "YFL":self.contains_segment("YFL"),"YFH":self.contains_segment("YFH")}]                                          
-        
+        print("ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
         return Campaign.bdt.predict(pd.DataFrame(test))

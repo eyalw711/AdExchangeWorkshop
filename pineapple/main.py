@@ -75,15 +75,18 @@ def test_ImpsOptimization():
     
 def test_profitability_prediction():
     cc.Campaign.initialize_campaign_profitability_predictor()
-    camp = cc.Campaign.campaigns[1]
+    camp = cc.Campaign.campaigns[0]
     print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(1)))
     
-    #seg = [sc.MarketSegment.segments['OML']]+[sc.MarketSegment.segments['OMH']]
-    seg = [sc.MarketSegment.segments['OMH']]
-    camp = cc.Campaign(10, 1, 4, seg , 5000, 1.1, 1.3, "1")    
-    camp.budget = 1000
+    seg = [sc.MarketSegment.segments['OML']]+[sc.MarketSegment.segments['OMH']]
+    #seg = [sc.MarketSegment.segments['OMH']]
+    camp = cc.Campaign(10, 3, 7, seg , 3000, 1.1, 1.3, "1")    
+    camp.assignCampaign(agents[0], {'Q_old':0.9}, budget = 5000)
+    campaigns = cc.Campaign.getCampaignList() + cc.Campaign.getStatisticsCampaignListAtDays(camp.startDay, camp.endDay)
+    #print("demand:" + str(sc.MarketSegment.segment_set_demand_forDays(camp.segments,camp.startDay,camp.endDay,campaigns)))
+
     
-    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(1)))
+    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(2)))
     
 def test_statisticalCampaigns():
     for day in cc.Campaign.statistic_campaigns:
