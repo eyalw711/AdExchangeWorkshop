@@ -8,6 +8,7 @@ import pandas as pd
 import math
 import CampaignClass as cc
 
+
 class MarketSegment:
     segments = {}
     

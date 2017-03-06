@@ -93,6 +93,9 @@ def test_statisticalCampaigns():
         print("statistical campaigns for day = {}".format(day))
         for seg in cc.Campaign.statistic_campaigns[day]:
             print (seg, ':', cc.Campaign.statistic_campaigns[day][seg])
+            
+def test_ucs_prediction():
+    print ("ucs predicted price: " + str(ucs.ucsManager.predict_required_price_to_win_desired_UCS_level(1,1,7,1)))
     
 def main():
     print("PineApple!")
@@ -100,7 +103,7 @@ def main():
     for action in init_actions:
         action()
     
-    tests = [test_segments_and_demand, test_ImpsOptimization, test_ucs_desired_level, test_bidBundle, test_profitability_prediction]# test_statisticalCampaigns]
+    tests = [test_segments_and_demand, test_ImpsOptimization, test_ucs_desired_level, test_bidBundle, test_profitability_prediction, test_ucs_prediction]# test_statisticalCampaigns]
     for test in tests:
         print()
         print ("Running test: {}".format(test.__name__))

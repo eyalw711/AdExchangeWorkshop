@@ -7,6 +7,9 @@ Created on Wed Feb 22 00:17:33 2017
 import math
 
 import CampaignClass as cc
+import SegmentClass as sc
+import pandas as pd
+from sklearn import svm
 
 class ucsManager:
     
@@ -34,5 +37,17 @@ class ucsManager:
         print("desired level {}".format(lvl))
         return lvl
     
-    def predict_required_price_to_win_desired_UCS_level():
-        pass        
+    def predict_required_price_to_win_desired_UCS_level(ucs_level, day, number_of_active_networks, number_of_last_day_networks):
+        segments = ["OML", "OMH", "OFL", "OFH", "YML", "YMH", "YFL", "YFH"]
+        demands = [sc.MarketSegment.segments[segment].segment_demand(day,cc.Campaign.getCampaignList()) for segment in segments]
+        if ucs_level >= 7:
+            return 0
+        training = pd.read_csv('data//ucs_level_statistics.csv')        
+        X = list(training.columns[1:-7])
+        y = [training.columns[-7 + ucs_level]]
+        print(training.head(1))
+        print(X)
+        print(y)
+        clf = svm.SVR()
+        clf.fit(training[X], training[y].values.ravel())
+        return clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+demands])
