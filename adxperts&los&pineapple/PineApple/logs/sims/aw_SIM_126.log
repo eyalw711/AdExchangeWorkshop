@@ -1,0 +1,27 @@
+18/03 08:34:50 SEVERE agentware.AgentServiceImpl|agent could not handle message Message[coordinator,adv2,(CampaignReport CampaignReportEntry [tgt imps=3235.41087909675, ntg imps=0.0, cost=0.06439133197138366])]
+java.lang.ArithmeticException: / by zero
+	at PineAppleAgent$CampaignData.accurityCalc(PineAppleAgent.java:857)
+	at PineAppleAgent.handleCampaignReport(PineAppleAgent.java:590)
+	at PineAppleAgent.messageReceived(PineAppleAgent.java:169)
+	at se.sics.tasim.aw.AgentService.deliverToAgent(AgentService.java:130)
+	at tau.tac.adx.agentware.AgentServiceImpl.deliverToAgent(AgentServiceImpl.java:135)
+	at tau.tac.adx.agentware.SimClient.run(SimClient.java:437)
+	at java.lang.Thread.run(Thread.java:745)
+18/03 08:35:40 SEVERE agentware.AgentServiceImpl|agent could not handle message Message[coordinator,adv2,(CampaignReport CampaignReportEntry [tgt imps=1546.8025991305344, ntg imps=0.0, cost=0.0])]
+java.lang.ArithmeticException: / by zero
+	at PineAppleAgent$CampaignData.accurityCalc(PineAppleAgent.java:857)
+	at PineAppleAgent.handleCampaignReport(PineAppleAgent.java:590)
+	at PineAppleAgent.messageReceived(PineAppleAgent.java:169)
+	at se.sics.tasim.aw.AgentService.deliverToAgent(AgentService.java:130)
+	at tau.tac.adx.agentware.AgentServiceImpl.deliverToAgent(AgentServiceImpl.java:135)
+	at tau.tac.adx.agentware.SimClient.run(SimClient.java:437)
+	at java.lang.Thread.run(Thread.java:745)
+18/03 08:35:52 SEVERE agentware.ServerConnection|(1) could not read
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at tau.tac.adx.agentware.ServerConnection.run(ServerConnection.java:221)
+	at java.lang.Thread.run(Thread.java:745)
+18/03 08:35:52 SEVERE agentware.SimClient|************************************************************
+18/03 08:35:52 SEVERE agentware.SimClient|* Connection Lost
+18/03 08:35:52 SEVERE agentware.SimClient|* Lost connection to localhost (will reconnect in 30 seconds)
+18/03 08:35:52 SEVERE agentware.SimClient|************************************************************

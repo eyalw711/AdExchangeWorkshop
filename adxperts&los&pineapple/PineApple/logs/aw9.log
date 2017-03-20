@@ -1,0 +1,10 @@
+18/03 08:55:06 INFO agentware.SimClient|next simulation starts in 53 seconds
+18/03 08:55:16 SEVERE agentware.ServerConnection|(1) could not read
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at tau.tac.adx.agentware.ServerConnection.run(ServerConnection.java:221)
+	at java.lang.Thread.run(Thread.java:745)
+18/03 08:55:16 SEVERE agentware.SimClient|************************************************************
+18/03 08:55:16 SEVERE agentware.SimClient|* Connection Lost
+18/03 08:55:16 SEVERE agentware.SimClient|* Lost connection to localhost (will reconnect in 30 seconds)
+18/03 08:55:16 SEVERE agentware.SimClient|************************************************************
