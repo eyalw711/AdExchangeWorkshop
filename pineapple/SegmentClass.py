@@ -7,7 +7,7 @@ Created on Sat Feb 18 16:53:51 2017
 import pandas as pd
 import math
 import CampaignClass as cc
-
+import itertools
 
 class MarketSegment:
     segments = {}
@@ -22,6 +22,13 @@ class MarketSegment:
     def addSize(self, x):
         self.size += x
     
+    def getSegmentListFromStr(segmentStr):
+        segmentsList = []
+        for comb in itertools.product(['O','Y'], ['M','F'], ['H', 'L']):
+            if all(c in comb for c in segmentStr):
+                segmentsList.append(MarketSegment.segments[''.join(comb)])
+        return segmentsList
+        
     def segments_init():
         segments = MarketSegment.segments
         population = pd.read_csv('data//population.csv')
@@ -49,9 +56,12 @@ class MarketSegment:
     
     def segment_demand(self, day, campaignList):
         numer = self.segment_demand_numer(day, campaignList)
-        denumer = sum(seg.segment_demand_numer(day, campaignList) for
+        if numer == 0:
+            return 0
+        else:
+            denumer = sum(seg.segment_demand_numer(day, campaignList) for
                       seg in MarketSegment.getSegmentsList())
-        return numer/denumer
+            return numer/denumer
     
 #    def segment_set_demand_forDays(segmentList, dayStart, dayEnd, campaignList):
 #        D = dayEnd - dayStart + 1
@@ -60,6 +70,8 @@ class MarketSegment:
     
     def segment_set_demand_forDay(segmentList, day, campaignList):
         '''computes equivalent demand of a set of segments in parallel'''
+        if any(seg.segment_demand(day, campaignList)==0 for seg in segmentList):
+            return 0
         equiv_demand_inv = sum(math.pow(seg.segment_demand(day, campaignList),-1) for seg in segmentList)
         return math.pow(equiv_demand_inv,-1)
     

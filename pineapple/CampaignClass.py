@@ -33,7 +33,7 @@ class Campaign:
         self.publisher = publisher
         self.agent = None
         self.targetedImpressions = 0 # how many impressions we have already aquired
-        self.budget = 0 
+        self.budget = 0 #in millis
         self.impressions_goal = 0 # as defined in the document (target number of impressions)
         self.avg_p_per_imp = 0 # "p bar"
         

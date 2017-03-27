@@ -13,6 +13,8 @@ class Agent:
         self.quality = 0.9
         self.my_campaigns = {}
     
+    def getOnGoingCampaigns(self, day):
+        return [camp for (key, camp) in self.my_campaigns.items() if camp.activeAtDay(day)]
     
     def campaignOpportunityBid(self, campaign): # as defined in the document
         COB = campaign.initial_budget_bid()

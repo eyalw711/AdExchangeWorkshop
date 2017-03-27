@@ -21,6 +21,7 @@ class ucsManager:
             return -1
     
     def get_desired_UCS_level(day, ongoing_camps):
+        ''' param ongoing_camps in a list of campaigns'''
         if len(ongoing_camps) == 0:
             print ("No ongoing campaigns")
             return 7

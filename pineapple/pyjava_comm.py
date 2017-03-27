@@ -16,6 +16,8 @@ class Game:
         self.validity = True
         self.agent = agent
         self.campaigns = campaigns
+        self.day = 1
+        
 
 class Communicator:
     
@@ -39,21 +41,64 @@ class Communicator:
             
             
     def dumpPickle(self):
-        pickle.dump( self.game, open( "pickle//game.p", "wb" ) )
+        pickle.dump( self.game, open( "pickle//game.p", "wb" ) ) #TODO: dump final state, not like now
     
+    def handleInitPickle(self):
+        self.game = Game(Agent("PineApple"),{})
+        self.dumpPickle()
+        
     def handleGetUCSBid(self):
-        print("TEST")
+        day = self.game.day
+        ongoingCamps = self.game.agent.getOnGoingCampaigns(day) #TODO: what day?
+        ucsLevel = ucsManager.get_desired_UCS_level(self.game.day, ongoingCamps)
+        
+        numberOfActiveNetworks = 0 #TODO
+        numberOfLastDayNetworks = 0 #TODO
+        ucsBid = ucsManager.predict_required_price_to_win_desired_UCS_level(
+                ucsLevel, day, numberOfActiveNetworks, numberOfLastDayNetworks)
+        
+        print(ucsBid)
         pass
     
     def handleGetBidBundle(self):
         pass
     
     def handleInitialCampaignMessage(self):
-        pass
+        cid = int(self.argsList[0])
+        reach = int(self.argsList[1])
+        startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
+        segmentList = MarketSegment.getSegmentListFromStr(self.argsList[4])
+        vidCoeff = float(self.argsList[5])
+        mobileCoeff = float(self.argsList[6])
+        budgetMillis = float(self.argsList[7])
+        initialCampaign = Campaign(cid, startDay, endDay, segmentList,
+                                   reach, vidCoeff, mobileCoeff, '')
+        
+        initialCampaign.assignCampaign(self.game.agent,
+                                       { "Q_old" : 1 },
+                                       budgetMillis) #TODO: what is the starting quality
     
     def handleGetCampaignBudgetBid(self):
-        pass
-    
+        print("ArgsList is {}".format(self.argsList))
+        cid = int(self.argsList[0])
+        reach = int(self.argsList[1])
+        startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
+        segmentList = MarketSegment.getSegmentListFromStr(self.argsList[4])
+        vidCoeff = float(self.argsList[5])
+        mobileCoeff = float(self.argsList[6])
+        day = int(self.argsList[7])
+        
+        campaignInOpportunity = Campaign(cid, startDay, endDay, segmentList,
+                                   reach, vidCoeff, mobileCoeff, '')
+        
+        initialBudget = self.game.agent.campaignOpportunityBid(campaignInOpportunity)
+        Campaign.initialize_campaign_profitability_predictor()
+        profitability = campaignInOpportunity.predict_campaign_profitability(day)
+        if (profitability == -1):
+            print((campaignInOpportunity.reach*self.game.agent.quality) - 0.1)
+        else:
+            print(initialBudget)
+
     def handleCampaignReport(self):
         pass
     
@@ -74,33 +119,28 @@ class Communicator:
     
     def handleBankStatus(self):
         pass
-    
-    
-        
-    def handleQuery(self):
-        functions = {
-                "GetUCSBid": Communicator.handleGetUCSBid,
-                "GetBidBundle": Communicator.handleGetBidBundle,
-                "InitialCampaignMessage": Communicator.handleInitialCampaignMessage,
-                "GetCampaignBudgetBid": Communicator.handleGetCampaignBudgetBid,
-                "CampaignReport": Communicator.handleCampaignReport,
-                "AdNetworkDailyNotification": Communicator.handleAdNetworkDailyNotification,
-                "AdxPublisherReport": Communicator.handleAdxPublisherReport,
-                "PublisherCatalog": Communicator.handlePublisherCatalog,
-                "AdNetworkReport": Communicator.handleAdNetworkReport,
-                "StartInfo": Communicator.handleStartInfo,
-                "BankStatus": Communicator.handleBankStatus
+      
+    handlers = {
+                "initPickle" : handleInitPickle,
+                "GetUCSBid": handleGetUCSBid,
+                "GetBidBundle": handleGetBidBundle,
+                "InitialCampaignMessage": handleInitialCampaignMessage,
+                "GetCampaignBudgetBid": handleGetCampaignBudgetBid,
+                "CampaignReport": handleCampaignReport,
+                "AdNetworkDailyNotification": handleAdNetworkDailyNotification,
+                "AdxPublisherReport": handleAdxPublisherReport,
+                "PublisherCatalog": handlePublisherCatalog,
+                "AdNetworkReport": handleAdNetworkReport,
+                "StartInfo": handleStartInfo,
+                "BankStatus": handleBankStatus
                 }
-        
-        handler = functions[self.queryName]
+    
+    def handleQuery(self):
+        handler = Communicator.handlers[self.queryName]
         handler(self)
     
-    
 def main(queryName, argsList):
-    if queryName in ["GetUCSBid", "GetBidBundle", "InitialCampaignMessage",
-                     "GetCampaignBudgetBid", "GetCampaignBudgetBid", "CampaignReport",
-                     "AdNetworkDailyNotification", "AdxPublisherReport", "PublisherCatalog",
-                     "AdNetworkReport", "StartInfo", "BankStatus"]:
+    if queryName in Communicator.handlers:
         communicator = Communicator(queryName, argsList)
         try:
             communicator.loadPickle()
