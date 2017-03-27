@@ -59,6 +59,8 @@ class Campaign:
                           row['reach'], row['vidCoeff'], row['mobCoeff'], row['publisher'])
         print("statistic campaigns initialized!")
 
+    def setCampaigns(campaignsDict):
+        Campaign.campaigns = campaignsDict
         
     def activeAtDay(self,d):
         if d >= self.startDay and d <= self.endDay:
