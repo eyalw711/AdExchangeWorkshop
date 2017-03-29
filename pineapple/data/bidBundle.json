@@ -1,0 +1,228 @@
+{
+    "bidbundle": [
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OMH"
+                ],
+                "Device": "Desktop",
+                "adType": "Text"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 386854.4981884456
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OMH"
+                ],
+                "Device": "Mobile",
+                "adType": "Text"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 386854.4981884456
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OMH"
+                ],
+                "Device": "Desktop",
+                "adType": "Video"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 386854.4981884456
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OMH"
+                ],
+                "Device": "Mobile",
+                "adType": "Video"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 386854.4981884456
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OML"
+                ],
+                "Device": "Desktop",
+                "adType": "Text"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 859410.6735745788
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OML"
+                ],
+                "Device": "Mobile",
+                "adType": "Text"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 859410.6735745788
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OML"
+                ],
+                "Device": "Desktop",
+                "adType": "Video"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 859410.6735745788
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OML"
+                ],
+                "Device": "Mobile",
+                "adType": "Video"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 859410.6735745788
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OFH"
+                ],
+                "Device": "Desktop",
+                "adType": "Text"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 194863.59005284324
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OFH"
+                ],
+                "Device": "Mobile",
+                "adType": "Text"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 194863.59005284324
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OFH"
+                ],
+                "Device": "Desktop",
+                "adType": "Video"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 194863.59005284324
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OFH"
+                ],
+                "Device": "Mobile",
+                "adType": "Video"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 194863.59005284324
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OFL"
+                ],
+                "Device": "Desktop",
+                "adType": "Text"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 258616.5889398836
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OFL"
+                ],
+                "Device": "Mobile",
+                "adType": "Text"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 258616.5889398836
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OFL"
+                ],
+                "Device": "Desktop",
+                "adType": "Video"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 258616.5889398836
+        },
+        {
+            "query": {
+                "publisher": "",
+                "marketSegments": [
+                    "OFL"
+                ],
+                "Device": "Mobile",
+                "adType": "Video"
+            },
+            "bid": 729.7368077124758,
+            "campaignId": 2,
+            "weight": 6.233800177005116,
+            "dailyLimit": 258616.5889398836
+        }
+    ]
+}

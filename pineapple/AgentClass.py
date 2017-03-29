@@ -4,14 +4,20 @@ Created on Wed Feb 22 00:12:36 2017
 
 @author: Eyal
 """
-import CampaignClass as cc
-import UcsManagerClass as uc
+from CampaignClass import Campaign
+from UcsManagerClass import ucsManager
+
 import itertools
 class Agent:
     def __init__(self, name):
         self.name = name
         self.quality = 0.9
+        ''' powers of 0.9 '''
+        self.dailyUCSLevel = 0 #TODO: what is the starting UCS Level? 
         self.my_campaigns = {}
+        
+    def __repr__(self):
+        return "Agent {}: Q: {} Campaigns: {}".format(self.name, self.quality, self.my_campaigns.values())
     
     def getOnGoingCampaigns(self, day):
         return [camp for (key, camp) in self.my_campaigns.items() if camp.activeAtDay(day)]
@@ -27,47 +33,62 @@ class Agent:
             return campaign.reach/(10*self.quality) + 0.1
         
     def formBidBundle(self, day):
-        bidBundle = []
+        '''
+        forms a bid bundle for tomorrow
+        param day is (current game day + 1)
+        '''
+        bidBundle = {"bidbundle" : []}
+        bidsArray = bidBundle["bidbundle"]
         ongoing_camps = [cmp for cid,cmp in self.my_campaigns.items() if cmp.activeAtDay(day)]
-        print("{}: ongoing camps {}".format(self.name, self.my_campaigns.keys()))
-        ucs_level = uc.ucsManager.get_desired_UCS_level(day, ongoing_camps)
+        print("#formBidBundle: {}: ongoing camps {}".format(self.name, self.my_campaigns.keys()))
+        ucs_level = ucsManager.get_desired_UCS_level(day, ongoing_camps) #day is tomorrow as this function expects
         if ucs_level > 0:
             ucs_level -= 1
-        lvl_accuracy = uc.ucsManager.level_accuracy(ucs_level)
-        # query (sement, platform, adtype)
+        lvl_accuracy = ucsManager.level_accuracy(ucs_level)
+        # query (segment, platform, adtype)
 #        public final void addQuery(final AdxQuery query, final double bid,
 #			final Ad ad, int campaignId, int weight, final double dailyLimit) {
         for cid, cmp in self.my_campaigns.items():
-#            print("forming bids for cid {}".format(cid))
+#            print("#formBidBundle: forming bids for cid {}".format(cid))
             cmpSegmentsSize = cmp.sizeOfSegments()
             goal_targeted_number_of_imps_for_day = min(cmpSegmentsSize*lvl_accuracy, \
                             (cmp.impressions_goal - cmp.targetedImpressions)*lvl_accuracy)
             # sort segments of campaign based on segment demand
-            cmpSegmentsList = sorted(cmp.segments, key = lambda x: x.segment_demand(day, cc.Campaign.getCampaignList()))
+            cmpSegmentsList = sorted(cmp.segments, key = lambda x: x.segment_demand(day, Campaign.getCampaignList()))
             bidSegments = []
             for i in range(len(cmpSegmentsList)):
-#                print("i={}, segSizeSum*acc={}, impsGoal={}".format(i,sum(seg.size for seg in cmpSegmentsList[:i]) * lvl_accuracy,goal_targeted_number_of_imps_for_day ))
+#                print("#formBidBundle: i={}, segSizeSum*acc={}, impsGoal={}".format(i,sum(seg.size for seg in cmpSegmentsList[:i]) * lvl_accuracy,goal_targeted_number_of_imps_for_day ))
                 if sum(seg.size for seg in cmpSegmentsList[:i]) * lvl_accuracy > goal_targeted_number_of_imps_for_day:
                     bidSegments = cmpSegmentsList[:i]
                     break
                 if not bidSegments:
                     bidSegments = cmpSegmentsList
-#            print(bidSegments)
+#            print(#formBidBundle: bidSegments)
             
             for x in itertools.product(bidSegments, ["Text","Video"], ["Desktop", "Mobile"]):
                 p = cmp.avg_p_per_imp
                 seg = x[0]
-                demand = seg.segment_demand(day, cc.Campaign.getCampaignList())
+                demand = seg.segment_demand(day, Campaign.getCampaignList())
                 if (not seg is bidSegments[-1]):
                     s = seg.size
                 else:
                     s= goal_targeted_number_of_imps_for_day - sum(segTag.size for segTag in bidSegments[:-1])
                     
-                bidBundle += [{'segment': x[0].name, 'adType': x[1], 
-                        'adPlatform': x[2], 
-                        'campID': cid, 
-                        'bid': (p*demand),  # TODO: don't just multiply by demand
-                        'spendLimit' : (p*demand*s*lvl_accuracy), # TODO: don't just multiply by demand. consider how to refer to each  ad type / mobie
-                        'weight': (cmp.imps_to_go)}]
+#                bidBundle += [{'segment': x[0].name, 'adType': x[1], 
+#                        'adPlatform': x[2], 
+#                        'campID': cid, 
+#                        'bid': (p*demand),  # TODO: don't just multiply by demand
+#                        'spendLimit' : (p*demand*s*lvl_accuracy), # TODO: don't just multiply by demand. consider how to refer to each  ad type / mobie
+#                        'weight': (cmp.imps_to_go)}]
                 
+                query = {"publisher" : cmp.publisher,
+                         "marketSegments" : [seg.name],
+                         "Device" : x[2],
+                         "adType" : x[1]} #TODO: the publisher comes from someplace else
+                         
+                bidsArray += [{"query" : query, 
+                         "bid" : float(p*demand), 
+                         "campaignId" : int(cid), 
+                         "weight" : float(cmp.imps_to_go()/1000), 
+                         "dailyLimit" : float(p*demand*s*lvl_accuracy)}]
         return bidBundle

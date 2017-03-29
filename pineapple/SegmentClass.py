@@ -6,7 +6,6 @@ Created on Sat Feb 18 16:53:51 2017
 """
 import pandas as pd
 import math
-import CampaignClass as cc
 import itertools
 
 class MarketSegment:
@@ -17,7 +16,7 @@ class MarketSegment:
         self.size = size
     
     def __repr__(self):
-        return "[Segment {}, size {}]".format(self.name,self.size)
+        return "({},{})".format(self.name,self.size)
     
     def addSize(self, x):
         self.size += x
@@ -38,30 +37,24 @@ class MarketSegment:
                 segments[name] = MarketSegment(name, row['size'])
             else:
                 segments[name].addSize(row['size'])
-        print("segments initialized!")
+        print("#segments_init: segments initialized!")
      
     def getSegmentsList():
         return list(MarketSegment.segments.values())
     
     def segment_indicator(self, day, campaign):
         if (self in campaign.segments) and (campaign.activeAtDay(day)):
-            return 1
+            return True
         else:
-            return 0
+            return False
 
     def segment_demand_numer(self, day, campaignList):
-        numer = sum((1/(self.size * camp.activePeriodLength())) * 
-                    self.segment_indicator(day, camp) * camp.reach for camp in campaignList)
+        numer = sum(camp.reach/(camp.sizeOfSegments() * camp.activePeriodLength()) for camp in campaignList if self.segment_indicator(day, camp))
         return numer
     
     def segment_demand(self, day, campaignList):
         numer = self.segment_demand_numer(day, campaignList)
-        if numer == 0:
-            return 0
-        else:
-            denumer = sum(seg.segment_demand_numer(day, campaignList) for
-                      seg in MarketSegment.getSegmentsList())
-            return numer/denumer
+        return numer
     
 #    def segment_set_demand_forDays(segmentList, dayStart, dayEnd, campaignList):
 #        D = dayEnd - dayStart + 1
@@ -76,8 +69,10 @@ class MarketSegment:
         return math.pow(equiv_demand_inv,-1)
     
     def segment_set_demand_forDays(segmentList, dayStart, dayEnd, campaignList):
-        D = dayEnd - dayStart + 1
-        return math.pow(D,-1)*sum( MarketSegment.segment_set_demand_forDay(segmentList, day, campaignList) for day in range(dayStart, dayEnd+1))
+        if any(MarketSegment.segment_set_demand_forDay(segmentList, day, campaignList) == 0 for day in range(dayStart, dayEnd + 1)):
+            return 0
+        equiv_demand_inv = sum(math.pow(MarketSegment.segment_set_demand_forDay(segmentList, day, campaignList),-1) for day in range(dayStart, dayEnd + 1))
+        return math.pow(equiv_demand_inv,-1)
     
     
     

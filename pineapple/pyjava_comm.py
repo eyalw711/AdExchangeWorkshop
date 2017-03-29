@@ -6,16 +6,17 @@ Created on Mon Mar 27 17:56:15 2017
 """
 import sys
 import pickle
+import json
 from CampaignClass import Campaign
 from AgentClass import Agent
 from SegmentClass import MarketSegment
 from UcsManagerClass import ucsManager
 
 class Game:
-    def __init__(self, agent, campaigns):
-        self.validity = True
-        self.agent = agent
-        self.campaigns = campaigns
+    def __init__(self):
+        self.agent = Agent("PineApple")
+        self.opponents = [Agent(str(i)) for i in range(7)]
+        self.campaigns = {}
         self.day = 1
         
 
@@ -24,44 +25,47 @@ class Communicator:
     def __init__(self, queryName, argsList):
         self.queryName = queryName
         self.argsList = argsList
-        self.game = Game(Agent("PineApple"), {})
+        self.game = Game()
     
     def loadPickle(self):
-        self.game = pickle.load( open("pickle//game.p", "rb"))
+        try:
+            self.game = pickle.load( open("pickle//game.p", "rb"))
+        except (OSError, IOError) as e:
+            self.game = Game()
         
         MarketSegment.segments_init()
         Campaign.statistic_campaigns_init()
-        if self.game.validity == False:                 #New Game
-            self.game.validity = True
-            self.game.campaigns = {}
-            self.game.agent = Agent("PineApple")
-           
-        else:                                           #Continue Game
-            Campaign.setCampaigns(self.game.campaigns)
+        Campaign.setCampaigns(self.game.campaigns)
             
             
     def dumpPickle(self):
         pickle.dump( self.game, open( "pickle//game.p", "wb" ) ) #TODO: dump final state, not like now
-    
-    def handleInitPickle(self):
-        self.game = Game(Agent("PineApple"),{})
-        self.dumpPickle()
+
         
     def handleGetUCSBid(self):
         day = self.game.day
-        ongoingCamps = self.game.agent.getOnGoingCampaigns(day) #TODO: what day?
-        ucsLevel = ucsManager.get_desired_UCS_level(self.game.day, ongoingCamps)
+        ongoingCamps = self.game.agent.getOnGoingCampaigns(day+1)
+        ucsLevel = ucsManager.get_desired_UCS_level(day+1, ongoingCamps)
         
-        numberOfActiveNetworks = 0 #TODO
-        numberOfLastDayNetworks = 0 #TODO
+        numberOfActiveNetworks = sum(
+                [1 for opponent in self.game.opponents if any(camp.activeAtDay(day+1)
+                    for camp in opponent.getOnGoingCampaigns(day+1))])
+        numberOfLastDayNetworks = sum(
+                [1 for opponent in self.game.opponents if any(camp.endDay == day+1
+                    for camp in opponent.getOnGoingCampaigns(day+1))])
         ucsBid = ucsManager.predict_required_price_to_win_desired_UCS_level(
                 ucsLevel, day, numberOfActiveNetworks, numberOfLastDayNetworks)
         
         print(ucsBid)
-        pass
+
     
     def handleGetBidBundle(self):
-        pass
+        day = self.game.day
+        bidBundle = self.game.agent.formBidBundle(day+1)
+        with open('data//bidBundle.json','w') as f:
+            json.dump(bidBundle, f, indent=4)
+        
+        print("done")
     
     def handleInitialCampaignMessage(self):
         cid = int(self.argsList[0])
@@ -77,9 +81,15 @@ class Communicator:
         initialCampaign.assignCampaign(self.game.agent,
                                        { "Q_old" : 1 },
                                        budgetMillis) #TODO: what is the starting quality
-    
+        #experiement:
+        otherInitialCampaigns = [Campaign("i{}".format(i), startDay, endDay,
+                                          segmentList, reach, vidCoeff,
+                                          mobileCoeff, '') for i in range(7)]
+        for (inx,camp) in enumerate(otherInitialCampaigns):
+            camp.assignCampaign(self.game.opponents[inx], None, budgetMillis)
+            
     def handleGetCampaignBudgetBid(self):
-        print("ArgsList is {}".format(self.argsList))
+        print("#handleGetCampaignBudgetBid: ArgsList is {}".format(self.argsList))
         cid = int(self.argsList[0])
         reach = int(self.argsList[1])
         startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
@@ -100,10 +110,33 @@ class Communicator:
             print(initialBudget)
 
     def handleCampaignReport(self):
-        pass
+        number_of_campaign_stats = int(self.argsList[0])
+        for i in range(number_of_campaign_stats):
+            cid = int(self.argsList[1 + 4*i])
+            targetedImpressions = int(self.argsList[2+4*i])
+#            nonTargetedImpressions = self.argsList[3+4*i]
+#            cost = self.argsList[4+4*i]
+            #update:
+            if cid in self.game.agent.my_campaigns:
+                self.game.agent.my_campaigns[cid].targetedImpressions = targetedImpressions
+            if cid in Campaign.campaigns:
+                Campaign.campaigns[cid].targetedImpressions = targetedImpressions
+                
     
     def handleAdNetworkDailyNotification(self):
-        pass
+        self.game.day = int(self.argsList[0])
+        self.game.agent.dailyUCSLevel = float(self.argsList[1])
+        #price of UCS dont care
+        oldQuality = self.game.agent.quality
+        self.game.agent.quality = float(self.argsList[3])
+        
+        cid = int(self.argsList[4])
+        #TODO: Verify assign correctly
+        cmp = Campaign.campaigns[cid]
+        if self.argsList[5] == self.game.agent.name: #TODO: dangerous, check
+            cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality},int(self.argsList[6]))
+        else:
+            cmp.assignCampaign(self.game.opponents[0], None, int(self.argsList[6])) #TODO: change assignee to real one
     
     def handleAdxPublisherReport(self):
         pass
@@ -119,9 +152,14 @@ class Communicator:
     
     def handleBankStatus(self):
         pass
-      
+    
+    def handleGetGameStatus(self):
+        '''DEBUG'''
+        print("handleGetGameStatus: day ", self.game.day)
+        print("handleGetGameStatus: agent ", self.game.agent)
+        
     handlers = {
-                "initPickle" : handleInitPickle,
+                "GetGameStatus": handleGetGameStatus,
                 "GetUCSBid": handleGetUCSBid,
                 "GetBidBundle": handleGetBidBundle,
                 "InitialCampaignMessage": handleInitialCampaignMessage,

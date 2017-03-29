@@ -21,7 +21,7 @@ Java to Python queries:
 			read from file "/comm/bidbundle.json" in the following json format (https://en.wikipedia.org/wiki/JSON#Example):
 			 the file would be a sequence (Array) of the following objects:
 			 {
-				"bidbundle" = [Array of bids]
+				"bidbundle" : [Array of bids]
 			 }
 			 
 			 where each bid is a json object with the following format:
@@ -29,10 +29,10 @@ Java to Python queries:
 			 
 			 and the queries themselves are also json objects:
 			{
-				"publisher" = publisher_name_string,
-				"marketSegments" = [Array of MarketSegmentStrings],
-				"Device" = device_string,
-				"adType" = adType_string
+				"publisher" : publisher_name_string,
+				"marketSegments" : [Array of MarketSegmentStrings],
+				"Device" : device_string,
+				"adType" : adType_string
 			}
 			 
 			where:
