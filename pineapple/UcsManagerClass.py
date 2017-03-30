@@ -59,4 +59,5 @@ class ucsManager:
         print("#predict_required_price_to_win_desired_UCS_level: ", y)
         clf = svm.SVR()
         clf.fit(training[X], training[y].values.ravel())
-        return clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+demands])
+        y_pred = clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+demands])
+        return float(y_pred)

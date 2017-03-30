@@ -5,6 +5,7 @@ Created on Mon Mar 27 17:56:15 2017
 @author: Eyal
 """
 import sys
+import os
 import pickle
 import json
 from CampaignClass import Campaign
@@ -17,6 +18,7 @@ class Game:
         self.agent = Agent("PineApple")
         self.opponents = [Agent(str(i)) for i in range(7)]
         self.campaigns = {}
+        self.campaignOffer = None
         self.day = 1
         
 
@@ -39,10 +41,12 @@ class Communicator:
             
             
     def dumpPickle(self):
+        #update game:
+        self.game.campaigns = Campaign.campaigns
         pickle.dump( self.game, open( "pickle//game.p", "wb" ) ) #TODO: dump final state, not like now
-
-        
-    def handleGetUCSBid(self):
+    
+    def handleGetUcsAndBundle(self):
+        answer = {}
         day = self.game.day
         ongoingCamps = self.game.agent.getOnGoingCampaigns(day+1)
         ucsLevel = ucsManager.get_desired_UCS_level(day+1, ongoingCamps)
@@ -56,16 +60,12 @@ class Communicator:
         ucsBid = ucsManager.predict_required_price_to_win_desired_UCS_level(
                 ucsLevel, day, numberOfActiveNetworks, numberOfLastDayNetworks)
         
-        print(ucsBid)
-
-    
-    def handleGetBidBundle(self):
-        day = self.game.day
-        bidBundle = self.game.agent.formBidBundle(day+1)
-        with open('data//bidBundle.json','w') as f:
-            json.dump(bidBundle, f, indent=4)
+        answer["UCSBid"] = float(ucsBid)
         
-        print("done")
+        bidBundle = self.game.agent.formBidBundle(day+1)
+        answer["bidbundle"] = bidBundle
+        
+        print(json.dumps(answer, separators=(',', ':')))
     
     def handleInitialCampaignMessage(self):
         cid = int(self.argsList[0])
@@ -98,16 +98,17 @@ class Communicator:
         mobileCoeff = float(self.argsList[6])
         day = int(self.argsList[7])
         
-        campaignInOpportunity = Campaign(cid, startDay, endDay, segmentList,
-                                   reach, vidCoeff, mobileCoeff, '')
+        camp = Campaign(cid, startDay, endDay, segmentList,
+                                   reach, vidCoeff, mobileCoeff)
+        self.game.campaignOffer = camp
         
-        initialBudget = self.game.agent.campaignOpportunityBid(campaignInOpportunity)
+        initialBudget = self.game.agent.campaignOpportunityBid(camp)
         Campaign.initialize_campaign_profitability_predictor()
-        profitability = campaignInOpportunity.predict_campaign_profitability(day)
+        profitability = camp.predict_campaign_profitability(day)
         if (profitability == -1):
-            print((campaignInOpportunity.reach*self.game.agent.quality) - 0.1)
+            print(json.dumps({"budgetBid":(camp.reach*self.game.agent.quality) - 0.1})) #TODO
         else:
-            print(initialBudget)
+            print(json.dumps({"budgetBid":initialBudget}))
 
     def handleCampaignReport(self):
         number_of_campaign_stats = int(self.argsList[0])
@@ -132,25 +133,34 @@ class Communicator:
         
         cid = int(self.argsList[4])
         #TODO: Verify assign correctly
-        cmp = Campaign.campaigns[cid]
+        cmp = self.game.campaignOffer
         if self.argsList[5] == self.game.agent.name: #TODO: dangerous, check
-            cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality},int(self.argsList[6]))
+            cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality}, budget = int(self.argsList[6]))
         else:
-            cmp.assignCampaign(self.game.opponents[0], None, int(self.argsList[6])) #TODO: change assignee to real one
+            cmp.assignCampaign(self.game.opponents[0], goalObject = None, budget = int(self.argsList[6])) #TODO: change assignee to real one
     
     def handleAdxPublisherReport(self):
+        '''currently undefined impl'''
         pass
     
     def handlePublisherCatalog(self):
+        '''currently undefined impl'''
         pass
     
     def handleAdNetworkReport(self):
+        '''currently undefined impl'''
         pass
     
     def handleStartInfo(self):
-        pass
+        #TODO: Assume OK to delete here
+        try:
+            os.remove("pickle//game.p")
+        except OSError:
+            pass
+            
     
     def handleBankStatus(self):
+        '''currently undefined impl'''
         pass
     
     def handleGetGameStatus(self):
@@ -160,8 +170,7 @@ class Communicator:
         
     handlers = {
                 "GetGameStatus": handleGetGameStatus,
-                "GetUCSBid": handleGetUCSBid,
-                "GetBidBundle": handleGetBidBundle,
+                "GetUcsAndBundle": handleGetUcsAndBundle,
                 "InitialCampaignMessage": handleInitialCampaignMessage,
                 "GetCampaignBudgetBid": handleGetCampaignBudgetBid,
                 "CampaignReport": handleCampaignReport,

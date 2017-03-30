@@ -37,8 +37,7 @@ class Agent:
         forms a bid bundle for tomorrow
         param day is (current game day + 1)
         '''
-        bidBundle = {"bidbundle" : []}
-        bidsArray = bidBundle["bidbundle"]
+        bidsArray = []
         ongoing_camps = [cmp for cid,cmp in self.my_campaigns.items() if cmp.activeAtDay(day)]
         print("#formBidBundle: {}: ongoing camps {}".format(self.name, self.my_campaigns.keys()))
         ucs_level = ucsManager.get_desired_UCS_level(day, ongoing_camps) #day is tomorrow as this function expects
@@ -81,14 +80,15 @@ class Agent:
 #                        'spendLimit' : (p*demand*s*lvl_accuracy), # TODO: don't just multiply by demand. consider how to refer to each  ad type / mobie
 #                        'weight': (cmp.imps_to_go)}]
                 
-                query = {"publisher" : cmp.publisher,
-                         "marketSegments" : [seg.name],
+                query = {
+                        "marketSegments" : [seg.name],
                          "Device" : x[2],
-                         "adType" : x[1]} #TODO: the publisher comes from someplace else
+                         "adType" : x[1]
+                        }
                          
                 bidsArray += [{"query" : query, 
                          "bid" : float(p*demand), 
                          "campaignId" : int(cid), 
                          "weight" : float(cmp.imps_to_go()/1000), 
                          "dailyLimit" : float(p*demand*s*lvl_accuracy)}]
-        return bidBundle
+        return bidsArray

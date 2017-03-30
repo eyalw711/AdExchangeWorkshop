@@ -22,7 +22,7 @@ def test_segments_and_demand():
     camps_segs = [['OMH','YFL'],['OMH'],['OMH','YFL'],['YML','OML','OFH']]
     for i in range(4):
         camp_seg_list = [sc.MarketSegment.segments[name] for name in camps_segs[i]]
-        camp = cc.Campaign(i, i, i+3, camp_seg_list, (i+1)*1000 , 1, 1, "1")
+        camp = cc.Campaign(i, i, i+3, camp_seg_list, (i+1)*1000 , 1, 1)
         camp.assignCampaign(agents[i%len(agents)], {'Q_old':0.9}, budget = (i+1)*0.9)
         print("p_avg ",camp.avg_p_per_imp)
     print()
@@ -52,7 +52,7 @@ def test_bidBundle():
 def test_ucs_desired_level():
     seg = sc.MarketSegment.segments['OMH']
     size = 6*seg.size
-    camp = cc.Campaign(0, 1, 4, [seg], size , 1, 1, "1")
+    camp = cc.Campaign(0, 1, 4, [seg], size , 1, 1)
     camp.targetedImpressions = size/2
     camp.impressions_goal = size+100
     print("desired level of UCS for campaigns = {}".format(ucs.ucsManager.get_desired_UCS_level(1, [camp])))
@@ -80,7 +80,7 @@ def test_profitability_prediction():
     
     seg = [sc.MarketSegment.segments['OML']]+[sc.MarketSegment.segments['OMH']]
     #seg = [sc.MarketSegment.segments['OMH']]
-    camp = cc.Campaign(10, 3, 7, seg , 3000, 1.1, 1.3, "1")    
+    camp = cc.Campaign(10, 3, 7, seg , 3000, 1.1, 1.3)    
     camp.assignCampaign(agents[0], {'Q_old':0.9}, budget = 5000)
     campaigns = cc.Campaign.getCampaignList() + cc.Campaign.getStatisticsCampaignListAtDays(camp.startDay, camp.endDay)
     #print("demand:" + str(sc.MarketSegment.segment_set_demand_forDays(camp.segments,camp.startDay,camp.endDay,campaigns)))

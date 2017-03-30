@@ -20,7 +20,7 @@ class Campaign:
     bdt = None
     
     def __init__(self, cid, startDay, endDay, segments, reach, 
-                 videoCoeff, mobileCoeff, publisher):
+                 videoCoeff, mobileCoeff):
         self.cid = cid
         ''' integers'''
         self.startDay = startDay
@@ -30,7 +30,6 @@ class Campaign:
         self.reach = reach
         self.videoCoeff = videoCoeff
         self.mobileCoeff = mobileCoeff
-        self.publisher = publisher
         self.agent = None
         self.targetedImpressions = 0 # how many impressions we have already aquired
         self.budget = 0 #in millis
@@ -54,9 +53,9 @@ class Campaign:
                     camps[day] = newDictForDay
                 dayDict = camps[day]
                 segmentName = row['segment']
-                dayDict[segmentName] = Campaign(row['cid'], row['start'],
+                dayDict[segmentName] = Campaign("s{}".format(index), row['start'],
                        row['end'], [sc.MarketSegment.segments[segmentName]],
-                          row['reach'], row['vidCoeff'], row['mobCoeff'], row['publisher'])
+                          row['reach'], row['vidCoeff'], row['mobCoeff'])
         print("#statistic_campaigns_init: statistic campaigns initialized!")
 
     def setCampaigns(campaignsDict):
@@ -154,12 +153,19 @@ class Campaign:
     
     def predict_campaign_profitability(self, day):
         campaigns = Campaign.getCampaignList() + Campaign.getStatisticsCampaignListAtDays(self.startDay, self.endDay)
-        test = [{"day":day, "budget":self.budget, "start":self.startDay, "end":self.endDay,
-                 "vidCoeff":self.videoCoeff, "mobCoeff":self.mobileCoeff, "reach":self.reach,
-                 "demand":sc.MarketSegment.segment_set_demand_forDays(self.segments,self.startDay,self.endDay,campaigns),
-                "publisher":self.publisher, "OML":self.contains_segment("OML"),"OMH":self.contains_segment("OMH"),
-                "OFL":self.contains_segment("OFL"),"OFH":self.contains_segment("OFH"),
-                "YML":self.contains_segment("YML"),"YMH":self.contains_segment("YMH"),
-                "YFL":self.contains_segment("YFL"),"YFH":self.contains_segment("YFH")}]                                          
+        test = [{
+                "day":day,
+                "budget":self.budget,
+                "start":self.startDay,
+                "end":self.endDay,
+                "vidCoeff":self.videoCoeff,
+                "mobCoeff":self.mobileCoeff,
+                "reach":self.reach,
+                "demand":sc.MarketSegment.segment_set_demand_forDays(self.segments,self.startDay,self.endDay,campaigns),
+                "OML":self.contains_segment("OML"), "OMH":self.contains_segment("OMH"),
+                "OFL":self.contains_segment("OFL"), "OFH":self.contains_segment("OFH"),
+                "YML":self.contains_segment("YML"), "YMH":self.contains_segment("YMH"),
+                "YFL":self.contains_segment("YFL"), "YFH":self.contains_segment("YFH")}]                                          
         print("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
-        return Campaign.bdt.predict(pd.DataFrame(test))
+        y_pred = Campaign.bdt.predict(pd.DataFrame(test)) 
+        return int(y_pred[0])

@@ -6,24 +6,17 @@ python pyjava_comm.py <Query_Name> <inputs>
 
 Java to Python queries:
 			
-	1. Query_Name = GetUCSBid
-		Inputs:
-			None
-			
-		Outputs:
-			UCS bid (double, read from stdout)
-	
-	2. Query_Name = GetBidBundle
+	EDIT: NOTICE CHANGE: read all output from console - no files!
+		Query_Name = GetUcsAndBundle
 		Inputs:
 			None
 		Outputs:
-			Read "done" from stdout, and after that:
-			read from file "/comm/bidbundle.json" in the following json format (https://en.wikipedia.org/wiki/JSON#Example):
-			 the file would be a sequence (Array) of the following objects:
-			 {
+			Read from stdout the follwing json object (printed without newlines or whitespaces):
+			{
+				"UCSBid" : <double>,
 				"bidbundle" : [Array of bids]
-			 }
-			 
+			}
+			
 			 where each bid is a json object with the following format:
 			 {"query" = query, "bid" = bid , "campaignId" = cid, "weight" = w, "dailyLimit" = lim}
 			 
@@ -69,6 +62,7 @@ Java to Python updates:
 		Outputs:
 			None
 	
+		EDIT: NOTICE CHANGE: read all output from console - no files!
 	2. Query_Name = GetCampaignBudgetBid
 		When to call?:
 				When receiveing an "CampaignOpportunityMessage" message.
@@ -96,7 +90,11 @@ Java to Python updates:
 			8. CampaignOpportunityMessage.day
 		
 		Outputs:
-			Bid for this campaign auction (double, read from stdout)	
+		
+			Read from stdout the follwing json object (printed without newlines or whitespaces):
+			{
+				"budgetBid" : <double>
+			}
 	
 	3. Query_Name = CampaignReport
 		When to call?:
