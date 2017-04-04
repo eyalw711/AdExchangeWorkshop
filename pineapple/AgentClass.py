@@ -39,7 +39,7 @@ class Agent:
         '''
         bidsArray = []
         ongoing_camps = [cmp for cid,cmp in self.my_campaigns.items() if cmp.activeAtDay(day)]
-        print("#formBidBundle: {}: ongoing camps {}".format(self.name, self.my_campaigns.keys()))
+        #print("#formBidBundle: {}: ongoing camps {}".format(self.name, self.my_campaigns.keys()))
         ucs_level = ucsManager.get_desired_UCS_level(day, ongoing_camps) #day is tomorrow as this function expects
         if ucs_level > 0:
             ucs_level -= 1

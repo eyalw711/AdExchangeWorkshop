@@ -26,7 +26,7 @@ class ucsManager:
         param day is tomorrow
         '''
         if len(ongoing_camps) == 0:
-            print ("#get_desired_UCS_level: No ongoing campaigns")
+            #print ("#get_desired_UCS_level: No ongoing campaigns")
             return 7
         ''' setting lvl to argmax I_target .... as defined in the document '''
         camp = sorted(ongoing_camps, key=lambda x: (x.impressions_goal - x.targetedImpressions)/((x.endDay - day  + 1)*x.sizeOfSegments()) , reverse=True)[0]        
@@ -38,7 +38,7 @@ class ucsManager:
         while (lvlacc < level_no_round and lvlacc <= 1):
             lvlacc = lvlacc / 0.9
             lvl -= 1
-        print("#get_desired_UCS_level: desired level {}".format(lvl))
+        #print("#get_desired_UCS_level: desired level {}".format(lvl))
         return lvl
     
     def predict_required_price_to_win_desired_UCS_level(ucs_level, day, number_of_active_networks, number_of_last_day_networks):
@@ -54,9 +54,9 @@ class ucsManager:
         training = pd.read_csv('data//ucs_level_statistics.csv')        
         X = list(training.columns[1:-7])
         y = [training.columns[-7 + ucs_level]]
-        print("#predict_required_price_to_win_desired_UCS_level: ", training.head(1))
-        print("#predict_required_price_to_win_desired_UCS_level: ", X)
-        print("#predict_required_price_to_win_desired_UCS_level: ", y)
+        #print("#predict_required_price_to_win_desired_UCS_level: ", training.head(1))
+        #print("#predict_required_price_to_win_desired_UCS_level: ", X)
+        #print("#predict_required_price_to_win_desired_UCS_level: ", y)
         clf = svm.SVR()
         clf.fit(training[X], training[y].values.ravel())
         y_pred = clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+demands])

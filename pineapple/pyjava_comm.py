@@ -65,7 +65,7 @@ class Communicator:
         bidBundle = self.game.agent.formBidBundle(day+1)
         answer["bidbundle"] = bidBundle
         
-        print(json.dumps(answer, separators=(',', ':')))
+        print(json.dumps(answer, separators=(',', ':'))) #NEEDED
     
     def handleInitialCampaignMessage(self):
         cid = int(self.argsList[0])
@@ -89,7 +89,7 @@ class Communicator:
             camp.assignCampaign(self.game.opponents[inx], None, budgetMillis)
             
     def handleGetCampaignBudgetBid(self):
-        print("#handleGetCampaignBudgetBid: ArgsList is {}".format(self.argsList))
+        #print("#handleGetCampaignBudgetBid: ArgsList is {}".format(self.argsList))
         cid = int(self.argsList[0])
         reach = int(self.argsList[1])
         startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
@@ -106,9 +106,9 @@ class Communicator:
         Campaign.initialize_campaign_profitability_predictor()
         profitability = camp.predict_campaign_profitability(day)
         if (profitability == -1):
-            print(json.dumps({"budgetBid":(camp.reach*self.game.agent.quality) - 0.1})) #TODO
+            print(json.dumps({"budgetBid":(camp.reach*self.game.agent.quality) - 0.1})) #NEEDED #TODO
         else:
-            print(json.dumps({"budgetBid":initialBudget}))
+            print(json.dumps({"budgetBid":initialBudget})) #NEEDED
 
     def handleCampaignReport(self):
         number_of_campaign_stats = int(self.argsList[0])
@@ -165,8 +165,8 @@ class Communicator:
     
     def handleGetGameStatus(self):
         '''DEBUG'''
-        print("handleGetGameStatus: day ", self.game.day)
-        print("handleGetGameStatus: agent ", self.game.agent)
+        #print("handleGetGameStatus: day ", self.game.day)
+        #print("handleGetGameStatus: agent ", self.game.agent)
         
     handlers = {
                 "GetGameStatus": handleGetGameStatus,
@@ -192,18 +192,19 @@ def main(queryName, argsList):
         try:
             communicator.loadPickle()
         except Exception:
-            print("Error Loading Pickle")
+            pass
+            #print("Error Loading Pickle")
 
         communicator.handleQuery()
         communicator.dumpPickle()
         
     else:
-        print("Unexpected query: {}".format(queryName))
+        #print("Unexpected query: {}".format(queryName))
         sys.exit()
 
 if __name__ == "__main__":
     if len(sys.argv[1:]) > 0:
         main(sys.argv[1], sys.argv[2:])
     else:
-        print("Expected a query name!")
+        #print("Expected a query name!")
         sys.exit()

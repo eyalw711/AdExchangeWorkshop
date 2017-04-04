@@ -37,7 +37,7 @@ class MarketSegment:
                 segments[name] = MarketSegment(name, row['size'])
             else:
                 segments[name].addSize(row['size'])
-        print("#segments_init: segments initialized!")
+        #print("#segments_init: segments initialized!")
      
     def getSegmentsList():
         return list(MarketSegment.segments.values())

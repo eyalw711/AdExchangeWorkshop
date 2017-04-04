@@ -56,7 +56,7 @@ class Campaign:
                 dayDict[segmentName] = Campaign("s{}".format(index), row['start'],
                        row['end'], [sc.MarketSegment.segments[segmentName]],
                           row['reach'], row['vidCoeff'], row['mobCoeff'])
-        print("#statistic_campaigns_init: statistic campaigns initialized!")
+        #print("#statistic_campaigns_init: statistic campaigns initialized!")
 
     def setCampaigns(campaignsDict):
         Campaign.campaigns = campaignsDict
@@ -166,6 +166,6 @@ class Campaign:
                 "OFL":self.contains_segment("OFL"), "OFH":self.contains_segment("OFH"),
                 "YML":self.contains_segment("YML"), "YMH":self.contains_segment("YMH"),
                 "YFL":self.contains_segment("YFL"), "YFH":self.contains_segment("YFH")}]                                          
-        print("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
+        #print("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
         y_pred = Campaign.bdt.predict(pd.DataFrame(test)) 
         return int(y_pred[0])
