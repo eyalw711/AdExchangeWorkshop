@@ -1,0 +1,191 @@
+This doc explains the interface between the Java and Python parts of the PineAppleAgent
+
+calling the python functions would be done in this way (with the exec command):
+
+python pyjava_comm.py <Query_Name> <inputs>
+
+Java to Python queries:
+			
+	EDIT: NOTICE CHANGE: read all output from console - no files!
+		Query_Name = GetUcsAndBundle
+		Inputs:
+			None
+		Outputs:
+			Read from stdout the follwing json object (printed without newlines or whitespaces):
+			{
+				"UCSBid" : <double>,
+				"bidbundle" : [Array of bids]
+			}
+			
+			 where each bid is a json object with the following format:
+			 {"query" = query, "bid" = bid , "campaignId" = cid, "weight" = w, "dailyLimit" = lim}
+			 
+			 and the queries themselves are also json objects:
+			{
+				"publisher" : publisher_name_string,
+				"marketSegments" : [Array of MarketSegmentStrings],
+				"Device" : device_string,
+				"adType" : adType_string
+			}
+			 
+			where:
+			MarketSegmentStrings are of the format [O/Y][M/F][H/L] such as OFL or YMH (always three chars)
+			device_string is either "pc" or "mobile"
+			adType_string is either "text" or "video"
+
+Java to Python updates:
+	1. Query_Name = InitialCampaignMessage
+		When to call?:
+				When receiveing an "InitialCampaignMessage" message.
+		Inputs:
+			1. InitialCampaignMessage.id
+			2. InitialCampaignMessage.reachImps
+			3. InitialCampaignMessage.dayStart
+			4. InitialCampaignMessage.dayEnd
+			5. targetSegment_string:
+				Explanation: The InitialCampaignMessage has a field of type:
+					private Set<MarketSegment> targetSegment = new HashSet<MarketSegment>();
+				
+				The format of targetSegment_string (the 5th python argument) is as follows:
+				targetSegment_string = [O/Y][M/F][H/L]
+				
+				examples:
+				MALE YOUNG HIGH_INCOME --> YMH
+				MALE YOUNG --> YM
+				
+				hint: can use in java (targetSegment is a HashSet<MarketSegment>)
+				MarketSegment.names(targetSegment)
+				
+			6. InitialCampaignMessage.videoCoef
+			7. InitialCampaignMessage.mobileCoef
+			8. InitialCampaignMessage.budgetMillis
+		Outputs:
+			None
+	
+		EDIT: NOTICE CHANGE: read all output from console - no files!
+	2. Query_Name = GetCampaignBudgetBid
+		When to call?:
+				When receiveing an "CampaignOpportunityMessage" message.
+		Inputs:
+			1. CampaignOpportunityMessage.id
+			2. CampaignOpportunityMessage.reachImps
+			3. CampaignOpportunityMessage.dayStart
+			4. CampaignOpportunityMessage.dayEnd
+			5. targetSegment_string:
+				Explanation: The CampaignOpportunityMessage has a field of type:
+					private Set<MarketSegment> targetSegment = new HashSet<MarketSegment>();
+				
+				The format of targetSegment_string (the 5th python argument) is as follows:
+				targetSegment_string = [O/Y][M/F][H/L]
+				
+				examples:
+				MALE YOUNG HIGH_INCOME --> YMH
+				MALE YOUNG --> YM
+				
+				hint: can use in java (targetSegment is a HashSet<MarketSegment>)
+				MarketSegment.names(targetSegment)
+				
+			6. CampaignOpportunityMessage.videoCoef
+			7. CampaignOpportunityMessage.mobileCoef
+			8. CampaignOpportunityMessage.day
+		
+		Outputs:
+		
+			Read from stdout the follwing json object (printed without newlines or whitespaces):
+			{
+				"budgetBid" : <double>
+			}
+	
+	3. Query_Name = CampaignReport
+		When to call?:
+				When receiveing an "CampaignReport" message.
+		Inputs:
+			1. int number_of_Campaign_stats
+				explanation:
+				CampaignReport is a type of dictionary which has
+				keys and values.
+				Keys contain campaign_Id.
+				Values contain a tuple of (targeted_impressions, non_targeted_impressions, cost)
+				
+				Format of number_of_Campaign_stats:
+					number_of_Campaign_stats = number of keys in the CampaignReport dictionary
+			
+			2. foreach key,val:
+				cid targeted_impressions non_targeted_impressions cost
+		
+			example:
+			CampaignReport = 
+			{
+				123 : (10, 20, 30)
+				321 : (20, 30, 40)
+			}
+			then arglist is:
+			2 123 10 20 30 321 20 30 40
+		
+		Outputs:
+			None	
+	
+	4. Query_Name = AdNetworkDailyNotification
+		When to call?:
+				When receiveing an "AdNetworkDailyNotification" message.
+		Inputs:
+			AdNetworkDailyNotification.effectiveDay
+			AdNetworkDailyNotification.serviceLevel
+			AdNetworkDailyNotification.price
+			AdNetworkDailyNotification.qualityScore
+			AdNetworkDailyNotification.campaignId
+			AdNetworkDailyNotification.winner
+			AdNetworkDailyNotification.costMillis
+		
+		Outputs:
+			None	
+	
+	5. Query_Name = AdxPublisherReport
+		When to call?:
+					When receiveing an "AdxPublisherReport" message.
+		Inputs:
+			1. num_of_publishers
+			2. foreach key,val:
+				publisher_name reservePriceBaseline Popularity adTypeOrientation[*Text*].value adTypeOrientation[*Video*].value
+			
+			Note: please think how to extract the data using the source files from the tac github
+					We didn't precisely define how to do it here.
+		Outputs:
+				None				
+	
+	6. Query_Name = PublisherCatalog
+		When to call?:
+			When receiveing an "PublisherCatalog" message.
+		Inputs:
+			list of publisher_name reservePriceType
+			
+			explanation: 
+			publisher_name is a string
+			reservePriceType is one of the following strings: {None, Adjustable, DC}
+				(These are described in Spec page 11)
+				
+		Outputs:
+			None
+		Note: please think how to extract the data using the source files from the tac github
+			We didn't precisely define how to do it here.
+	
+	7. Query_Name = AdNetworkReport
+		Note: This is important and kind of complicated.
+		need to discuss this verbally.
+		Generally all of this data should be written to a file, define format later.
+	
+	8.  Query_Name = StartInfo
+		When to call?:
+			When receiveing a "StartInfo" message.
+		Inputs:
+			1. StartInfo.simulationID
+		Outputs:
+			None
+		
+	9. Query_Name = BankStatus
+		When to call?:
+			When receiveing a "BankStatus" message.
+		Inputs:
+			1. BankStatus.balance
+		Outputs:
+			None

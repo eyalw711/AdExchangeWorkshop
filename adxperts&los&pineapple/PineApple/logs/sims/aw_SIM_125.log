@@ -1,9 +1,0 @@
-18/03 08:24:50 SEVERE agentware.AgentServiceImpl|agent could not handle message Message[coordinator,adv1,(CampaignReport CampaignReportEntry [tgt imps=10936.812190727884, ntg imps=0.0, cost=3.776891748271905])]
-java.lang.ArithmeticException: / by zero
-	at PineAppleAgent$CampaignData.accurityCalc(PineAppleAgent.java:857)
-	at PineAppleAgent.handleCampaignReport(PineAppleAgent.java:590)
-	at PineAppleAgent.messageReceived(PineAppleAgent.java:169)
-	at se.sics.tasim.aw.AgentService.deliverToAgent(AgentService.java:130)
-	at tau.tac.adx.agentware.AgentServiceImpl.deliverToAgent(AgentServiceImpl.java:135)
-	at tau.tac.adx.agentware.SimClient.run(SimClient.java:437)
-	at java.lang.Thread.run(Thread.java:745)
