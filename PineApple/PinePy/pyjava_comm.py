@@ -95,11 +95,9 @@ class Communicator:
         profitability = camp.predict_campaign_profitability(day)
 #        profitability = random.choice([1, -1]) #TODO: REMOVE
         if (profitability == -1):
-            answer["budgetBid"] = (camp.reach*self.game.agent.quality) - 0.1})
-#            print(json.dumps({"budgetBid":(camp.reach*self.game.agent.quality) - 0.1})) #NEEDED #TODO
+            answer["budgetBid"] = str((camp.reach*self.game.agent.quality) - 0.1)
         else:
-            answer["budgetBid"] = initialBudget
-#            print(json.dumps({"budgetBid":initialBudget})) #NEEDED
+            answer["budgetBid"] = str(initialBudget)
             
 #        day = self.game.day
         ongoingCamps = self.game.agent.getOnGoingCampaigns(day+1)
@@ -114,7 +112,7 @@ class Communicator:
         ucsBid = ucsManager.predict_required_price_to_win_desired_UCS_level(
                 ucsLevel, day, numberOfActiveNetworks, numberOfLastDayNetworks)
         
-        answer["UCSBid"] = float(ucsBid)
+        answer["UCSBid"] = str(float(ucsBid))
         
         print(json.dumps(answer, separators=(',', ':'))) #NEEDED
         

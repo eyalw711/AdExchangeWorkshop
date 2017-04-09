@@ -98,8 +98,8 @@ class Agent:
                 if bid < 0:
                     bid = p
                 bidsArray += [{"query" : query, 
-                         "bid" : bid, 
+                         "bid" : str(bid), 
                          "campaignId" : int(cid), 
-                         "weight" : cmp.imps_to_go(), 
-                         "dailyLimit" : float(p*demand*s*lvl_accuracy)}]
+                         "weight" : int(cmp.imps_to_go()), 
+                         "dailyLimit" : str(float(p*demand*s*lvl_accuracy))}]
         return bidsArray
