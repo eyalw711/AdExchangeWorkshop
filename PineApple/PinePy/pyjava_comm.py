@@ -45,9 +45,31 @@ class Communicator:
         self.game.campaigns = Campaign.campaigns
         pickle.dump( self.game, open( "pickle//game.p", "wb" ) ) #TODO: dump final state, not like now
     
-    def handleGetUcsAndBundle(self):
+    def handleGetUcsAndBudget(self):
+         #print("#handleGetUcsAndBudget: ArgsList is {}".format(self.argsList))
         answer = {}
-        day = self.game.day
+        
+        cid = int(self.argsList[0])
+        reach = int(self.argsList[1])
+        startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
+        segmentList = MarketSegment.getSegmentListFromStr(self.argsList[4])
+        vidCoeff = float(self.argsList[5])
+        mobileCoeff = float(self.argsList[6])
+        day = int(self.argsList[7])
+        
+        camp = Campaign(cid, startDay, endDay, segmentList,
+                                   reach, vidCoeff, mobileCoeff)
+        self.game.campaignOffer = camp
+        
+        initialBudget = self.game.agent.campaignOpportunityBid(camp)
+        Campaign.initialize_campaign_profitability_predictor()
+        profitability = camp.predict_campaign_profitability(day)
+        if (profitability == -1):
+            print(json.dumps({"budgetBid":(camp.reach*self.game.agent.quality) - 0.1})) #NEEDED #TODO
+        else:
+            print(json.dumps({"budgetBid":initialBudget})) #NEEDED
+            
+#        day = self.game.day
         ongoingCamps = self.game.agent.getOnGoingCampaigns(day+1)
         ucsLevel = ucsManager.get_desired_UCS_level(day+1, ongoingCamps)
         
@@ -62,10 +84,9 @@ class Communicator:
         
         answer["UCSBid"] = float(ucsBid)
         
-        bidBundle = self.game.agent.formBidBundle(day+1)
-        answer["bidbundle"] = bidBundle
-        
         print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+        
+        
     
     def handleInitialCampaignMessage(self):
         cid = int(self.argsList[0])
@@ -88,27 +109,12 @@ class Communicator:
         for (inx,camp) in enumerate(otherInitialCampaigns):
             camp.assignCampaign(self.game.opponents[inx], None, budgetMillis)
             
-    def handleGetCampaignBudgetBid(self):
-        #print("#handleGetCampaignBudgetBid: ArgsList is {}".format(self.argsList))
-        cid = int(self.argsList[0])
-        reach = int(self.argsList[1])
-        startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
-        segmentList = MarketSegment.getSegmentListFromStr(self.argsList[4])
-        vidCoeff = float(self.argsList[5])
-        mobileCoeff = float(self.argsList[6])
-        day = int(self.argsList[7])
-        
-        camp = Campaign(cid, startDay, endDay, segmentList,
-                                   reach, vidCoeff, mobileCoeff)
-        self.game.campaignOffer = camp
-        
-        initialBudget = self.game.agent.campaignOpportunityBid(camp)
-        Campaign.initialize_campaign_profitability_predictor()
-        profitability = camp.predict_campaign_profitability(day)
-        if (profitability == -1):
-            print(json.dumps({"budgetBid":(camp.reach*self.game.agent.quality) - 0.1})) #NEEDED #TODO
-        else:
-            print(json.dumps({"budgetBid":initialBudget})) #NEEDED
+    def handleGetBidBundle(self):
+        #print("#handleGetBidBundle: ArgsList is {}".format(self.argsList))
+        answer = {}
+        bidBundle = self.game.agent.formBidBundle(self.game.day+1)
+        answer["bidbundle"] = bidBundle
+        print(json.dumps(answer, separators=(',', ':'))) #NEEDED
 
     def handleCampaignReport(self):
         number_of_campaign_stats = int(self.argsList[0])
@@ -170,9 +176,9 @@ class Communicator:
         
     handlers = {
                 "GetGameStatus": handleGetGameStatus,
-                "GetUcsAndBundle": handleGetUcsAndBundle,
+                "GetUcsAndBudget": handleGetUcsAndBudget,
                 "InitialCampaignMessage": handleInitialCampaignMessage,
-                "GetCampaignBudgetBid": handleGetCampaignBudgetBid,
+                "GetBidBundle": handleGetBidBundle,
                 "CampaignReport": handleCampaignReport,
                 "AdNetworkDailyNotification": handleAdNetworkDailyNotification,
                 "AdxPublisherReport": handleAdxPublisherReport,
