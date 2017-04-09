@@ -38,7 +38,7 @@ class Campaign:
         
     
     def __repr__(self):
-        return "Campaign ID:{}, start:{} ends:{}, segments:{}, reach:{}".format(
+        return "Campaign ID:{}, start:{}, ends:{}, segments:{}, reach:{}".format(
                 self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
     
     ''' dummy campaigns '''

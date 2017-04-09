@@ -42,9 +42,14 @@ class Communicator:
             eprint("loadPickle: ", str(e), " making a new game since pickle isn't found")
             self.game = Game()
         
-        MarketSegment.segments_init()
-        Campaign.statistic_campaigns_init()
-        Campaign.setCampaigns(self.game.campaigns)
+        try:
+            MarketSegment.segments_init()
+            Campaign.statistic_campaigns_init()
+            Campaign.setCampaigns(self.game.campaigns)
+        except KeyError as e:
+            template = "While initializing stuff an exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(e).__name__, e.args)
+            eprint("loadPickle: Error Loading Pickle: ", message)  
             
             
     def dumpPickle(self):
@@ -232,12 +237,17 @@ def main(queryName, argsList):
         try:
             communicator.loadPickle()
         except Exception as e:
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            template = "While loading a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(e).__name__, e.args)
             eprint("main: Error Loading Pickle: ", message)
 
         communicator.handleQuery()
-        communicator.dumpPickle()
+        try:
+            communicator.dumpPickle()
+        except Exception as e:
+            template = "While dumping a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(e).__name__, e.args)
+            eprint("main: Error Loading Pickle: ", message)
         os.chdir(origPath)
         
     else:
