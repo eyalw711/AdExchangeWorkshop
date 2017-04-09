@@ -52,7 +52,6 @@ import tools.DataToCSV;
 public class PineAppleAgent extends Agent 
 {
 	//yossi 27.3 start
-	public boolean globPythonUse = true;
 	public boolean debugFlag = true;
 	public boolean testTrue = true;
 	public static boolean debugFlagStatic = true;
@@ -246,11 +245,9 @@ public class PineAppleAgent extends Agent
 	{
 		System.out.println("Day " + day + " :" + content.toString());
 		//yossi 27.3 start
-			if(globPythonUse){
-				if(debugFlag)
-					System.out.println("DEBUG: run python - BankStatus");
-				runPythonScript("BankStatus " + Double.toString(content.getAccountBalance()));
-			}
+		if(debugFlag)
+			System.out.println("DEBUG: run python - BankStatus");
+		runPythonScript("BankStatus " + Double.toString(content.getAccountBalance()));
 		//yossi 27.3 end
 	}
 
@@ -264,11 +261,9 @@ public class PineAppleAgent extends Agent
 		this.startInfo = startInfo;
 		
 		//yossi 27.3 start
-		if(globPythonUse){
-			if(debugFlag)
-				System.out.println("DEBUG: run python - StartInfo");
-			runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()));
-		}
+		if(debugFlag)
+			System.out.println("DEBUG: run python - StartInfo");
+		runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()));
 		//yossi 27.3 end
 	}
 
@@ -351,8 +346,6 @@ public class PineAppleAgent extends Agent
 		System.out.println("Day " + day + ": Allocated campaign - " + campaignData);
 		
 		if (day == 0) {
-			DataToCSV.createCSVFile("./data/campaign_statistics.csv", false, "");
-			DataToCSV.createCSVFile("./data/campaigns_profitability.csv", false, "");
 			String s_tmp = "Day " + day + ": Allocated campaign - " + campaignData;
 			DataToCSV.split_to_fields(s_tmp, DEBUG);
 		}
@@ -374,11 +367,10 @@ public class PineAppleAgent extends Agent
 		}
 		String paramString = Integer.toString(initialCampaignMessage.getId()) + " " + Long.toString(initialCampaignMessage.getReachImps()) + " " + Long.toString(initialCampaignMessage.getDayStart()) + " " + Long.toString(initialCampaignMessage.getDayEnd()) + " " + initialsSeg + " " + Double.toString(initialCampaignMessage.getVideoCoef())+ " " + Double.toString(initialCampaignMessage.getMobileCoef())+ " " + Long.toString(initialCampaignMessage.getBudgetMillis());
 		
-		if(globPythonUse){
-			if(debugFlag)
-				System.out.println("DEBUG: run python - InitialCampaignMessage");
-			runPythonScript("InitialCampaignMessage " + paramString);
-		}
+		if(debugFlag)
+			System.out.println("DEBUG: run python - InitialCampaignMessage");
+		runPythonScript("InitialCampaignMessage " + paramString);
+
 		//yossi 27.3 end
 
 
@@ -569,13 +561,11 @@ public class PineAppleAgent extends Agent
 				+ " Quality Score is: " + notificationMessage.getQualityScore());
 		
 		//yossi 27.3 start
-		if(globPythonUse){
-			if(debugFlag)
-				System.out.println("DEBUG: run python - AdNetworkDailyNotification");
-			String paramsToSend = Integer.toString(adNetworkDailyNotification.getEffectiveDay()) + " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " " + Double.toString(adNetworkDailyNotification.getPrice()) + " " + Double.toString(adNetworkDailyNotification.getQualityScore()) + " " + Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + adNetworkDailyNotification.getWinner() + " " + Long.toString(adNetworkDailyNotification.getCostMillis());
-			runPythonScript("AdNetworkDailyNotification " + paramsToSend);
-			
-		}
+		if(debugFlag)
+			System.out.println("DEBUG: run python - AdNetworkDailyNotification");
+		String paramsToSend = Integer.toString(adNetworkDailyNotification.getEffectiveDay()) + " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " " + Double.toString(adNetworkDailyNotification.getPrice()) + " " + Double.toString(adNetworkDailyNotification.getQualityScore()) + " " + Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + adNetworkDailyNotification.getWinner() + " " + Long.toString(adNetworkDailyNotification.getCostMillis());
+		runPythonScript("AdNetworkDailyNotification " + paramsToSend);	
+		
 		//yossi 27.3 end
 
 		
@@ -722,24 +712,17 @@ public class PineAppleAgent extends Agent
 			System.out.println(strToPrint);
 			
 			//yossi 27.3 start
-			if(globPythonUse){
-				
 				paramsToSend = paramsToSend + " " + Integer.toString(cmpId) + " " + Double.toString(cstats.getTargetedImps()) + " " + Double.toString(cstats.getOtherImps()) + " " + Double.toString(cstats.getCost());
-				
-			}
 			//yossi 27.3 end
 			
 			
 		}
 		
 		//yossi 27.3 start
-				
-
-		if(globPythonUse){
-			if(debugFlag)
-				System.out.println("DEBUG: run python - CampaignReport");
-			runPythonScript("CampaignReport " + paramsToSend);
-		}
+		if(debugFlag)
+			System.out.println("DEBUG: run python - CampaignReport");
+		runPythonScript("CampaignReport " + paramsToSend);
+		
 		
 		//yossi 27.3 end
 		
