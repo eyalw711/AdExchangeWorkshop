@@ -70,7 +70,7 @@ class Agent:
             def mean(numbers):
                 return float(sum(numbers)) / max(len(numbers), 1)
             avgDem = mean([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments])
-            NORMALING_FACTOR = 1.0
+            NORMALING_FACTOR = 1.0 #TODO: think what that should be
             for x in itertools.product(bidSegments, ["Text","Video"], ["Desktop", "Mobile"]):
                 p = cmp.avg_p_per_imp
                 seg = x[0]
@@ -101,5 +101,5 @@ class Agent:
                          "bid" : str(bid), 
                          "campaignId" : int(cid), 
                          "weight" : int(cmp.imps_to_go()), 
-                         "dailyLimit" : str(float(p*demand*s*lvl_accuracy))}]
+                         "dailyLimit" : str(float(bid*s*lvl_accuracy))}]
         return bidsArray

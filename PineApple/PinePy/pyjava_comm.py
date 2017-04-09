@@ -132,7 +132,7 @@ class Communicator:
         initialCampaign.assignCampaign(self.game.agent,
                                        { "Q_old" : 1.0 },  #The starting quality is 1.0
                                        budgetMillis)
-        #experiement:
+        #TODO currently experiement - later maybe set as statistic campaigns:
         eprint("handleInitialCampaignMessage: NOTICE: making a wild assumption about initial campaigns! Think about this!")
         otherInitialCampaigns = [Campaign("{}".format(i+1), startDay, endDay,
                                           segmentList, reach, vidCoeff,
@@ -248,27 +248,18 @@ def main(queryName, argsList):
             communicator.loadPickle()
         except Exception as e:
             printException(e, "main", "loading a pickle")
-#            template = "While loading a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
-#            message = template.format(type(e).__name__, e.args)
-#            eprint("main: Error Loading Pickle: ", message)
             traceback.print_exc()
         
         try:
             communicator.handleQuery()
         except Exception as e:
             printException(e, "main", "handling a query")
-#            template = "While handling a query an exception of type {0} occurred. Arguments:\n{1!r}"
-#            message = template.format(type(e).__name__, e.args)
-#            eprint("main: Error Loading Pickle: ", message)
             traceback.print_exc()
             
         try:
             communicator.dumpPickle()
         except Exception as e:
             printException(e, "main", "dumping a pickle")
-#            template = "While dumping a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
-#            message = template.format(type(e).__name__, e.args)
-#            eprint("main: Error Loading Pickle: ", message)
             traceback.print_exc()
             
         os.chdir(origPath)
