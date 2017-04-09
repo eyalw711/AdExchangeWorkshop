@@ -51,14 +51,14 @@ import tools.DataToCSV;
 
 public class PineAppleAgent extends Agent 
 {
-	//yossi 27.3 start
 	public boolean debugFlag = true;
 	public boolean testTrue = true;
 	public static boolean debugFlagStatic = true;
-
+	private boolean DEBUG = true;
+	public boolean DEBUG_UCS = false;
+	
+	
 	public static String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py ";
-
-	//yossi 27.3 end
 	
 	private final Logger log = Logger
 			.getLogger(PineAppleAgent.class.getName());
@@ -134,7 +134,6 @@ public class PineAppleAgent extends Agent
 	private String[] publisherNames;
 	private CampaignData currCampaign;
 	private long pendingCampaignBudget;
-	private boolean DEBUG = true;
 
 	public PineAppleAgent() 
 	{
@@ -244,11 +243,9 @@ public class PineAppleAgent extends Agent
 	private void handleBankStatus(BankStatus content) 
 	{
 		System.out.println("Day " + day + " :" + content.toString());
-		//yossi 27.3 start
 		if(debugFlag)
 			System.out.println("DEBUG: run python - BankStatus");
 		runPythonScript("BankStatus " + Double.toString(content.getAccountBalance()));
-		//yossi 27.3 end
 	}
 
 	/**
@@ -259,12 +256,9 @@ public class PineAppleAgent extends Agent
 	 */
 	protected void handleStartInfo(StartInfo startInfo) {
 		this.startInfo = startInfo;
-		
-		//yossi 27.3 start
 		if(debugFlag)
 			System.out.println("DEBUG: run python - StartInfo");
 		runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()));
-		//yossi 27.3 end
 	}
 
 	/**
@@ -279,14 +273,13 @@ public class PineAppleAgent extends Agent
 
 	}
 	
-	//yossi 27.3 start
 
 	public static String getSegmentsInitials(String[] splitedSegments){
 		char[] letterForSegmet = new char[splitedSegments.length];
 		String segmentToUse = "";
 		
 		for(int i=0; i<splitedSegments.length; i++){
-			System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$: "+splitedSegments[i]);
+			//System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$: "+splitedSegments[i]);
 			letterForSegmet[i]=splitedSegments[i].charAt(0);
 			}
 		
@@ -313,10 +306,7 @@ public class PineAppleAgent extends Agent
 			}
 		return segmentToUse;
 	}
-	//yossi 27.3 end
 
-
-	
 	/**
 	 * On day 0, a campaign (the "initial campaign") is allocated to each
 	 * competing agent. The campaign starts on day 1. The address of the
@@ -351,10 +341,7 @@ public class PineAppleAgent extends Agent
 		}
 		
 		myCampaigns.put(initialCampaignMessage.getId(), campaignData);
-		
-		
-		//yossi 27.3 start
-		
+				
 		String tempName = MarketSegment.names(initialCampaignMessage.getTargetSegment());
 		tempName = tempName.trim();
 		String[] splitedSegments = tempName.split("\\s+");
@@ -370,11 +357,7 @@ public class PineAppleAgent extends Agent
 		if(debugFlag)
 			System.out.println("DEBUG: run python - InitialCampaignMessage");
 		runPythonScript("InitialCampaignMessage " + paramString);
-
-		//yossi 27.3 end
-
-
-		
+	
 	}
 
 	/**
@@ -387,7 +370,8 @@ public class PineAppleAgent extends Agent
 	{
 		try{
 		day = com.getDay();
-
+		long cmpBidMillis;
+		
 		pendingCampaign = new CampaignData(com);
 		System.out.println("Day " + day + ": Campaign opportunity - " + pendingCampaign);
 		
@@ -402,10 +386,7 @@ public class PineAppleAgent extends Agent
 		 * therefore the total number of impressions may be treated as a reserve
 		 * (upper bound) price for the auction.
 		 */
-		
-		
-		boolean DEBUG_UCS = false;
-		
+			
 		String tempName = MarketSegment.names(com.getTargetSegment());
 		tempName = tempName.trim();
 		String[] splitedSegments = tempName.split("\\s+");
@@ -422,9 +403,7 @@ public class PineAppleAgent extends Agent
 		
 		if(debugFlag)
 			System.out.println("DEBUG: output python - GetUcsAndBudget\n" + outputString);
-		
-		long cmpBidMillis;
-		
+				
 		if(outputString == null){
 			System.out.println("GetUcsAndBudget returned null");
 			cmpBidMillis =  com.getReachImps();
@@ -560,15 +539,10 @@ public class PineAppleAgent extends Agent
 				+ " at price " + notificationMessage.getPrice()
 				+ " Quality Score is: " + notificationMessage.getQualityScore());
 		
-		//yossi 27.3 start
 		if(debugFlag)
 			System.out.println("DEBUG: run python - AdNetworkDailyNotification");
 		String paramsToSend = Integer.toString(adNetworkDailyNotification.getEffectiveDay()) + " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " " + Double.toString(adNetworkDailyNotification.getPrice()) + " " + Double.toString(adNetworkDailyNotification.getQualityScore()) + " " + Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + adNetworkDailyNotification.getWinner() + " " + Long.toString(adNetworkDailyNotification.getCostMillis());
 		runPythonScript("AdNetworkDailyNotification " + paramsToSend);	
-		
-		//yossi 27.3 end
-
-		
 		
 	}
 
@@ -604,9 +578,6 @@ public class PineAppleAgent extends Agent
 		return MarketSegment.compundMarketSegment3(m1,m2,m3);
 	}
 	
-	/**
-	 * 
-	 */
 	protected void sendBidAndAds() 
 	{
 		try{
@@ -679,52 +650,32 @@ public class PineAppleAgent extends Agent
 	 */
 	private void handleCampaignReport(CampaignReport campaignReport) 
 	{
-
 		campaignReports.add(campaignReport);
 
-		
-		//yossi 27.3 start
-		
 		String paramsToSend = Integer.toString(campaignReport.keys().size());
-		
-		//yossi 27.3 end
-		
-		
+
 		/*
 		 * for each campaign, the accumulated statistics from day 1 up to day
 		 * n-1 are reported
 		 */
 		for (CampaignReportKey campaignKey : campaignReport.keys()) 
-		{
-			
-					
+		{				
 			int cmpId = campaignKey.getCampaignId();
 			CampaignStats cstats = campaignReport.getCampaignReportEntry(campaignKey).getCampaignStats();
 			myCampaigns.get(cmpId).setStats(cstats);
 			
-			
-			//Yossi
 			String strToPrint = "Day " + day + ": Updating campaign " + cmpId + " stats: "
 					+ cstats.getTargetedImps() + " tgtImps "
 					+ cstats.getOtherImps() + " nonTgtImps. Cost of imps is "
 					+ cstats.getCost();
-			//yossi
 			System.out.println(strToPrint);
 			
-			//yossi 27.3 start
-				paramsToSend = paramsToSend + " " + Integer.toString(cmpId) + " " + Double.toString(cstats.getTargetedImps()) + " " + Double.toString(cstats.getOtherImps()) + " " + Double.toString(cstats.getCost());
-			//yossi 27.3 end
-			
-			
+			paramsToSend = paramsToSend + " " + Integer.toString(cmpId) + " " + Double.toString(cstats.getTargetedImps()) + " " + Double.toString(cstats.getOtherImps()) + " " + Double.toString(cstats.getCost());						
 		}
 		
-		//yossi 27.3 start
 		if(debugFlag)
 			System.out.println("DEBUG: run python - CampaignReport");
 		runPythonScript("CampaignReport " + paramsToSend);
-		
-		
-		//yossi 27.3 end
 		
 	}
 
@@ -884,8 +835,6 @@ public class PineAppleAgent extends Agent
 		System.out.println("!!!!!!!!!!!!!!!!!!!!!!"+Arrays.toString(campaignData.campaignQueries)+"!!!!!!!!!!!!!!!!");
 	}
 
-	//YOSSID 27.3 start
-
 	//run a new proccess and activate the inputed cmd  - taken from http://alvinalexander.com
 	public static String runPythonScript(String queryToRun){
 		String s = null;
@@ -893,16 +842,12 @@ public class PineAppleAgent extends Agent
 		String stderr = null;
 
         try {
-
-            // using the Runtime exec method:
-            
+            // using the Runtime exec method:          
             if(debugFlagStatic)
                 System.out.println("DEBUG: start exec");
             
             Process p = Runtime.getRuntime().exec(pathAndCommand + queryToRun);
-            
-            
-            
+        
             if(debugFlagStatic)
                 System.out.println("DEBUG: DONE exec");
                 
@@ -911,8 +856,6 @@ public class PineAppleAgent extends Agent
 
             BufferedReader stdError = new BufferedReader(new 
                  InputStreamReader(p.getErrorStream()));
-            
-            
             
             // read the output from the command
             while ((s = stdInput.readLine()) != null) {
@@ -940,7 +883,6 @@ public class PineAppleAgent extends Agent
         }
         return stdout;
 	}
-	//YOSSID 27.3 end
 	
 	public class CampaignData 
 	{
