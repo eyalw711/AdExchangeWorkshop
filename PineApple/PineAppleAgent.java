@@ -624,7 +624,7 @@ public class PineAppleAgent extends Agent
 							new Ad(null),
 							JbidBundleElement.getInt("campaignId"),
 							JbidBundleElement.getInt("weight"),
-							Double.parseDouble(JbidBundleElement.getString("dailyLimit"));
+							Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
 				}
 			
 				if (bidBundle != null) 
