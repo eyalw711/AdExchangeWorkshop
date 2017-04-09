@@ -431,9 +431,19 @@ public class PineAppleAgent extends Agent
 		if(debugFlag)
 			System.out.println("DEBUG: output python - GetUcsAndBudget\n" + outputString);
 		
+		long cmpBidMillis;
+		
+		if(outputString == null){
+			System.out.println("GetUcsAndBudget returned null");
+			cmpBidMillis =  com.getReachImps();
+			ucsBid = 0.000001;
+			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);		
+			sendMessage(demandAgentAddress, bids);
+		}
+		
 		JSONObject obj = new JSONObject(outputString);
 		
-		long cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
+		cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
 				
 		pendingCampaignBudget = cmpBidMillis;
 
@@ -618,7 +628,8 @@ public class PineAppleAgent extends Agent
 		if(debugFlag)
 			System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
 		
-		
+		if(outputString!=null){
+			
 		bidBundle = new AdxBidBundle();
 
 		int dayBiddingFor = day + 1;
@@ -658,6 +669,11 @@ public class PineAppleAgent extends Agent
 			System.out.println("Day " + day + ": Sending BidBundle");
 			sendMessage(adxAgentAddress, bidBundle);
 		}
+		}
+	
+		else
+			System.out.println("GetBidBundle returned null");
+
 		}
 		catch(Exception e){
 			 System.out.println("exception happened at sendBidAndAds " + e.getMessage());
@@ -921,7 +937,7 @@ public class PineAppleAgent extends Agent
             
             // read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
-            	stderr=s;
+            	stderr= stderr + "\n" + s;
             }
             
             if(debugFlagStatic)
