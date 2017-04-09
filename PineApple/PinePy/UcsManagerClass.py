@@ -47,11 +47,11 @@ class ucsManager:
         param ucs_level is the desired level tomorrow
         params number_of_* are calculated for tomorrow
         '''
-        segments = ["OML", "OMH", "OFL", "OFH", "YML", "YMH", "YFL", "YFH"]
-        demands = [sc.MarketSegment.segments[segment].segment_demand(day,cc.Campaign.getCampaignList()) for segment in segments]
+
+        segment_networks = [sc.MarketSegment.segments[segment].number_of_active_netowrks_on_segment(day, cc.Campaign.getCampaignList()) for segment in sc.MarketSegment.segment_names]
         if ucs_level >= 7:
             return 0
-        training = pd.read_csv('..//data//ucs_level_statistics.csv')        
+        training = pd.read_csv('..//data//ucs_level_statistics2.csv')        
         X = list(training.columns[1:-7])
         y = [training.columns[-7 + ucs_level]]
         #print("#predict_required_price_to_win_desired_UCS_level: ", training.head(1))
@@ -59,5 +59,5 @@ class ucsManager:
         #print("#predict_required_price_to_win_desired_UCS_level: ", y)
         clf = svm.SVR()
         clf.fit(training[X], training[y].values.ravel())
-        y_pred = clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+demands])
+        y_pred = clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+segment_networks])
         return float(y_pred)

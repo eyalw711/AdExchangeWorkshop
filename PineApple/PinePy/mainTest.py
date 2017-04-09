@@ -5,6 +5,7 @@ Created on Sat Feb 18 19:23:55 2017
 @author: Eyal
 """
 
+from CampaignClass import Campaign
 import CampaignClass as cc
 import SegmentClass as sc
 import UcsManagerClass as ucs
@@ -98,10 +99,16 @@ def test_ucs_prediction():
     print ("ucs predicted price: " + str(ucs.ucsManager.predict_required_price_to_win_desired_UCS_level(1,1,7,1)))
     
 def main():
-    print("PineApple!")
+    print("PineApple!")    
+
+    
     init_actions = [sc.MarketSegment.segments_init, cc.Campaign.statistic_campaigns_init]
     for action in init_actions:
         action()
+        
+    # update campaign profitability CSV file with decision and demand
+    #Campaign.campagin_protabiloity_assign_desicion()
+    #Campaign.campagin_protabiloity_assign_demand()
     
     tests = [test_segments_and_demand, test_ImpsOptimization, test_ucs_desired_level, test_bidBundle, test_profitability_prediction, test_ucs_prediction]# test_statisticalCampaigns]
     for test in tests:

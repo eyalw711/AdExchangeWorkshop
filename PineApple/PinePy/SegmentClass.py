@@ -4,13 +4,14 @@ Created on Sat Feb 18 16:53:51 2017
 
 @author: Eyal
 """
+
 import pandas as pd
 import math
 import itertools
 
 class MarketSegment:
     segments = {}
-    
+    segment_names = ["OML", "OMH", "OFL", "OFH", "YML", "YMH", "YFL", "YFH"]
     def __init__(self, name, size):
         self.name = name #{O/Y}{M/F}{H/L}
         self.size = size
@@ -73,6 +74,13 @@ class MarketSegment:
             return 0
         equiv_demand_inv = sum(math.pow(MarketSegment.segment_set_demand_forDay(segmentList, day, campaignList),-1) for day in range(dayStart, dayEnd + 1))
         return math.pow(equiv_demand_inv,-1)
+    
+    def number_of_active_netowrks_on_segment(self, day, campaignList):
+        networks = set()
+        for campaign in campaignList:
+            if self.segment_indicator(day, campaign):
+                networks.add(campaign.agent)        
+        return len(networks) 
     
     
     
