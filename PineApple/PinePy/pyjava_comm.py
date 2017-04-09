@@ -50,7 +50,10 @@ class Communicator:
     def dumpPickle(self):
         #update game:
         self.game.campaigns = Campaign.campaigns
-        pickle.dump( self.game, open( "pickle//game.p", "wb" ) ) #TODO: dump final state, not like now
+        with open( "pickle//game.p", "wb" ) as pickleFile:
+            pickle.dump( self.game, pickleFile )
+        with open( "pickle//games.json", "a+") as jsonGames:
+            json.dump(self.game, jsonGames)
     
     def handleGetUcsAndBudget(self):
         eprint("handleGetUcsAndBudget: ArgsList is {}".format(self.argsList))
@@ -226,6 +229,7 @@ def main(queryName, argsList):
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(e).__name__, e.args)
             eprint("main: Error Loading Pickle: ", message)
+            return
 
         communicator.handleQuery()
         communicator.dumpPickle()
