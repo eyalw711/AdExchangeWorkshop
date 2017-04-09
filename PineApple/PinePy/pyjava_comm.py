@@ -51,9 +51,15 @@ class Communicator:
         #update game:
         self.game.campaigns = Campaign.campaigns
         with open( "pickle//game.p", "wb" ) as pickleFile:
-            pickle.dump( self.game, pickleFile )
-        with open( "pickle//games.json", "a+") as jsonGames:
-            json.dump(self.game, jsonGames)
+            pickle.dump( self.game, pickleFile)
+            eprint(self.game.agent.my_campaigns)
+            for key, camp in self.game.agent.my_campaigns.items():
+                eprint(key, camp.segments)
+            for ag in self.game.opponents:
+                eprint(ag.my_campaigns)
+                for key, camp in ag.my_campaigns.items():
+                    eprint(key, camp.segments)
+            
     
     def handleGetUcsAndBudget(self):
         eprint("handleGetUcsAndBudget: ArgsList is {}".format(self.argsList))
@@ -114,9 +120,9 @@ class Communicator:
                                        budgetMillis)
         #experiement:
         eprint("handleInitialCampaignMessage: NOTICE: making a wild assumption about initial campaigns! Think about this!")
-        otherInitialCampaigns = [Campaign("i{}".format(i), startDay, endDay,
+        otherInitialCampaigns = [Campaign("{}".format(i+1), startDay, endDay,
                                           segmentList, reach, vidCoeff,
-                                          mobileCoeff) for i in range(7)]
+                                          mobileCoeff) for i in range(7)] #TODO: what are the other IDs???
         for (inx,camp) in enumerate(otherInitialCampaigns):
             camp.assignCampaign(self.game.opponents[inx], None, budgetMillis)
             
