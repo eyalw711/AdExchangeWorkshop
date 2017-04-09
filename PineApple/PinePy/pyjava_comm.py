@@ -90,10 +90,10 @@ class Communicator:
         self.game.campaignOffer = camp
         
         initialBudget = self.game.agent.campaignOpportunityBid(camp)
-        eprint("MUST BRING BACK TO LIFE THE PROFITABILITY PREDICTION")
-#        Campaign.initialize_campaign_profitability_predictor()
-#        profitability = camp.predict_campaign_profitability(day)
-        profitability = random.choice([1, -1]) #TODO: REMOVE
+#        eprint("MUST BRING BACK TO LIFE THE PROFITABILITY PREDICTION")
+        Campaign.initialize_campaign_profitability_predictor()
+        profitability = camp.predict_campaign_profitability(day)
+#        profitability = random.choice([1, -1]) #TODO: REMOVE
         if (profitability == -1):
             print(json.dumps({"budgetBid":(camp.reach*self.game.agent.quality) - 0.1})) #NEEDED #TODO
         else:
