@@ -622,7 +622,7 @@ public class PineAppleAgent extends Agent
 					bidBundle.addQuery(query, 
 							Double.parseDouble(JbidBundleElement.getString("bid")),
 							new Ad(null),
-							JbidBundleElement.getInt("campaignId")),
+							JbidBundleElement.getInt("campaignId"),
 							JbidBundleElement.getInt("weight"),
 							Double.parseDouble(JbidBundleElement.getString("dailyLimit"));
 				}
