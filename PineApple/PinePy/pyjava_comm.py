@@ -97,7 +97,7 @@ class Communicator:
         mobileCoeff = float(self.argsList[6])
         budgetMillis = float(self.argsList[7])
         initialCampaign = Campaign(cid, startDay, endDay, segmentList,
-                                   reach, vidCoeff, mobileCoeff, '')
+                                   reach, vidCoeff, mobileCoeff)
         
         initialCampaign.assignCampaign(self.game.agent,
                                        { "Q_old" : 1 },
@@ -105,7 +105,7 @@ class Communicator:
         #experiement:
         otherInitialCampaigns = [Campaign("i{}".format(i), startDay, endDay,
                                           segmentList, reach, vidCoeff,
-                                          mobileCoeff, '') for i in range(7)]
+                                          mobileCoeff) for i in range(7)]
         for (inx,camp) in enumerate(otherInitialCampaigns):
             camp.assignCampaign(self.game.opponents[inx], None, budgetMillis)
             
