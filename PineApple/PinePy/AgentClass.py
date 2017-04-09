@@ -15,9 +15,9 @@ def eprint(*args, **kwargs):
 class Agent:
     def __init__(self, name):
         self.name = name
-        self.quality = 0.9
+        self.quality = 1.0 #starting quality is 1.0
         ''' powers of 0.9 '''
-        self.dailyUCSLevel = 0 #TODO: what is the starting UCS Level? 
+        self.dailyUCSLevel = 0.9 #starting UCS Level is 0.9 
         self.my_campaigns = {}
         
     def __repr__(self):

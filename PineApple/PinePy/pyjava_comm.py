@@ -39,7 +39,7 @@ class Communicator:
         try:
             self.game = pickle.load( open("pickle//game.p", "rb"))
         except (OSError, IOError) as e:
-            eprint("loadPickle: making a new game since pickle isn't found")
+            eprint("loadPickle: ", str(e), " making a new game since pickle isn't found")
             self.game = Game()
         
         MarketSegment.segments_init()
@@ -222,8 +222,8 @@ def main(queryName, argsList):
         communicator = Communicator(queryName, argsList)
         try:
             communicator.loadPickle()
-        except Exception:
-            eprint("Error Loading Pickle")
+        except Exception as e:
+            eprint("Error Loading Pickle: ", str(e))
 
         communicator.handleQuery()
         communicator.dumpPickle()
