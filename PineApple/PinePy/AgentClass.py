@@ -89,6 +89,6 @@ class Agent:
                 bidsArray += [{"query" : query, 
                          "bid" : float(p*demand), 
                          "campaignId" : int(cid), 
-                         "weight" : float(cmp.imps_to_go()/1000), 
+                         "weight" : cmp.imps_to_go(), 
                          "dailyLimit" : float(p*demand*s*lvl_accuracy)}]
         return bidsArray
