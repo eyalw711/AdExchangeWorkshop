@@ -439,6 +439,7 @@ public class PineAppleAgent extends Agent
 			ucsBid = 0.000001;
 			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);		
 			sendMessage(demandAgentAddress, bids);
+			return;
 		}
 		
 		JSONObject obj = new JSONObject(outputString);
