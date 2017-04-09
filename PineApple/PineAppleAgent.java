@@ -243,9 +243,9 @@ public class PineAppleAgent extends Agent
 	private void handleBankStatus(BankStatus content) 
 	{
 		System.out.println("Day " + day + " :" + content.toString());
-		if(debugFlag)
-			System.out.println("DEBUG: run python - BankStatus");
-		runPythonScript("BankStatus " + Double.toString(content.getAccountBalance()));
+		//if(debugFlag)
+		//	System.out.println("DEBUG: run python - BankStatus");
+		//runPythonScript("BankStatus " + Double.toString(content.getAccountBalance()));
 	}
 
 	/**
@@ -582,59 +582,59 @@ public class PineAppleAgent extends Agent
 	{
 		try{
 
-		if(debugFlag)
-			System.out.println("DEBUG: run python - GetBidBundle");		
-		
-		String outputString = runPythonScript("GetBidBundle");
-		
-		if(debugFlag)
-			System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
-		
-		if(outputString!=null){
+			if(debugFlag)
+				System.out.println("DEBUG: run python - GetBidBundle");		
 			
-		bidBundle = new AdxBidBundle();
-
-		int dayBiddingFor = day + 1;
-
-		JSONObject JbidBundle = new JSONObject(outputString);
-		JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
-		JSONObject JbidBundleElement;
-		AdxQuery query;
-		Device d;
-		AdType adtype; 
-		for (int i = 0; i < JbidsArray.length(); i++) {	
-			JbidBundleElement = JbidsArray.getJSONObject(i);
-			JSONObject JQuery = JbidBundleElement.getJSONObject("query");
-			if(JQuery.getString("Device").equals("Desktop"))
-				d =	Device.pc;
-			else
-				d =	Device.mobile;
-			if(JQuery.getString("adType").equals("Text"))
-				adtype =AdType.text;
-			else
-				adtype =AdType.video;
- 
-			query = new AdxQuery(JQuery.getString("publisher"), 
-					createSegmentFromPython(JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName")),
-					d,
-					adtype);
+			String outputString = runPythonScript("GetBidBundle");
 			
-			bidBundle.addQuery(query, 
-					Double.parseDouble(JbidBundleElement.getString("bid")),
-					new Ad(null),
-					Integer.parseInt(JbidBundleElement.getString("campaignId")),
-					Integer.parseInt(JbidBundleElement.getString("weight")));
-		}
+			if(debugFlag)
+				System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
+			
+			if(outputString!=null){
+				
+				bidBundle = new AdxBidBundle();
 		
-		if (bidBundle != null) 
-		{
-			System.out.println("Day " + day + ": Sending BidBundle");
-			sendMessage(adxAgentAddress, bidBundle);
-		}
-		}
-	
-		else
-			System.out.println("GetBidBundle returned null");
+				int dayBiddingFor = day + 1;
+		
+				JSONObject JbidBundle = new JSONObject(outputString);
+				JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
+				JSONObject JbidBundleElement;
+				AdxQuery query;
+				Device d;
+				AdType adtype; 
+				for (int i = 0; i < JbidsArray.length(); i++) {	
+					JbidBundleElement = JbidsArray.getJSONObject(i);
+					JSONObject JQuery = JbidBundleElement.getJSONObject("query");
+					if(JQuery.getString("Device").equals("Desktop"))
+						d =	Device.pc;
+					else
+						d =	Device.mobile;
+					if(JQuery.getString("adType").equals("Text"))
+						adtype =AdType.text;
+					else
+						adtype =AdType.video;
+		 
+					query = new AdxQuery(JQuery.getString("publisher"), 
+							createSegmentFromPython(JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName")),
+							d,
+							adtype);
+					
+					bidBundle.addQuery(query, 
+							Double.parseDouble(JbidBundleElement.getString("bid")),
+							new Ad(null),
+							Integer.parseInt(JbidBundleElement.getString("campaignId")),
+							Integer.parseInt(JbidBundleElement.getString("weight")));
+				}
+			
+				if (bidBundle != null) 
+				{
+					System.out.println("Day " + day + ": Sending BidBundle");
+					sendMessage(adxAgentAddress, bidBundle);
+				}
+			}
+		
+			else
+				System.out.println("GetBidBundle returned null");
 
 		}
 		catch(Exception e){
@@ -685,6 +685,11 @@ public class PineAppleAgent extends Agent
 	private void handleAdxPublisherReport(AdxPublisherReport adxPublisherReport) 
 	{
 		System.out.println("Publishers Report: ");
+		
+		if(adxPublisherReport.keys().size() == 0 && DEBUG){
+			System.out.println("DEBUG: no entries in adxPublisherReport");
+		}
+		
 		for (PublisherCatalogEntry publisherKey : adxPublisherReport.keys()) 
 		{
 			AdxPublisherReportEntry entry = adxPublisherReport
@@ -873,6 +878,7 @@ public class PineAppleAgent extends Agent
             	System.out.println(stdout);
             	System.out.println("the stderr is:");
             	System.out.println(stderr);
+            	
             }
             
         }
