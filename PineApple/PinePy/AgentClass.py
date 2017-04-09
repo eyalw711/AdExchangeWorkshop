@@ -6,8 +6,12 @@ Created on Wed Feb 22 00:12:36 2017
 """
 from CampaignClass import Campaign
 from UcsManagerClass import ucsManager
-
 import itertools
+from pyjava_comm import eprint
+
+def mean(numbers):
+    return float(sum(numbers)) / max(len(numbers), 1)
+
 class Agent:
     def __init__(self, name):
         self.name = name
@@ -64,6 +68,8 @@ class Agent:
                     bidSegments = cmpSegmentsList
 #            print(#formBidBundle: bidSegments)
             
+            avgDem = mean([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments])
+            NORMALING_FACTOR = 1.0
             for x in itertools.product(bidSegments, ["Text","Video"], ["Desktop", "Mobile"]):
                 p = cmp.avg_p_per_imp
                 seg = x[0]
@@ -85,9 +91,13 @@ class Agent:
                          "Device" : x[2],
                          "adType" : x[1]
                         }
-                         
+                
+                eprint("p is ", p, " and deltaDemand is ", (demand - avgDem))
+                bid = float(p+(demand - avgDem)*NORMALING_FACTOR)
+                if bid < 0:
+                    bid = p
                 bidsArray += [{"query" : query, 
-                         "bid" : float(p*demand), 
+                         "bid" : bid, 
                          "campaignId" : int(cid), 
                          "weight" : cmp.imps_to_go(), 
                          "dailyLimit" : float(p*demand*s*lvl_accuracy)}]

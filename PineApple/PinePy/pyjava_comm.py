@@ -4,6 +4,7 @@ Created on Mon Mar 27 17:56:15 2017
 
 @author: Eyal
 """
+from __future__ import print_function
 import sys
 import os
 import pickle
@@ -13,6 +14,11 @@ from AgentClass import Agent
 from SegmentClass import MarketSegment
 from UcsManagerClass import ucsManager
 
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+    
+    
 class Game:
     def __init__(self):
         self.agent = Agent("PineApple")
@@ -33,6 +39,7 @@ class Communicator:
         try:
             self.game = pickle.load( open("pickle//game.p", "rb"))
         except (OSError, IOError) as e:
+            eprint("loadPickle: making a new game since pickle isn't found")
             self.game = Game()
         
         MarketSegment.segments_init()
@@ -46,7 +53,7 @@ class Communicator:
         pickle.dump( self.game, open( "pickle//game.p", "wb" ) ) #TODO: dump final state, not like now
     
     def handleGetUcsAndBudget(self):
-         #print("#handleGetUcsAndBudget: ArgsList is {}".format(self.argsList))
+        eprint("handleGetUcsAndBudget: ArgsList is {}".format(self.argsList))
         answer = {}
         
         cid = int(self.argsList[0])
@@ -100,9 +107,10 @@ class Communicator:
                                    reach, vidCoeff, mobileCoeff)
         
         initialCampaign.assignCampaign(self.game.agent,
-                                       { "Q_old" : 1 },
-                                       budgetMillis) #TODO: what is the starting quality
+                                       { "Q_old" : 1.0 },  #The starting quality is 1.0
+                                       budgetMillis)
         #experiement:
+        eprint("handleInitialCampaignMessage: NOTICE: making a wild assumption about initial campaigns! Think about this!")
         otherInitialCampaigns = [Campaign("i{}".format(i), startDay, endDay,
                                           segmentList, reach, vidCoeff,
                                           mobileCoeff) for i in range(7)]
@@ -110,7 +118,6 @@ class Communicator:
             camp.assignCampaign(self.game.opponents[inx], None, budgetMillis)
             
     def handleGetBidBundle(self):
-        #print("#handleGetBidBundle: ArgsList is {}".format(self.argsList))
         answer = {}
         bidBundle = self.game.agent.formBidBundle(self.game.day+1)
         answer["bidbundle"] = bidBundle
@@ -120,9 +127,9 @@ class Communicator:
         number_of_campaign_stats = int(self.argsList[0])
         for i in range(number_of_campaign_stats):
             cid = int(self.argsList[1 + 4*i])
-            targetedImpressions = int(self.argsList[2+4*i])
-#            nonTargetedImpressions = self.argsList[3+4*i]
-#            cost = self.argsList[4+4*i]
+            targetedImpressions = int(float(self.argsList[2+4*i]))
+#           nonTargetedImpressions = self.argsList[3+4*i]
+#           cost = self.argsList[4+4*i]
             #update:
             if cid in self.game.agent.my_campaigns:
                 self.game.agent.my_campaigns[cid].targetedImpressions = targetedImpressions
@@ -133,11 +140,22 @@ class Communicator:
     def handleAdNetworkDailyNotification(self):
         self.game.day = int(self.argsList[0])
         self.game.agent.dailyUCSLevel = float(self.argsList[1])
-        #price of UCS dont care
+        #price of UCS in argList[3] (dont care)
         oldQuality = self.game.agent.quality
         self.game.agent.quality = float(self.argsList[3])
         
         cid = int(self.argsList[4])
+        try:
+            eprint("handleAdNetworkDailyNotification processed args:" ,self.game.day,
+                   self.game.agent.dailyUCSLevel,
+                   self.game.agent.quality,
+                   cid,
+                   self.argsList[5],
+                   int(self.argsList[6]))
+        except Exception as e:
+            eprint("handleAdNetworkDailyNotification failed! ", str(e))
+            return
+        
         #TODO: Verify assign correctly
         cmp = self.game.campaignOffer
         if self.argsList[5] == self.game.agent.name: #TODO: dangerous, check
@@ -161,8 +179,9 @@ class Communicator:
         #TODO: Assume OK to delete here
         try:
             os.remove("pickle//game.p")
+            eprint("removed last pickle")
         except OSError:
-            pass
+            eprint("Unable to remove pickle")
             
     
     def handleBankStatus(self):
@@ -171,8 +190,8 @@ class Communicator:
     
     def handleGetGameStatus(self):
         '''DEBUG'''
-        #print("handleGetGameStatus: day ", self.game.day)
-        #print("handleGetGameStatus: agent ", self.game.agent)
+        eprint("handleGetGameStatus: day ", self.game.day)
+        eprint("handleGetGameStatus: agent ", self.game.agent)
         
     handlers = {
                 "GetGameStatus": handleGetGameStatus,
@@ -197,27 +216,26 @@ def main(queryName, argsList):
     try:
         os.chdir(origPath + "//PinePy")
     except Exception:
-        pass
+        eprint("couldn't change to dir", origPath + "//PinePy")
     
     if queryName in Communicator.handlers:
         communicator = Communicator(queryName, argsList)
         try:
             communicator.loadPickle()
         except Exception:
-            pass
-            #print("Error Loading Pickle")
+            eprint("Error Loading Pickle")
 
         communicator.handleQuery()
         communicator.dumpPickle()
         os.chdir(origPath)
         
     else:
-        #print("Unexpected query: {}".format(queryName))
+        eprint("Unexpected query: {}".format(queryName))
         sys.exit()
 
 if __name__ == "__main__":
     if len(sys.argv[1:]) > 0:
         main(sys.argv[1], sys.argv[2:])
     else:
-        #print("Expected a query name!")
+        eprint("Expected a query name!")
         sys.exit()
