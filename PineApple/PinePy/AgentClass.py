@@ -4,13 +4,13 @@ Created on Wed Feb 22 00:12:36 2017
 
 @author: Eyal
 """
+import sys
 from CampaignClass import Campaign
 from UcsManagerClass import ucsManager
 import itertools
-from pyjava_comm import eprint
 
-def mean(numbers):
-    return float(sum(numbers)) / max(len(numbers), 1)
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 class Agent:
     def __init__(self, name):
@@ -67,7 +67,8 @@ class Agent:
                 if not bidSegments:
                     bidSegments = cmpSegmentsList
 #            print(#formBidBundle: bidSegments)
-            
+            def mean(numbers):
+                return float(sum(numbers)) / max(len(numbers), 1)
             avgDem = mean([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments])
             NORMALING_FACTOR = 1.0
             for x in itertools.product(bidSegments, ["Text","Video"], ["Desktop", "Mobile"]):
