@@ -42,7 +42,7 @@ import edu.umich.eecs.tac.props.BankStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONOArray;
+import org.json.JSONArray;
 
 
 import tools.DataToCSV;
@@ -432,7 +432,7 @@ public class PineAppleAgent extends Agent
 		
 		JSONObject obj = new JSONObject(outputString);
 		
-		cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
+		long cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
 				
 		pendingCampaignBudget = cmpBidMillis;
 
@@ -593,7 +593,7 @@ public class PineAppleAgent extends Agent
 		else
 			m3=MarketSegment.LOW_INCOME;
 		
-		return compundMarketSegment3(m1,m2,m3);
+		return MarketSegment.compundMarketSegment3(m1,m2,m3);
 		
 	}
 	
