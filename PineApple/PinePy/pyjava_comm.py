@@ -44,7 +44,7 @@ class Communicator:
         
         try:
             MarketSegment.segments_init()
-            Campaign.statistic_campaigns_init()
+            #Campaign.statistic_campaigns_init() #TODO: bring back to life again when can
             Campaign.setCampaigns(self.game.campaigns)
         except KeyError as e:
             template = "While initializing stuff an exception of type {0} occurred. Arguments:\n{1!r}"
@@ -57,13 +57,14 @@ class Communicator:
         self.game.campaigns = Campaign.campaigns
         with open( "pickle//game.p", "wb" ) as pickleFile:
             pickle.dump( self.game, pickleFile)
-            eprint(self.game.agent.my_campaigns)
-            for key, camp in self.game.agent.my_campaigns.items():
-                eprint(key, camp.segments)
-            for ag in self.game.opponents:
-                eprint(ag.my_campaigns)
-                for key, camp in ag.my_campaigns.items():
-                    eprint(key, camp.segments)
+            #This was used for debugging
+#            eprint(self.game.agent.my_campaigns)
+#            for key, camp in self.game.agent.my_campaigns.items():
+#                eprint(key, camp.segments)
+#            for ag in self.game.opponents:
+#                eprint(ag.my_campaigns)
+#                for key, camp in ag.my_campaigns.items():
+#                    eprint(key, camp.segments)
             
     
     def handleGetUcsAndBudget(self):
@@ -234,14 +235,21 @@ def main(queryName, argsList):
     
     if queryName in Communicator.handlers:
         communicator = Communicator(queryName, argsList)
+        
         try:
             communicator.loadPickle()
         except Exception as e:
             template = "While loading a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(e).__name__, e.args)
             eprint("main: Error Loading Pickle: ", message)
-
-        communicator.handleQuery()
+        
+        try:
+            communicator.handleQuery()
+        except Exception as e:
+            template = "While handling a query an exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(e).__name__, e.args)
+            eprint("main: Error Loading Pickle: ", message)
+            
         try:
             communicator.dumpPickle()
         except Exception as e:
