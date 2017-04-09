@@ -95,9 +95,9 @@ class Communicator:
         profitability = camp.predict_campaign_profitability(day)
 #        profitability = random.choice([1, -1]) #TODO: REMOVE
         if (profitability == -1):
-            answer["budgetBid"] = str((camp.reach*self.game.agent.quality) - 0.1)
+            answer["budgetBid"] = str(int((camp.reach*self.game.agent.quality) - 0.1))
         else:
-            answer["budgetBid"] = str(initialBudget)
+            answer["budgetBid"] = str(int(initialBudget))
             
 #        day = self.game.day
         ongoingCamps = self.game.agent.getOnGoingCampaigns(day+1)
