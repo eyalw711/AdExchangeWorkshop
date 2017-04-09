@@ -369,73 +369,73 @@ public class PineAppleAgent extends Agent
 	private void handleICampaignOpportunityMessage(CampaignOpportunityMessage com) 
 	{
 		try{
-		day = com.getDay();
-		long cmpBidMillis;
-		
-		pendingCampaign = new CampaignData(com);
-		System.out.println("Day " + day + ": Campaign opportunity - " + pendingCampaign);
-		
-		String s_tmp = "Day " + day + ": Campaign opportunity - " + pendingCampaign;
-		DataToCSV.split_to_fields2(s_tmp, DEBUG);
-
-		/*
-		 * The campaign requires com.getReachImps() impressions. The competing
-		 * Ad Networks bid for the total campaign Budget (that is, the ad
-		 * network that offers the lowest budget gets the campaign allocated).
-		 * The advertiser is willing to pay the AdNetwork at most 1$ CPM,
-		 * therefore the total number of impressions may be treated as a reserve
-		 * (upper bound) price for the auction.
-		 */
+			day = com.getDay();
+			long cmpBidMillis;
 			
-		String tempName = MarketSegment.names(com.getTargetSegment());
-		tempName = tempName.trim();
-		String[] splitedSegments = tempName.split("\\s+");
-		String initialsSeg = getSegmentsInitials(splitedSegments);
+			pendingCampaign = new CampaignData(com);
+			System.out.println("Day " + day + ": Campaign opportunity - " + pendingCampaign);
 			
-		String paramString = Integer.toString(com.getId()) + " " + Long.toString(com.getReachImps()) + " " + Long.toString(com.getDayStart()) + " " + Long.toString(com.getDayEnd()) + " " + initialsSeg + " " + Double.toString(com.getVideoCoef())+ " " + Double.toString(com.getMobileCoef()) + " " + Integer.toString(com.getDay());
-		
-		if(debugFlag){
-			System.out.println("DEBUG: run python - GetUcsAndBudget");
-			System.out.println("DEBUG: run python - GetUcsAndBudget param: " + paramString);		
-		}
-		
-		String outputString = runPythonScript("GetUcsAndBudget " + paramString);
-		
-		if(debugFlag)
-			System.out.println("DEBUG: output python - GetUcsAndBudget\n" + outputString);
+			String s_tmp = "Day " + day + ": Campaign opportunity - " + pendingCampaign;
+			DataToCSV.split_to_fields2(s_tmp, DEBUG);
+	
+			/*
+			 * The campaign requires com.getReachImps() impressions. The competing
+			 * Ad Networks bid for the total campaign Budget (that is, the ad
+			 * network that offers the lowest budget gets the campaign allocated).
+			 * The advertiser is willing to pay the AdNetwork at most 1$ CPM,
+			 * therefore the total number of impressions may be treated as a reserve
+			 * (upper bound) price for the auction.
+			 */
 				
-		if(outputString == null){
-			System.out.println("GetUcsAndBudget returned null");
-			cmpBidMillis =  com.getReachImps();
-			ucsBid = 0.000001;
-			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);		
+			String tempName = MarketSegment.names(com.getTargetSegment());
+			tempName = tempName.trim();
+			String[] splitedSegments = tempName.split("\\s+");
+			String initialsSeg = getSegmentsInitials(splitedSegments);
+				
+			String paramString = Integer.toString(com.getId()) + " " + Long.toString(com.getReachImps()) + " " + Long.toString(com.getDayStart()) + " " + Long.toString(com.getDayEnd()) + " " + initialsSeg + " " + Double.toString(com.getVideoCoef())+ " " + Double.toString(com.getMobileCoef()) + " " + Integer.toString(com.getDay());
+			
+			if(debugFlag){
+				System.out.println("DEBUG: run python - GetUcsAndBudget");
+				System.out.println("DEBUG: run python - GetUcsAndBudget param: " + paramString);		
+			}
+			
+			String outputString = runPythonScript("GetUcsAndBudget " + paramString);
+			
+			if(debugFlag)
+				System.out.println("DEBUG: output python - GetUcsAndBudget\n" + outputString);
+					
+			if(outputString == null){
+				System.out.println("GetUcsAndBudget returned null");
+				cmpBidMillis =  com.getReachImps();
+				ucsBid = 0.000001;
+				AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);		
+				sendMessage(demandAgentAddress, bids);
+				return;
+			}
+			
+			JSONObject obj = new JSONObject(outputString);
+			
+			cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
+					
+			pendingCampaignBudget = cmpBidMillis;
+	
+			System.out.println("Day " + day + ": Campaign total budget bid (millis): " + cmpBidMillis);
+	
+			/*
+			 * Adjust ucs bid s.t. target level is achieved. Note: The bid for the
+			 * user classification service is piggybacked
+			 */
+	
+	
+			ucsBid = Double.parseDouble(obj.getString("UCSBid"));
+	
+			System.out.println("Day " + day + ": ucsBid reported: " + ucsBid);
+	
+			
+			/* Note: Campaign bid is in millis */
+			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
+			
 			sendMessage(demandAgentAddress, bids);
-			return;
-		}
-		
-		JSONObject obj = new JSONObject(outputString);
-		
-		cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
-				
-		pendingCampaignBudget = cmpBidMillis;
-
-		System.out.println("Day " + day + ": Campaign total budget bid (millis): " + cmpBidMillis);
-
-		/*
-		 * Adjust ucs bid s.t. target level is achieved. Note: The bid for the
-		 * user classification service is piggybacked
-		 */
-
-
-		ucsBid = Double.parseDouble(obj.getString("UCSBid"));
-
-		System.out.println("Day " + day + ": ucsBid reported: " + ucsBid);
-
-		
-		/* Note: Campaign bid is in millis */
-		AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
-		
-		sendMessage(demandAgentAddress, bids);
 		}
 		catch (Exception e) {
             System.out.println("exception happened at : handleICampaignOpportunityMessage" + e.getMessage());
@@ -622,8 +622,9 @@ public class PineAppleAgent extends Agent
 					bidBundle.addQuery(query, 
 							Double.parseDouble(JbidBundleElement.getString("bid")),
 							new Ad(null),
-							Integer.parseInt(JbidBundleElement.getString("campaignId")),
-							Integer.parseInt(JbidBundleElement.getString("weight")));
+							JbidBundleElement.getInt("campaignId")),
+							JbidBundleElement.getInt("weight"),
+							Double.parseDouble(JbidBundleElement.getString("dailyLimit"));
 				}
 			
 				if (bidBundle != null) 
