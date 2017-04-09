@@ -81,7 +81,7 @@ class Agent:
 #                        'weight': (cmp.imps_to_go)}]
                 
                 query = {
-                        "marketSegments" : [seg.name],
+                        "marketSegments" : [{"segmentName":seg.name}],
                          "Device" : x[2],
                          "adType" : x[1]
                         }
