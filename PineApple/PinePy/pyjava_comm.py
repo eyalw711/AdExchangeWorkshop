@@ -7,6 +7,7 @@ Created on Mon Mar 27 17:56:15 2017
 from __future__ import print_function
 import sys
 import os
+import traceback
 import pickle
 import json
 from CampaignClass import Campaign
@@ -17,7 +18,11 @@ from UcsManagerClass import ucsManager
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-    
+
+def printException(e, functionName, whileDoingString):
+    template = "While " + whileDoingString + " an exception of type {0} occurred. Arguments:\n{1!r}"
+    message = template.format(type(e).__name__, e.args)
+    eprint(functionName, ": Error Loading Pickle: ", message)
     
 class Game:
     def __init__(self):
@@ -239,23 +244,30 @@ def main(queryName, argsList):
         try:
             communicator.loadPickle()
         except Exception as e:
-            template = "While loading a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(e).__name__, e.args)
-            eprint("main: Error Loading Pickle: ", message)
+            printException(e, "main", "loading a pickle")
+#            template = "While loading a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
+#            message = template.format(type(e).__name__, e.args)
+#            eprint("main: Error Loading Pickle: ", message)
+            traceback.print_exc()
         
         try:
             communicator.handleQuery()
         except Exception as e:
-            template = "While handling a query an exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(e).__name__, e.args)
-            eprint("main: Error Loading Pickle: ", message)
+            printException(e, "main", "handling a query")
+#            template = "While handling a query an exception of type {0} occurred. Arguments:\n{1!r}"
+#            message = template.format(type(e).__name__, e.args)
+#            eprint("main: Error Loading Pickle: ", message)
+            traceback.print_exc()
             
         try:
             communicator.dumpPickle()
         except Exception as e:
-            template = "While dumping a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(e).__name__, e.args)
-            eprint("main: Error Loading Pickle: ", message)
+            printException(e, "main", "dumping a pickle")
+#            template = "While dumping a pickle an exception of type {0} occurred. Arguments:\n{1!r}"
+#            message = template.format(type(e).__name__, e.args)
+#            eprint("main: Error Loading Pickle: ", message)
+            traceback.print_exc()
+            
         os.chdir(origPath)
         
     else:
