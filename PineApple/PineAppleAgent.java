@@ -393,6 +393,7 @@ public class PineAppleAgent extends Agent
 	 */
 	private void handleICampaignOpportunityMessage(CampaignOpportunityMessage com) 
 	{
+		try{
 		day = com.getDay();
 
 		pendingCampaign = new CampaignData(com);
@@ -453,6 +454,12 @@ public class PineAppleAgent extends Agent
 		AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
 		
 		sendMessage(demandAgentAddress, bids);
+		}
+		catch (Exception e) {
+            System.out.println("exception happened at : handleICampaignOpportunityMessage" + e.getMessage());
+            e.printStackTrace();
+            System.exit(-1);
+        }
 		
 	}
 
@@ -594,7 +601,6 @@ public class PineAppleAgent extends Agent
 			m3=MarketSegment.LOW_INCOME;
 		
 		return MarketSegment.compundMarketSegment3(m1,m2,m3);
-		
 	}
 	
 	/**
@@ -602,6 +608,7 @@ public class PineAppleAgent extends Agent
 	 */
 	protected void sendBidAndAds() 
 	{
+		try{
 
 		if(debugFlag)
 			System.out.println("DEBUG: run python - GetBidBundle");		
@@ -650,6 +657,12 @@ public class PineAppleAgent extends Agent
 		{
 			System.out.println("Day " + day + ": Sending BidBundle");
 			sendMessage(adxAgentAddress, bidBundle);
+		}
+		}
+		catch(Exception e){
+			 System.out.println("exception happened at sendBidAndAds " + e.getMessage());
+	            e.printStackTrace();
+	            System.exit(-1);
 		}
 		
 	}
