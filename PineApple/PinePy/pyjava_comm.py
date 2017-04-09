@@ -223,7 +223,9 @@ def main(queryName, argsList):
         try:
             communicator.loadPickle()
         except Exception as e:
-            eprint("Error Loading Pickle: ", str(e))
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(e).__name__, e.args)
+            eprint("main: Error Loading Pickle: ", message)
 
         communicator.handleQuery()
         communicator.dumpPickle()
