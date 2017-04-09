@@ -40,6 +40,11 @@ import tau.tac.adx.report.publisher.AdxPublisherReportEntry;
 import edu.umich.eecs.tac.props.Ad;
 import edu.umich.eecs.tac.props.BankStatus;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONOArray;
+
+
 import tools.DataToCSV;
 
 
@@ -52,7 +57,7 @@ public class PineAppleAgent extends Agent
 	public boolean testTrue = true;
 	public static boolean debugFlagStatic = true;
 
-	public static String pathAndCommand = "python3.6 ./pyscript/pyjava_comm.py ";
+	public static String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py ";
 
 	//yossi 27.3 end
 	
@@ -405,30 +410,8 @@ public class PineAppleAgent extends Agent
 		 * (upper bound) price for the auction.
 		 */
 		
-		Random random = new Random();
-		long cmpBidMillis;
+		
 		boolean DEBUG_UCS = false;
-		long campaignRequiredImps = com.getReachImps();
-		
-		LinkedList<CampaignData> openCampaigns = getAllOpenCampaignsAtDayPlus(2);
-		
-		//yossi - need to check
-		
-		
-		if (openCampaigns.isEmpty() && !biddedYesterday() && (numOfCampaignsCompleted() <= 3+isCampineDay0Completed()))
-		{
-			DEBUG_UCS = true;
-			cmpBidMillis = (int)(campaignRequiredImps+500)/10;
-		}
-		else
-		{
-			cmpBidMillis = 40000;
-		}
-		
-		
-		
-		//yossi 27.3 start
-		
 		
 		String tempName = MarketSegment.names(com.getTargetSegment());
 		tempName = tempName.trim();
@@ -437,24 +420,21 @@ public class PineAppleAgent extends Agent
 			
 		String paramString = Integer.toString(com.getId()) + " " + Long.toString(com.getReachImps()) + " " + Long.toString(com.getDayStart()) + " " + Long.toString(com.getDayEnd()) + " " + initialsSeg + " " + Double.toString(com.getVideoCoef())+ " " + Double.toString(com.getMobileCoef()) + " " + Integer.toString(com.getDay());
 		
-		if(globPythonUse){
-			if(debugFlag){
-				System.out.println("DEBUG: run python - GetCampaignBudgetBid");
-				System.out.println("DEBUG: run python - GetCampaignBudgetBid param: " + paramString);
-				
-			}
-			String cmpBidMillisString = runPythonScript("GetCampaignBudgetBid " + paramString);
-			if(debugFlag)
-				System.out.println("DEBUG: output python - GetCampaignBudgetBid\n" + cmpBidMillisString);
-			
-			
-			cmpBidMillis = Long.parseLong(cmpBidMillisString);
+		if(debugFlag){
+			System.out.println("DEBUG: run python - GetUcsAndBudget");
+			System.out.println("DEBUG: run python - GetUcsAndBudget param: " + paramString);		
 		}
 		
-		//yossi 27.3 end
+		String outputString = runPythonScript("GetUcsAndBudget " + paramString);
 		
+		if(debugFlag)
+			System.out.println("DEBUG: output python - GetUcsAndBudget\n" + outputString);
+		
+		JSONObject obj = new JSONObject(outputString);
+		
+		cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
+				
 		pendingCampaignBudget = cmpBidMillis;
-		//pendingCampaign.setBudget(cmpBidMillis);	
 
 		System.out.println("Day " + day + ": Campaign total budget bid (millis): " + cmpBidMillis);
 
@@ -463,39 +443,16 @@ public class PineAppleAgent extends Agent
 		 * user classification service is piggybacked
 		 */
 
-		if (adNetworkDailyNotification != null) 
-		{
-			double ucsLevel = adNetworkDailyNotification.getServiceLevel();
-			
-			if(globPythonUse)
-			{
-				if(debugFlag)
-					System.out.println("DEBUG: run python - GetUCSBid");
 
-				String outputString = runPythonScript("GetUcsAndBundle");
-				
-				if(debugFlag)
-					System.out.println("DEBUG: got from python - GetUcsAndBundle\n" + outputString);
-				
-				if (debugFlag && outputString == null)
-					System.out.println("error in GetUCSBid python run");
-				ucsBid = Double.parseDouble(outputString);
-			}
-			else
-				ucsBid = 0.000000001; //0.1 + random.nextDouble()/10.0;
-			
-			System.out.println("Day " + day + ": ucs level reported: " + ucsLevel);
-		} 
-		else 
-		{
-			System.out.println("Day " + day + ": Initial ucs bid is " + ucsBid);
-		}
+		ucsBid = Double.parseDouble(obj.getString("UCSBid"));
 
+		System.out.println("Day " + day + ": ucsBid reported: " + ucsBid);
+
+		
 		/* Note: Campaign bid is in millis */
 		AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
+		
 		sendMessage(demandAgentAddress, bids);
-		
-		
 		
 	}
 
@@ -619,102 +576,82 @@ public class PineAppleAgent extends Agent
 		++day;
 	}
 
+	public static Set<MarketSegment> createSegmentFromPython(String pythonSegName){
+		MarketSegment m1, m2, m3;
+		if(pythonSegName.charAt(0)=='O')
+			m1=MarketSegment.OLD;
+		else
+			m1=MarketSegment.YOUNG;
+		
+		if(pythonSegName.charAt(1)=='M')
+			m2=MarketSegment.MALE;
+		else
+			m2=MarketSegment.FEMALE;
+		
+		if(pythonSegName.charAt(2)=='H')
+			m3=MarketSegment.HIGH_INCOME;
+		else
+			m3=MarketSegment.LOW_INCOME;
+		
+		return compundMarketSegment3(m1,m2,m3);
+		
+	}
+	
 	/**
 	 * 
 	 */
 	protected void sendBidAndAds() 
 	{
 
+		if(debugFlag)
+			System.out.println("DEBUG: run python - GetBidBundle");		
+		
+		String outputString = runPythonScript("GetBidBundle");
+		
+		if(debugFlag)
+			System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
+		
+		
 		bidBundle = new AdxBidBundle();
 
 		int dayBiddingFor = day + 1;
 
-		//Random random = new Random();
-
-		/* A random bid, fixed for all queries of the campaign */
-		/*
-		 * Note: bidding per 1000 imps (CPM) - no more than average budget
-		 * revenue per imp
-		 */
-
-		
-		
-		double rbid = 5.0; //10.0*random.nextDouble();
-		if (numOfCampaignsCompleted() >= isCampineDay0Completed() +3) {
-			if (DEBUG) {
-				System.out.println("DEBUG RBID 66666666666666666666666666666666666666666666666666");
-			}
-			rbid = 0;
+		JSONObject JbidBundle = new JSONObject(outputString);
+		JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
+		JSONObject JbidBundleElement;
+		AdxQuery query;
+		Device d;
+		AdType adtype; 
+		for (int i = 0; i < JbidsArray.length(); i++) {	
+			JbidBundleElement = JbidsArray.getJSONObject(i);
+			JSONObject JQuery = JbidBundleElement.getJSONObject("query");
+			if(JQuery.getString("Device").equals("Desktop"))
+				d =	Device.pc;
+			else
+				d =	Device.mobile;
+			if(JQuery.getString("adType").equals("Text"))
+				adtype =AdType.text;
+			else
+				adtype =AdType.video;
+ 
+			query = new AdxQuery(JQuery.getString("publisher"), 
+					createSegmentFromPython(JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName")),
+					d,
+					adtype);
+			
+			bidBundle.addQuery(query, 
+					Double.parseDouble(JbidBundleElement.getString("bid")),
+					new Ad(null),
+					Integer.parseInt(JbidBundleElement.getString("campaignId")),
+					Integer.parseInt(JbidBundleElement.getString("weight")));
 		}
-		/*
-		 * add bid entries w.r.t. each active campaign with remaining contracted
-		 * impressions.
-		 * 
-		 * for now, a single entry per active campaign is added for queries of
-		 * matching target segment.
-		 */
-
-		if ((dayBiddingFor >= currCampaign.dayStart)
-				&& (dayBiddingFor <= currCampaign.dayEnd)
-				&& (currCampaign.impsTogo() > 0)) 
-		{
-
-			int entCount = 0;
-			for (CampaignData campData : getAllOpenCampaignsAtDayPlus(1))
-			{
-				for (AdxQuery query : campData.campaignQueries) 
-				{
-					if (campData.impsTogo() - entCount > 0) 
-					{
-						/*
-						 * among matching entries with the same campaign id, the AdX
-						 * randomly chooses an entry according to the designated
-						 * weight. by setting a constant weight 1, we create a
-						 * uniform probability over active campaigns(irrelevant because we are bidding only on one campaign)
-						 */
-						if (query.getDevice() == Device.pc) 
-						{
-							if (query.getAdType() == AdType.text) 
-							{
-								entCount++;
-							} 
-							else 
-							{
-								entCount += campData.videoCoef;
-							}
-						} 
-						else 
-						{
-							if (query.getAdType() == AdType.text) 
-							{
-								entCount+=campData.mobileCoef;
-							} 
-							else 
-							{
-								entCount += campData.videoCoef + campData.mobileCoef;
-							}
-						}
-						bidBundle.addQuery(query, rbid, new Ad(null),
-								campData.id, 1);
-					}
-				}
-				
-				double impressionLimit = campData.impsTogo();
-				double budgetLimit = campData.budget;
-				bidBundle.setCampaignDailyLimit(campData.id,
-						(int) impressionLimit, budgetLimit);
-
-				System.out.println("Day " + day + ": Updated " + entCount
-						+ " Bid Bundle entries for Campaign id " + campData.id);
-			}
-
-		}
-
+		
 		if (bidBundle != null) 
 		{
 			System.out.println("Day " + day + ": Sending BidBundle");
 			sendMessage(adxAgentAddress, bidBundle);
 		}
+		
 	}
 
 	/**

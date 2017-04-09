@@ -34,7 +34,7 @@ Java to Python queries:
 		Outputs:
 			Read from stdout the follwing json object (printed without newlines or whitespaces):
 			{
-				"budget" : <double>,
+				"budgetBid" : <double>,
 				"UCSBid" : <double>
 			}
 		
