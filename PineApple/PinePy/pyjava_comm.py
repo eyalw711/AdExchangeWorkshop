@@ -229,7 +229,6 @@ def main(queryName, argsList):
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(e).__name__, e.args)
             eprint("main: Error Loading Pickle: ", message)
-            return
 
         communicator.handleQuery()
         communicator.dumpPickle()

@@ -94,7 +94,7 @@ class Campaign:
             x0 = [self.reach]
             res = optimize.basinhopping(f, x0, niter=1)
            
-            self.impressions_goal = res.x
+            self.impressions_goal = res.x[0]
             self.avg_p_per_imp = B*demand*self.impressions_goal/R
         
     def getCampaignList():
