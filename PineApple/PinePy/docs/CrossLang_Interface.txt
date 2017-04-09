@@ -7,13 +7,43 @@ python pyjava_comm.py <Query_Name> <inputs>
 Java to Python queries:
 			
 	EDIT: NOTICE CHANGE: read all output from console - no files!
-		Query_Name = GetUcsAndBundle
+		Query_Name = GetUcsAndBudget
+		Inputs:
+			1. CampaignOpportunityMessage.id
+			2. CampaignOpportunityMessage.reachImps
+			3. CampaignOpportunityMessage.dayStart
+			4. CampaignOpportunityMessage.dayEnd
+			5. targetSegment_string:
+				Explanation: The CampaignOpportunityMessage has a field of type:
+					private Set<MarketSegment> targetSegment = new HashSet<MarketSegment>();
+				
+				The format of targetSegment_string (the 5th python argument) is as follows:
+				targetSegment_string = [O/Y][M/F][H/L]
+				
+				examples:
+				MALE YOUNG HIGH_INCOME --> YMH
+				MALE YOUNG --> YM
+				
+				hint: can use in java (targetSegment is a HashSet<MarketSegment>)
+				MarketSegment.names(targetSegment)
+				
+			6. CampaignOpportunityMessage.videoCoef
+			7. CampaignOpportunityMessage.mobileCoef
+			8. CampaignOpportunityMessage.day
+			
+		Outputs:
+			Read from stdout the follwing json object (printed without newlines or whitespaces):
+			{
+				"budget" : <double>,
+				"UCSBid" : <double>
+			}
+		
+		Query_Name = GetBidBundle
 		Inputs:
 			None
 		Outputs:
 			Read from stdout the follwing json object (printed without newlines or whitespaces):
 			{
-				"UCSBid" : <double>,
 				"bidbundle" : [Array of bids]
 			}
 			
@@ -32,6 +62,7 @@ Java to Python queries:
 			MarketSegmentStrings are of the format [O/Y][M/F][H/L] such as OFL or YMH (always three chars)
 			device_string is either "pc" or "mobile"
 			adType_string is either "text" or "video"
+			
 
 Java to Python updates:
 	1. Query_Name = InitialCampaignMessage
@@ -63,40 +94,8 @@ Java to Python updates:
 			None
 	
 		EDIT: NOTICE CHANGE: read all output from console - no files!
-	2. Query_Name = GetCampaignBudgetBid
-		When to call?:
-				When receiveing an "CampaignOpportunityMessage" message.
-		Inputs:
-			1. CampaignOpportunityMessage.id
-			2. CampaignOpportunityMessage.reachImps
-			3. CampaignOpportunityMessage.dayStart
-			4. CampaignOpportunityMessage.dayEnd
-			5. targetSegment_string:
-				Explanation: The CampaignOpportunityMessage has a field of type:
-					private Set<MarketSegment> targetSegment = new HashSet<MarketSegment>();
-				
-				The format of targetSegment_string (the 5th python argument) is as follows:
-				targetSegment_string = [O/Y][M/F][H/L]
-				
-				examples:
-				MALE YOUNG HIGH_INCOME --> YMH
-				MALE YOUNG --> YM
-				
-				hint: can use in java (targetSegment is a HashSet<MarketSegment>)
-				MarketSegment.names(targetSegment)
-				
-			6. CampaignOpportunityMessage.videoCoef
-			7. CampaignOpportunityMessage.mobileCoef
-			8. CampaignOpportunityMessage.day
-		
-		Outputs:
-		
-			Read from stdout the follwing json object (printed without newlines or whitespaces):
-			{
-				"budgetBid" : <double>
-			}
 	
-	3. Query_Name = CampaignReport
+	2. Query_Name = CampaignReport
 		When to call?:
 				When receiveing an "CampaignReport" message.
 		Inputs:
