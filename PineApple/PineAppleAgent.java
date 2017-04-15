@@ -220,8 +220,7 @@ public class PineAppleAgent extends Agent
 			else 
 			{
 				System.out.println("UNKNOWN Message Received: " + content);
-			}numOfCampaignsCompleted
-numOfCampaignsCompleted
+			}
 		} 
 		catch (NullPointerException e) 
 		{
