@@ -84,7 +84,7 @@ class Communicator:
         initialBudget = self.game.agent.campaignOpportunityBid(camp)
 #        eprint("MUST BRING BACK TO LIFE THE PROFITABILITY PREDICTION")
         Campaign.initialize_campaign_profitability_predictor()
-        profitability, final_budget  = camp.predict_campaign_profitability(day,initialBudget)
+        profitability, final_budget  = camp.predict_campaign_profitability(day,initialBudget,self.game.agent.quality)
 #        profitability = random.choice([1, -1]) #TODO: REMOVE
         if (profitability == -1):
             answer["budgetBid"] = str(int((camp.reach*self.game.agent.quality) - 0.1))

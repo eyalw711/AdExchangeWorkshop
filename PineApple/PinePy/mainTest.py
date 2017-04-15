@@ -24,7 +24,7 @@ def test_segments_and_demand():
     for i in range(4):
         camp_seg_list = [sc.MarketSegment.segments[name] for name in camps_segs[i]]
         camp = cc.Campaign(i, i, i+3, camp_seg_list, (i+1)*1000 , 1, 1)
-        camp.assignCampaign(agents[i%len(agents)], {'Q_old':0.9}, budget = (i+1)*0.9)
+        camp.assignCampaign(agents[i%len(agents)], {'Q_old':0.9}, budget = (i+1)*0.9*1000)
         print("p_avg ",camp.avg_p_per_imp)
     print()
     print(">Campaigns:")
@@ -77,17 +77,17 @@ def test_ImpsOptimization():
 def test_profitability_prediction():
     cc.Campaign.initialize_campaign_profitability_predictor()
     camp = cc.Campaign.campaigns[0]
-    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(1,camp.budget)))
+    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(1,camp.budget,1)))
     
     seg = [sc.MarketSegment.segments['OML']]+[sc.MarketSegment.segments['OMH']]
     #seg = [sc.MarketSegment.segments['OMH']]
-    camp = cc.Campaign(10, 3, 7, seg , 3000, 1.1, 1.3)    
-    camp.assignCampaign(agents[0], {'Q_old':0.9}, budget = 0.2)
+    camp = cc.Campaign(10, 12, 16, seg , 30000, 1.1, 1.3)    
+    camp.assignCampaign(agents[0], {'Q_old':0.9}, budget = 10)
     campaigns = cc.Campaign.getCampaignList() + cc.Campaign.getStatisticsCampaignListAtDays(camp.startDay, camp.endDay)
     #print("demand:" + str(sc.MarketSegment.segment_set_demand_forDays(camp.segments,camp.startDay,camp.endDay,campaigns)))
 
     
-    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(2,camp.budget)))
+    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(2,camp.budget,1)))
     
 def test_statisticalCampaigns():
     for day in cc.Campaign.statistic_campaigns:

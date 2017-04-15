@@ -12,6 +12,10 @@ import math
 import random
 import os
 import glob
+import numpy as np
+import sklearn.cross_validation as cval
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 
@@ -149,10 +153,21 @@ class Campaign:
     def initialize_campaign_profitability_predictor():
         train = pd.read_csv('..//data//campaigns_profitability.csv')        
         features = list(train.columns[3:-9])
-        #features = list(train.columns[3:-17])
+        #features = list(train.columns[3:-18])
+        #features = list(train.columns[4:5])+list(train.columns[9:10])
+        print("*** FEATURES ***")
+        print(features)
         # TODO:  consider the value of n_estimators based on predict_proba
-        Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME.R", n_estimators=30)
+        Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME.R", n_estimators=50)
         Campaign.bdt.fit(train[features], train["decision"])
+        #trainX, testX, trainY, testY = cval.train_test_split(train[features], train["decision"], test_size=0.3, random_state=0)
+        #trueY, predY = testY, Campaign.bdt.predict(testX)
+        #print ("accuracy_score:")
+        #model = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME.R", n_estimators=50)
+        #model.fit(trainX,trainY)
+        #print(classification_report(testY, model.predict(testX)))
+
+
         
     def compute_campaign_desicion(profit, completion):
         if profit > 0 and completion >= 1:
@@ -242,11 +257,13 @@ class Campaign:
         # write to CSV:     
         data.to_csv('..//data//campaigns_profitability.csv', index = False)
     
-    def predict_campaign_profitability(self, day, budget):
+    def predict_campaign_profitability(self, day, budget, quality):
         campaigns = Campaign.getCampaignList() + Campaign.getStatisticsCampaignListAtDays(self.startDay, self.endDay)
+        max_budget = self.reach*quality
+        b = budget / 1000.0
         test = [{
                 "day":day,
-                "budget":budget,
+                "budget":b,
                 "start":self.startDay,
                 "end":self.endDay,
                 "vidCoeff":self.videoCoeff,
@@ -259,22 +276,16 @@ class Campaign:
                 "YFL":self.contains_segment("YFL"), "YFH":self.contains_segment("YFH")}]
     
         '''test = [{
-                "day":day,
                 "budget":budget,
-                "start":self.startDay,
-                "end":self.endDay,
-                "vidCoeff":self.videoCoeff,
-                "mobCoeff":self.mobileCoeff,
                 "reach":self.reach,
-                "demand":MarketSegment.segment_set_demand_forDays(self.segments,self.startDay,self.endDay,campaigns)
-}]         '''                                 
+}]'''                                          
         print("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
-        for i in range (1, 2000, 10):
-            test[0]["budget"] = budget + i
+        for b in np.arange(b, max_budget, 0.1):
+            test[0]["budget"] = b
             y_pred = Campaign.bdt.predict(pd.DataFrame(test))
             if int(y_pred[0])== 1:
-                return int(y_pred[0]), budget    
-        return int(y_pred[0]), budget + i
+                return int(y_pred[0]), b*1000.0   
+        return int(y_pred[0]), b*1000.0
     
     def is_last_day(self, day):
         if day == self.endDay:
