@@ -9,10 +9,10 @@ import java.io.IOException;
 public class CollectProfitData {
 	
 	private static final String NEW_LINE_SEPARATOR = "\n";
-	private static final String PROF_FILE_PATH = "/home/sleviim/Workspaces/PineApple/data/campaigns_profitability.csv";
-	private static final String UCS_FILE_PATH = "/home/sleviim/Workspaces/PineApple/data/ucs_level_statistics.csv";
+	private static final String PROF_FILE_PATH = "/home/sleviim/Documents/university/sadna/AdExchangeWorkshop/PineApple/data/campaigns_profitability.csv";
+	private static final String UCS_FILE_PATH = "/home/sleviim/Documents/university/sadna/AdExchangeWorkshop/PineApple/data/ucs_level_statistics.csv";
 
-	private static final String CAMP_PROF_HEADER = "cid,sim,day,budget,start,end,vidCoeff,mobCoeff,reach,demand,OML,OMH,OFL,OFH,YML,YMH,YFL,YFH,completion_percentage,profit,revenue,budgetMillis,tartgetedImps,other,cost,ERR,decision";
+	private static final String CAMP_PROF_HEADER = "index,cid,sim,day,budget,start,end,vidCoeff,mobCoeff,reach,demand,OML,OMH,OFL,OFH,YML,YMH,YFL,YFH,completion_percentage,profit,revenue,budgetMillis,tartgetedImps,other,cost,ERR,decision";
 	//	places in array:							0	1	 2	 	3	 4		5	6		7		8		9	  10  11 12	  13  14  15  16  17			18			19		20		21			22			23		24	 25	  26
 	
 	private static final String UCS_STAT_HEADER = "index,game_number,day,active_networks,last_day_networks,OML,OMH,OFL,OFH,YML,YMH,YFL,YFH,l1_price,l2_price,l3_price,l4_price,l5_price,l6_price,l7_price";
@@ -55,7 +55,8 @@ public class CollectProfitData {
 		String[] tmpStringArr;
 		CampaignStatus camp;
 		DayStatus dayStatus;
-		int counter = -1;
+		int counter = 0;
+		int index = 1;
 		
 		for(int i = from; i<=to; i++){
 			//System.out.println(i);
@@ -177,7 +178,8 @@ public class CollectProfitData {
 			    		camp.setRevenue(tmpStringArr[9]);
 			    		
 			    		try {
-			    			fileWriter.append(camp.createLine());
+			    			fileWriter.append(camp.createLine(index));
+			    			index++;
 			    			fileWriter.append(NEW_LINE_SEPARATOR);
 			    		}
 			    		catch (Exception e) {
