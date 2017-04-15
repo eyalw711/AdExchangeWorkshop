@@ -64,8 +64,8 @@ class ucsManager:
         segment_networks = [sc.MarketSegment.segments[segment].number_of_active_netowrks_on_segment(day, cc.Campaign.getCampaignList()) for segment in sc.MarketSegment.segment_names]
         if ucs_level >= 7:
             return 0
-        training = pd.read_csv('..//data//ucs_level_statistics2.csv')        
-        X = list(training.columns[1:-7])
+        training = pd.read_csv('..//data//ucs_level_statistics.csv')        
+        X = list(training.columns[2:-7])
         y = [training.columns[-7 + ucs_level]]
         #print("#predict_required_price_to_win_desired_UCS_level: ", training.head(1))
         #print("#predict_required_price_to_win_desired_UCS_level: ", X)

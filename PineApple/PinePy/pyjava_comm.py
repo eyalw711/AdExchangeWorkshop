@@ -28,7 +28,7 @@ def printException(e, functionName, whileDoingString):
 class Game:
     def __init__(self):
         self.agent = Agent("PineApple")
-        self.opponents = [Agent(str(i)) for i in range(7)]
+        self.opponents = [Agent("") for i in range(7)]
         self.campaigns = {}
         self.campaignOffer = None
         self.day = 0
@@ -50,7 +50,7 @@ class Communicator:
         
         try:
             MarketSegment.segments_init()
-            #Campaign.statistic_campaigns_init() #TODO: bring back to life again when can
+            eprint("#TODO: bring back to life again when can") #Campaign.statistic_campaigns_init() #TODO: bring back to life again when can
             Campaign.setCampaigns(self.game.campaigns)
         except KeyError as e:
             template = "While initializing stuff an exception of type {0} occurred. Arguments:\n{1!r}"
@@ -63,14 +63,6 @@ class Communicator:
         self.game.campaigns = Campaign.campaigns
         with open( "pickle//game.p", "wb" ) as pickleFile:
             pickle.dump( self.game, pickleFile)
-            #This was used for debugging
-#            eprint(self.game.agent.my_campaigns)
-#            for key, camp in self.game.agent.my_campaigns.items():
-#                eprint(key, camp.segments)
-#            for ag in self.game.opponents:
-#                eprint(ag.my_campaigns)
-#                for key, camp in ag.my_campaigns.items():
-#                    eprint(key, camp.segments)
             
     
     def handleGetUcsAndBudget(self):
@@ -144,6 +136,7 @@ class Communicator:
         eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
             
     def handleGetBidBundle(self):
+        eprint("handleGetBidBundle: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
         answer = {}
         bidBundle = self.game.agent.formBidBundle(self.game.day+1)
         answer["bidbundle"] = bidBundle
@@ -164,6 +157,16 @@ class Communicator:
                 
     
     def handleAdNetworkDailyNotification(self):
+        '''
+        inputs:
+            0 - AdNetworkDailyNotification.effectiveDay
+        		1 - AdNetworkDailyNotification.serviceLevel
+    			2 - AdNetworkDailyNotification.price
+    			3 - AdNetworkDailyNotification.qualityScore
+    			4 - AdNetworkDailyNotification.campaignId
+    			5 - AdNetworkDailyNotification.winner
+    			6 - AdNetworkDailyNotification.costMillis
+        '''
         self.game.day = int(self.argsList[0])
         self.game.agent.dailyUCSLevel = float(self.argsList[1])
         #price of UCS in argList[3] (dont care)
@@ -184,10 +187,24 @@ class Communicator:
         
         #TODO: Verify assign correctly
         cmp = self.game.campaignOffer
-        if self.argsList[5] == self.game.agent.name: #TODO: dangerous, check
+        if self.argsList[6] != 0:
+            eprint("Won campaign cid {}, assigned to myself!".format(cid))
             cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality}, budget = int(self.argsList[6]))
         else:
-            cmp.assignCampaign(self.game.opponents[0], goalObject = None, budget = int(self.argsList[6])) #TODO: change assignee to real one
+            winner_name = self.argsList[5]
+            if any(agent.name == winner_name for agent in self.game.opponents):
+                for agent in self.game.opponents:
+                    if agent.name == winner_name:
+                         cmp.assignCampaign(agent, goalObject = None, budget = int(self.argsList[6]))
+                         break
+            else:
+                for agent in self.game.opponents:
+                    if agent.name == "":
+                        agent.name = winner_name
+                        cmp.assignCampaign(agent, goalObject = None, budget = int(self.argsList[6]))
+            eprint("Lost campaign cid {}, assigned to agent {}".format(cid, winner_name))
+           
+            
     
     def handleAdxPublisherReport(self):
         '''currently undefined impl'''
