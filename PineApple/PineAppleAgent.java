@@ -337,6 +337,7 @@ public class PineAppleAgent extends Agent
 		System.out.println("Day " + day + ": Allocated campaign - " + campaignData);
 		
 		if (day == 0) {
+                        DataToCSV.createCSVFile("temp_"+startInfo.getSimulationID()+".csv", false, "");
 			String s_tmp = "Day " + day + ": Allocated campaign - " + campaignData;
 			DataToCSV.split_to_fields(s_tmp, DEBUG);
 		}
@@ -534,6 +535,9 @@ public class PineAppleAgent extends Agent
 		System.out.println("Day " + day + " : Simulation Status Received");
 		sendBidAndAds();
 		System.out.println("Day " + day + " ended. Starting next day");
+		if (day == 60)
+                    DataToCSV.fill_with_zeros(60);
+                
 		++day;
 	}
 
