@@ -88,14 +88,14 @@ class Campaign:
             Q_old = goalObject["Q_old"]
             B = self.budget
             demand = self.campaign_demand_temp()
-            R = self.reach
+#            R = self.reach
             
             f = lambda x: -self.campaign_profit_for_ImpsTarget_estim(x, Q_old)
             x0 = [self.reach]
             res = optimize.basinhopping(f, x0, niter=1)
 
-            self.impressions_goal = res.x[0]
-            self.avg_p_per_imp = B*demand*self.impressions_goal/R
+            self.impressions_goal = res.x.flatten()[0] #res.x[0]
+            self.avg_p_per_imp = B*demand/self.impressions_goal #B*demand*self.impressions_goal/R
         
     def getCampaignList():
         return list(Campaign.campaigns.values())

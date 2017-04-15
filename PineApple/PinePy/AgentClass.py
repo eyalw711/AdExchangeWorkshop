@@ -43,49 +43,60 @@ class Agent:
         '''
         bidsArray = []
         ongoing_camps = [cmp for cid,cmp in self.my_campaigns.items() if cmp.activeAtDay(day)]
-        #print("#formBidBundle: {}: ongoing camps {}".format(self.name, self.my_campaigns.keys()))
+        eprint("#formBidBundle: {}: tomorrow is {}, ongoing camps tomorrow are {}".format(self.name, day, [cmp.cid for cmp in ongoing_camps]))
         ucs_level = ucsManager.get_desired_UCS_level(day, ongoing_camps) #day is tomorrow as this function expects
         if ucs_level > 0:
             ucs_level -= 1
         lvl_accuracy = ucsManager.level_accuracy(ucs_level)
-        # query (segment, platform, adtype)
-#        public final void addQuery(final AdxQuery query, final double bid,
-#			final Ad ad, int campaignId, int weight, final double dailyLimit) {
-        for cid, cmp in self.my_campaigns.items():
-#            print("#formBidBundle: forming bids for cid {}".format(cid))
+      
+        #for cid, cmp in self.my_campaigns.items():
+        for cmp in ongoing_camps:
+            cid = cmp.cid
+            eprint("#formBidBundle: forming bids for cid {}".format(cid))
             cmpSegmentsSize = cmp.sizeOfSegments()
-            goal_targeted_number_of_imps_for_day = min(cmpSegmentsSize*lvl_accuracy, \
-                            (cmp.impressions_goal - cmp.targetedImpressions)*lvl_accuracy)
+            goal_targeted_number_of_imps_for_day = min(cmpSegmentsSize*lvl_accuracy, (cmp.impressions_goal - cmp.targetedImpressions)*lvl_accuracy)
+            eprint("#formBidBundle: goal_targeted_number_of_imps_for_day is {}, impressionsGoal = {}, targetedImps = {}, level_accuracy = {}".format(
+                    goal_targeted_number_of_imps_for_day, cmp.impressions_goal, cmp.targetedImpressions, lvl_accuracy))
             # sort segments of campaign based on segment demand
             cmpSegmentsList = sorted(cmp.segments, key = lambda x: x.segment_demand(day, Campaign.getCampaignList()))
+            eprint("sorted campaigns for cid={} are {}".format(cid, cmpSegmentsList))
             bidSegments = []
             for i in range(len(cmpSegmentsList)):
 #                print("#formBidBundle: i={}, segSizeSum*acc={}, impsGoal={}".format(i,sum(seg.size for seg in cmpSegmentsList[:i]) * lvl_accuracy,goal_targeted_number_of_imps_for_day ))
                 if sum(seg.size for seg in cmpSegmentsList[:i]) * lvl_accuracy > goal_targeted_number_of_imps_for_day:
                     bidSegments = cmpSegmentsList[:i]
                     break
-                if not bidSegments:
-                    bidSegments = cmpSegmentsList
-#            print(#formBidBundle: bidSegments)
+            if not bidSegments:
+                bidSegments = cmpSegmentsList
+            eprint("formBidBundle: for cid={} the bid segments are {}".format(cid ,bidSegments))
+            
             def mean(numbers):
                 return float(sum(numbers)) / max(len(numbers), 1)
+            
             avgDem = mean([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments])
+			eprint("demands for segments are: {}".format([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments])
             NORMALING_FACTOR = 1.0 #TODO: think what that should be
+            p = cmp.avg_p_per_imp
+            eprint("for camp {} the p is {} and avgDem is {}".format(cmp.cid, p, avgDem))
             for x in itertools.product(bidSegments, ["Text","Video"], ["Desktop", "Mobile"]):
-                p = cmp.avg_p_per_imp
                 seg = x[0]
                 demand = seg.segment_demand(day, Campaign.getCampaignList())
+                
+                coeffsMult = 1
+                if x[1] == "Video" and cmp.videoCoeff > 1:
+                    coeffsMult *= cmp.videoCoeff
+                if x[2] == "Mobile" and cmp.mobileCoeff > 1:
+                    coeffsMult *= cmp.mobileCoeff
+                
+                
                 if (not seg is bidSegments[-1]):
                     s = seg.size
                 else:
-                    s= goal_targeted_number_of_imps_for_day - sum(segTag.size for segTag in bidSegments[:-1])
-                    
-#                bidBundle += [{'segment': x[0].name, 'adType': x[1], 
-#                        'adPlatform': x[2], 
-#                        'campID': cid, 
-#                        'bid': (p*demand),  # TODO: don't just multiply by demand
-#                        'spendLimit' : (p*demand*s*lvl_accuracy), # TODO: don't just multiply by demand. consider how to refer to each  ad type / mobie
-#                        'weight': (cmp.imps_to_go)}]
+                    s = goal_targeted_number_of_imps_for_day - sum(segTag.size for segTag in bidSegments[:-1]) 
+                    if s < 0:
+                        eprint("formBidBundle: s = {}, goal_targeted_number_of_imps_for_day = {}, sum Of all segments but the last = {}, sum of all segments = {}, number of segments = {}".format(
+                                s, goal_targeted_number_of_imps_for_day, sum(segTag.size for segTag in bidSegments[:-1]), 
+                                sum(segTag.size for segTag in bidSegments), len(bidSegments )))
                 
                 query = {
                         "marketSegments" : [{"segmentName":seg.name}],
@@ -93,10 +104,14 @@ class Agent:
                          "adType" : x[1]
                         }
                 
-                eprint("p is ", p, " and deltaDemand is ", (demand - avgDem))
-                bid = float(p+(demand - avgDem)*NORMALING_FACTOR)
+                
+                eprint("formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
+                
+                bid = float((p + (demand - avgDem) * NORMALING_FACTOR) * coeffsMult)
                 if bid < 0:
+                    eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")
                     bid = p
+                
                 bidsArray += [{"query" : query, 
                          "bid" : str(bid), 
                          "campaignId" : int(cid), 
