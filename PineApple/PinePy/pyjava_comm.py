@@ -31,7 +31,7 @@ class Game:
         self.opponents = [Agent(str(i)) for i in range(7)]
         self.campaigns = {}
         self.campaignOffer = None
-        self.day = 1
+        self.day = 0
         
 
 class Communicator:
@@ -123,6 +123,7 @@ class Communicator:
         reach = int(self.argsList[1])
         startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
         segmentList = MarketSegment.getSegmentListFromStr(self.argsList[4])
+        eprint("handleInitialCampaignMessage: segmentsList is ", segmentList)
         vidCoeff = float(self.argsList[5])
         mobileCoeff = float(self.argsList[6])
         budgetMillis = float(self.argsList[7])
@@ -139,6 +140,8 @@ class Communicator:
                                           mobileCoeff) for i in range(7)] #TODO: what are the other IDs???
         for (inx,camp) in enumerate(otherInitialCampaigns):
             camp.assignCampaign(self.game.opponents[inx], None, budgetMillis)
+        
+        eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
             
     def handleGetBidBundle(self):
         answer = {}
@@ -244,11 +247,13 @@ def main(queryName, argsList):
     if queryName in Communicator.handlers:
         communicator = Communicator(queryName, argsList)
         
-        try:
-            communicator.loadPickle()
-        except Exception as e:
-            printException(e, "main", "loading a pickle")
-            traceback.print_exc()
+            
+        if queryName != "StartInfo":
+            try:
+                communicator.loadPickle()
+            except Exception as e:
+                printException(e, "main", "loading a pickle")
+                traceback.print_exc()
         
         try:
             communicator.handleQuery()

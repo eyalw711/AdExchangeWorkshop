@@ -58,7 +58,7 @@ public class PineAppleAgent extends Agent
 	public boolean DEBUG_UCS = false;
 	
 	
-	public static String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py ";
+	public static String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py "; //"python ./PinePy/pyjava_comm.py ";
 	
 	private final Logger log = Logger
 			.getLogger(PineAppleAgent.class.getName());
@@ -211,7 +211,7 @@ public class PineAppleAgent extends Agent
 			} 
 			else if(content instanceof CampaignAuctionReport) 
 			{
-				hadnleCampaignAuctionReport((CampaignAuctionReport) content);
+				handleCampaignAuctionReport((CampaignAuctionReport) content);
 			} 
 			else if (content instanceof ReservePriceInfo) 
 			{
@@ -235,7 +235,7 @@ public class PineAppleAgent extends Agent
 		}
 	}
 
-	private void hadnleCampaignAuctionReport(CampaignAuctionReport content) 
+	private void handleCampaignAuctionReport(CampaignAuctionReport content) 
 	{
 		// ingoring - this message is obsolete
 	}
@@ -266,15 +266,17 @@ public class PineAppleAgent extends Agent
 	 * 
 	 * @param publisherCatalog
 	 */
-	private void handlePublisherCatalog(PublisherCatalog publisherCatalog) {
+	private void handlePublisherCatalog(PublisherCatalog publisherCatalog) 
+	{
+		System.out.println("Handling Publishers Catalog");
 		this.publisherCatalog = publisherCatalog;
 		generateAdxQuerySpace();
 		getPublishersNames();
-
 	}
 	
 
-	public static String getSegmentsInitials(String[] splitedSegments){
+	public static String getSegmentsInitials(String[] splitedSegments)
+	{
 		char[] letterForSegmet = new char[splitedSegments.length];
 		String segmentToUse = "";
 		
@@ -479,28 +481,7 @@ public class PineAppleAgent extends Agent
 		
 	}
 	
-	private int isCampineDay0Completed() {
-		for (Map.Entry<Integer, CampaignData> entry : myCampaigns.entrySet()) {
-			if (entry.getValue().dayStart ==1 && entry.getValue().impsTogo() <=0 ) {
-				if (DEBUG) {
-					System.out.println("DAY 0 COMPLETEDDDDDDDDDDDDDDDDD");
-				}
-				return 1;
-			}
-		}
-		return 0;
-	}
-	
-	private boolean biddedYesterday() 
-	{
-		if (DEBUG){
-			System.out.println("@@@@@@@@@@@@@@@@@@@" + pendingCampaign.budget);
-		}
-		if (pendingCampaignBudget == 40000)
-			return false;
-		else
-			return true;
-	}
+
 
 	/**
 	 * On day n ( > 0), the result of the UserClassificationService and Campaign
@@ -590,7 +571,8 @@ public class PineAppleAgent extends Agent
 			if(debugFlag)
 				System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
 			
-			if(outputString!=null){
+			if(outputString!=null)
+			{
 				
 				bidBundle = new AdxBidBundle();
 		
@@ -600,31 +582,36 @@ public class PineAppleAgent extends Agent
 				JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
 				JSONObject JbidBundleElement;
 				AdxQuery query;
-				Device d;
+				Device device;
 				AdType adtype; 
-				for (int i = 0; i < JbidsArray.length(); i++) {	
+				for (int i = 0; i < JbidsArray.length(); i++) 
+				{	
 					JbidBundleElement = JbidsArray.getJSONObject(i);
 					JSONObject JQuery = JbidBundleElement.getJSONObject("query");
 					if(JQuery.getString("Device").equals("Desktop"))
-						d =	Device.pc;
+						device = Device.pc;
 					else
-						d =	Device.mobile;
+						device = Device.mobile;
 					if(JQuery.getString("adType").equals("Text"))
-						adtype =AdType.text;
+						adtype = AdType.text;
 					else
-						adtype =AdType.video;
-		 
-					query = new AdxQuery(JQuery.getString("publisher"), 
-							createSegmentFromPython(JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName")),
-							d,
-							adtype);
+						adtype = AdType.video;
 					
-					bidBundle.addQuery(query, 
-							Double.parseDouble(JbidBundleElement.getString("bid")),
-							new Ad(null),
-							JbidBundleElement.getInt("campaignId"),
-							JbidBundleElement.getInt("weight"),
-							Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
+					for (String publisherName : publisherNames )
+					{
+						query = new AdxQuery(publisherName, 
+								createSegmentFromPython(JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName")),
+								device,
+								adtype);
+						
+						bidBundle.addQuery(query, 
+								Double.parseDouble(JbidBundleElement.getString("bid")),
+								new Ad(null),
+								JbidBundleElement.getInt("campaignId"),
+								JbidBundleElement.getInt("weight"),
+								Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
+					}
+					
 				}
 			
 				if (bidBundle != null) 
@@ -693,9 +680,9 @@ public class PineAppleAgent extends Agent
 		
 		for (PublisherCatalogEntry publisherKey : adxPublisherReport.keys()) 
 		{
-			AdxPublisherReportEntry entry = adxPublisherReport
-					.getEntry(publisherKey);
+			AdxPublisherReportEntry entry = adxPublisherReport.getEntry(publisherKey);
 			System.out.println(entry.toString());
+			System.out.println(entry.getReservePriceBaseline());
 		}
 	}
 
@@ -761,8 +748,8 @@ public class PineAppleAgent extends Agent
 			 */
 			for (PublisherCatalogEntry publisherCatalogEntry : publisherCatalog) 
 			{
-				String publishersName = publisherCatalogEntry
-						.getPublisherName();
+				String publishersName = publisherCatalogEntry.getPublisherName();
+				
 				for (MarketSegment userSegment : MarketSegment.values()) 
 				{
 					Set<MarketSegment> singleMarketSegment = new HashSet<MarketSegment>();

@@ -10,35 +10,48 @@ import CampaignClass as cc
 import SegmentClass as sc
 import pandas as pd
 from sklearn import svm
+import sys
 
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+    
 class ucsManager:
     
-    ''' return the accuracy degree of some level in the range 0-7 '''
     def level_accuracy(lvl):
+        '''
+        gets lvl int 0..7
+        return the accuracy degree of as 0.9'''
         if 0 <= lvl <= 7:
             return math.pow(0.9, lvl)
         else:
-            return -1
+            raise ValueError("valid levels are 0..7, but got {}!".format(lvl))
     
     def get_desired_UCS_level(day, ongoing_camps):
         '''
         param ongoing_camps in a list of campaigns active tomorrow
         param day is tomorrow
+        returns level in 0..7
         '''
         if len(ongoing_camps) == 0:
-            #print ("#get_desired_UCS_level: No ongoing campaigns")
+            eprint ("#get_desired_UCS_level: No ongoing campaigns")
             return 7
         ''' setting lvl to argmax I_target .... as defined in the document '''
         camp = sorted(ongoing_camps, key=lambda x: (x.impressions_goal - x.targetedImpressions)/((x.endDay - day  + 1)*x.sizeOfSegments()) , reverse=True)[0]        
         level_no_round = (camp.impressions_goal - camp.targetedImpressions)/((camp.endDay - day + 1)*camp.sizeOfSegments())
-        #print ("#get_desired_UCS_level: level_no_round = {}".format(level_no_round))
+        if level_no_round < 0:
+            eprint("get_desired_UCS_level: impressions_goal={}, targetedImpressions={}. set level_no_round to 0".format(camp.impressions_goal, camp.targetedImpressions))
+            level_no_round = 0
+        
+        
         #find rounded level
         lvlacc = math.pow(0.9,7) #lowest
         lvl = 7
-        while (lvlacc < level_no_round and lvlacc <= 1):
+        while (lvlacc < level_no_round and lvl >= 1):
             lvlacc = lvlacc / 0.9
             lvl -= 1
         #print("#get_desired_UCS_level: desired level {}".format(lvl))
+        eprint ("#get_desired_UCS_level: level_no_round = {}, returned lvl = {}".format(level_no_round, lvl))
         return lvl
     
     def predict_required_price_to_win_desired_UCS_level(ucs_level, day, number_of_active_networks, number_of_last_day_networks):
