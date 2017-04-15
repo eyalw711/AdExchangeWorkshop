@@ -74,7 +74,7 @@ class Agent:
                 return float(sum(numbers)) / max(len(numbers), 1)
             
             avgDem = mean([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments])
-			eprint("demands for segments are: {}".format([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments])
+            eprint("demands for segments are: {}".format([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments]))
             NORMALING_FACTOR = 1.0 #TODO: think what that should be
             p = cmp.avg_p_per_imp
             eprint("for camp {} the p is {} and avgDem is {}".format(cmp.cid, p, avgDem))

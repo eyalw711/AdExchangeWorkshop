@@ -153,12 +153,12 @@ class Campaign:
         Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME.R", n_estimators=100)
         Campaign.bdt.fit(train[features], train["decision"])
         
-    def compute_campaign_desicion(revenue, completion):
-        if revenue > 0 and completion >= 1:
+    def compute_campaign_desicion(profit, completion):
+        if profit > 0 and completion >= 1:
             return 1
-        elif revenue > 10 and completion >= 0.9:
+        elif profit > 10 and completion >= 0.9:
             return 1
-        elif revenue > 20 and completion >= 0.8:
+        elif profit > 20 and completion >= 0.8:
             return 1
         return -1
     
@@ -190,7 +190,7 @@ class Campaign:
         data = pd.read_csv('..//data//campaigns_profitability.csv')
         number_of_rows = data.shape[0]
         for i in range (0,number_of_rows):
-            data.at[i,"decision"] = Campaign.compute_campaign_desicion(data.at[i,"revenue"],data.at[i,"completion_percentage"])
+            data.at[i,"decision"] = Campaign.compute_campaign_desicion(data.at[i,"profit"],data.at[i,"completion_percentage"])
         data.to_csv('..//data//campaigns_profitability.csv',index = False)
     
     def campagin_protabiloity_assign_demand():
@@ -241,11 +241,11 @@ class Campaign:
         # write to CSV:     
         data.to_csv('..//data//campaigns_profitability.csv', index = False)
     
-    def predict_campaign_profitability(self, day):
+    def predict_campaign_profitability(self, day, budget):
         campaigns = Campaign.getCampaignList() + Campaign.getStatisticsCampaignListAtDays(self.startDay, self.endDay)
         test = [{
                 "day":day,
-                "budget":self.budget,
+                "budget":budget,
                 "start":self.startDay,
                 "end":self.endDay,
                 "vidCoeff":self.videoCoeff,
@@ -257,8 +257,11 @@ class Campaign:
                 "YML":self.contains_segment("YML"), "YMH":self.contains_segment("YMH"),
                 "YFL":self.contains_segment("YFL"), "YFH":self.contains_segment("YFH")}]                                          
         #print("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
-        y_pred = Campaign.bdt.predict(pd.DataFrame(test)) 
-        return int(y_pred[0])
+        for i in range (1, 1000, 5):
+            y_pred = Campaign.bdt.predict(pd.DataFrame(test))
+            if int(y_pred[0])== 1:
+                return int(y_pred[0]), budget    
+        return int(y_pred[0]), budget
     
     def is_last_day(self, day):
         if day == self.endDay:

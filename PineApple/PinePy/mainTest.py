@@ -100,15 +100,17 @@ def test_ucs_prediction():
     
 def main():
     print("PineApple!")    
-    cc.Campaign.campagin_statistics_assignment()
     
     init_actions = [sc.MarketSegment.segments_init, cc.Campaign.statistic_campaigns_init]
     for action in init_actions:
         action()
         
+    # update campagn statistics CSV file
+    cc.Campaign.campagin_statistics_assignment()
+    
     # update campaign profitability CSV file with decision and demand
-    #Campaign.campagin_protabiloity_assign_desicion()
-    #Campaign.campagin_protabiloity_assign_demand()
+    Campaign.campagin_protabiloity_assign_desicion()
+    Campaign.campagin_protabiloity_assign_demand()
     
     tests = [test_segments_and_demand, test_ImpsOptimization, test_ucs_desired_level, test_bidBundle, test_profitability_prediction, test_ucs_prediction]# test_statisticalCampaigns]
     for test in tests:
