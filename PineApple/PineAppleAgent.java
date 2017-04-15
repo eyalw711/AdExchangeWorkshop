@@ -220,8 +220,7 @@ public class PineAppleAgent extends Agent
 			else 
 			{
 				System.out.println("UNKNOWN Message Received: " + content);
-			}numOfCampaignsCompleted
-numOfCampaignsCompleted
+			}
 		} 
 		catch (NullPointerException e) 
 		{
@@ -683,7 +682,7 @@ numOfCampaignsCompleted
 		{
 			AdxPublisherReportEntry entry = adxPublisherReport.getEntry(publisherKey);
 			System.out.println(entry.toString());
-			System.out.println(entry.getReservePriceBaseline());
+			System.out.println("reserved price baseline: " + entry.getReservePriceBaseline());
 		}
 	}
 
