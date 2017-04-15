@@ -10,6 +10,8 @@ import pandas as pd
 from scipy import optimize
 import math
 import random
+import os
+import glob
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 
@@ -154,10 +156,35 @@ class Campaign:
     def compute_campaign_desicion(revenue, completion):
         if revenue > 0 and completion >= 1:
             return 1
+        elif revenue > 10 and completion >= 0.9:
             return 1
         elif revenue > 20 and completion >= 0.8:
             return 1
         return -1
+    
+    def campagin_statistics_assignment():
+        first = True
+        dir_path = "..//data//statistics"
+        number_of_files = len(glob.glob1(dir_path,"*.csv"))
+        counters = [0]*488
+        for file in os.listdir(dir_path):
+            if file.endswith(".csv"):
+                file_path = os.path.join(dir_path, file)
+                if (first):
+                    data = pd.read_csv(file_path)
+                    number_of_rows = data.shape[0]
+                    for i in range (0,number_of_rows):
+                        for j in range (4,9):
+                            data.iat[i,j] = 0
+                    first = False
+                data2 = pd.read_csv(file_path)
+                for i in range (0,number_of_rows):
+                    if(int(data2.iat[i,5]) != 0):
+                        for j in range (4,8):   
+                            data.iat[i,j] = (float(data.iat[i,j])*counters[i]+(float(data2.iat[i,j])))/(1+counters[i])
+                        counters[i] += 1
+                    data.iat[i,8] += float(data2.iat[i,8])/number_of_files
+        data.to_csv('..//data//campaign_statistics.csv',index = False)
     
     def campagin_protabiloity_assign_desicion():
         data = pd.read_csv('..//data//campaigns_profitability.csv')
