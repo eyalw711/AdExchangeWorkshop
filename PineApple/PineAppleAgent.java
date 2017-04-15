@@ -220,8 +220,8 @@ public class PineAppleAgent extends Agent
 			else 
 			{
 				System.out.println("UNKNOWN Message Received: " + content);
-			}
-
+			}numOfCampaignsCompleted
+numOfCampaignsCompleted
 		} 
 		catch (NullPointerException e) 
 		{
@@ -318,7 +318,7 @@ public class PineAppleAgent extends Agent
 	 */
 	private void handleInitialCampaignMessage(InitialCampaignMessage campaignMessage) 
 	{
-		System.out.println(campaignMessage.toString());
+		System.out.println("Initial_Campaign_Message:\n" + campaignMessage.toString());
 
 		day = 0;
 
@@ -457,17 +457,16 @@ public class PineAppleAgent extends Agent
 				retval++;
 		}
 		if (DEBUG) {
-			System.out.println("############### day:" + day + " number of campaigns completed:"+retval);
+			System.out.println("DEBUG(numOfCampaignsCompleted) - day:" + day + " number of campaigns completed:"+retval);
 		}
 		return retval;
 	}
 	
 	private void printProp() {
 		if (DEBUG){
-			System.out.println(day);
+			System.out.println("DEBUG(printProp): the day is: " + day);
 			for (Map.Entry<Integer, CampaignData> entry : myCampaigns.entrySet()) {
-				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-				
+				System.out.println("~~~~~~~~~~~~~~Campain_Properties~~~~~~~~~~~~~~~~~");
 				System.out.println(entry.getValue().budget);
 				System.out.println(entry.getValue().dayStart);
 				System.out.println(entry.getValue().dayEnd);
@@ -475,7 +474,7 @@ public class PineAppleAgent extends Agent
 				System.out.println(entry.getValue().stats);
 				System.out.println(entry.getValue().targetSegment);
 				System.out.println("impsToGo: " + entry.getValue().impsTogo());
-				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			}
 		}
 		
@@ -641,7 +640,9 @@ public class PineAppleAgent extends Agent
 		campaignReports.add(campaignReport);
 
 		String paramsToSend = Integer.toString(campaignReport.keys().size());
-
+                System.out.println("Campaign Report:");
+			
+		
 		/*
 		 * for each campaign, the accumulated statistics from day 1 up to day
 		 * n-1 are reported
@@ -825,7 +826,7 @@ public class PineAppleAgent extends Agent
 
 		campaignData.campaignQueries = new AdxQuery[campaignQueriesSet.size()];
 		campaignQueriesSet.toArray(campaignData.campaignQueries);
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!"+Arrays.toString(campaignData.campaignQueries)+"!!!!!!!!!!!!!!!!");
+		//System.out.println("!!!!!!!!!!!!!!!!!!!!!!"+Arrays.toString(campaignData.campaignQueries)+"!!!!!!!!!!!!!!!!");
 	}
 
 	//run a new proccess and activate the inputed cmd  - taken from http://alvinalexander.com
@@ -862,16 +863,19 @@ public class PineAppleAgent extends Agent
             
             if(debugFlagStatic)
             {
+                
+                System.out.println("DEBUG: python std outputs:");
+                System.out.println("--------------------------");
+                System.out.println("the stderr is:");
+            	System.out.println(stderr);
             	System.out.println("the stdout is:");
             	System.out.println(stdout);
-            	System.out.println("the stderr is:");
-            	System.out.println(stderr);
-            	
+                           	
             }
             
         }
         catch (IOException e) {
-            System.out.println("exception happened - here's what I know: ");
+            System.out.println("exception happened (runPythonScript) - here's what I know: ");
             e.printStackTrace();
             System.exit(-1);
         }
