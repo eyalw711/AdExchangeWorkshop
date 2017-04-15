@@ -82,16 +82,14 @@ class Communicator:
         self.game.campaignOffer = camp
         
         initialBudget = self.game.agent.campaignOpportunityBid(camp)
-#        eprint("MUST BRING BACK TO LIFE THE PROFITABILITY PREDICTION")
         Campaign.initialize_campaign_profitability_predictor()
         profitability, final_budget  = camp.predict_campaign_profitability(day,initialBudget,self.game.agent.quality)
 #        profitability = random.choice([1, -1]) #TODO: REMOVE
         if (profitability == -1):
-            answer["budgetBid"] = str(int((camp.reach*self.game.agent.quality) - 0.1))
+            answer["budgetBid"] = str(int((camp.reach*self.game.agent.quality) - 1))
         else:
             answer["budgetBid"] = str(int(final_budget))
             
-#        day = self.game.day
         ongoingCamps = self.game.agent.getOnGoingCampaigns(day+1)
         ucsLevel = ucsManager.get_desired_UCS_level(day+1, ongoingCamps)
         
@@ -174,6 +172,9 @@ class Communicator:
         self.game.agent.quality = float(self.argsList[3])
         
         cid = int(self.argsList[4])
+        winner_name = self.argsList[5]
+        budgetOfCampaign = int(self.argsList[6])
+        
         try:
             eprint("handleAdNetworkDailyNotification processed args:" ,self.game.day,
                    self.game.agent.dailyUCSLevel,
@@ -187,24 +188,23 @@ class Communicator:
         
         #TODO: Verify assign correctly
         cmp = self.game.campaignOffer
-        if self.argsList[6] != 0:
-            eprint("Won campaign cid {}, assigned to myself!".format(cid))
-            cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality}, budget = int(self.argsList[6]))
+        if budgetOfCampaign != 0:
+            eprint("handleAdNetworkDailyNotification: Won campaign cid {}, assigned to myself!".format(cid))
+            cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality}, budget = budgetOfCampaign)
         else:
-            winner_name = self.argsList[5]
             if any(agent.name == winner_name for agent in self.game.opponents):
                 for agent in self.game.opponents:
                     if agent.name == winner_name:
-                         cmp.assignCampaign(agent, goalObject = None, budget = int(self.argsList[6]))
+                         cmp.assignCampaign(agent, goalObject = None, budget = budgetOfCampaign)
                          break
             else:
                 for agent in self.game.opponents:
                     if agent.name == "":
                         agent.name = winner_name
-                        cmp.assignCampaign(agent, goalObject = None, budget = int(self.argsList[6]))
-            eprint("Lost campaign cid {}, assigned to agent {}".format(cid, winner_name))
-           
-            
+                        cmp.assignCampaign(agent, goalObject = None, budget = budgetOfCampaign)
+                        break
+            eprint("handleAdNetworkDailyNotification: Lost campaign cid {}, assigned to agent {}".format(cid, winner_name))
+        eprint("handleAdNetworkDailyNotification: opponents names - {}".format([agent.name for agent in self.game.opponents]))
     
     def handleAdxPublisherReport(self):
         '''currently undefined impl'''
@@ -219,7 +219,6 @@ class Communicator:
         pass
     
     def handleStartInfo(self):
-        #TODO: Assume OK to delete here
         try:
             os.remove("pickle//game.p")
             eprint("removed last pickle")

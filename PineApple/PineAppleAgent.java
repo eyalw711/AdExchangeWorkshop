@@ -337,6 +337,7 @@ public class PineAppleAgent extends Agent
 		System.out.println("Day " + day + ": Allocated campaign - " + campaignData);
 		
 		if (day == 0) {
+                        DataToCSV.createCSVFile("temp_"+startInfo.getSimulationID()+".csv", false, "");
 			String s_tmp = "Day " + day + ": Allocated campaign - " + campaignData;
 			DataToCSV.split_to_fields(s_tmp, DEBUG);
 		}
@@ -534,6 +535,9 @@ public class PineAppleAgent extends Agent
 		System.out.println("Day " + day + " : Simulation Status Received");
 		sendBidAndAds();
 		System.out.println("Day " + day + " ended. Starting next day");
+		if (day == 60)
+                    DataToCSV.fill_with_zeros(60);
+                
 		++day;
 	}
 
@@ -579,7 +583,7 @@ public class PineAppleAgent extends Agent
 				JSONObject JbidBundle = new JSONObject(outputString);
 				JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
 				JSONObject JbidBundleElement;
-				AdxQuery query;
+				AdxQuery query, emptyQuery;
 				Device device;
 				AdType adtype; 
 				for (int i = 0; i < JbidsArray.length(); i++) 
@@ -596,11 +600,23 @@ public class PineAppleAgent extends Agent
 						adtype = AdType.video;
 					
 					for (String publisherName : publisherNames )
-					{
+					{	
+						String marketSegmentName = JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName");
+						Set<MarketSegment> segment;
+						
+						if (marketSegmentName.compareTo("Unknown") == 0) //equals
+						{
+							segment = new HashSet<MarketSegment>();
+						}
+						else
+						{
+							segment = createSegmentFromPython(marketSegmentName);
+						}
 						query = new AdxQuery(publisherName, 
-								createSegmentFromPython(JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName")),
+								segment,
 								device,
 								adtype);
+						
 						
 						bidBundle.addQuery(query, 
 								Double.parseDouble(JbidBundleElement.getString("bid")),
@@ -962,7 +978,7 @@ public class PineAppleAgent extends Agent
 			this.campaignQueries = campaignQueries;
 		}
 
-/*		public int accurityCalc() {
+		/*	public int accurityCalc() {
 			char[] flags = CampaignStatus.segParser(this.targetSegment.toString());
 			int count = 0;
 			for (int i =0; i < 8; i++){
