@@ -241,12 +241,12 @@ public class CampaignStatus {
 		return flags;
 	}
 	
-	public String createLine(){
+	public String createLine(int index){
 		String ltw=null;
 		char [] flags = this.segmentToMask();
 		this.calcpercentage();
-		ltw = this.cid + ',' + Integer.toString(game) + ',' + this.day + ',' + this.budget + ',' + this.start + ',' + this.end + ',' + this.vidCoeff + ',' + this.mobCoeff + ',' + this.reach + ',' + "" + ',' + flags[0] + ',' + flags[1] + ',' + flags[2] + ',' + flags[3] + ',' + flags[4] + ',' + flags[5] + ',' + flags[6] + ',' + flags[7] + ',' +this.percent + ',' + "??" + ',' + this.revenue + ',' + this.budgetMillis + ',' + this.tartgetedImps + ',' + this.other + ',' + this.cost + ',' + this.ERR + ',' + "";
-		// cid,#sim,day,budget,start,end,vidCoeff,mobCoeff,reach,demand,OML,OMH,OFL,OFH,YML,YMH,YFL,YFH,completion_percentage,profit,decision,revenue,budgetMillis,tartgetedImps,other,cost,ERR
+		ltw = Integer.toString(index) + ',' + this.cid + ',' + Integer.toString(game) + ',' + this.day + ',' + this.budget + ',' + this.start + ',' + this.end + ',' + this.vidCoeff + ',' + this.mobCoeff + ',' + this.reach + ',' + "" + ',' + flags[0] + ',' + flags[1] + ',' + flags[2] + ',' + flags[3] + ',' + flags[4] + ',' + flags[5] + ',' + flags[6] + ',' + flags[7] + ',' +this.percent + ',' + "??" + ',' + this.revenue + ',' + this.budgetMillis + ',' + this.tartgetedImps + ',' + this.other + ',' + this.cost + ',' + this.ERR + ',' + "";
+		// index,cid,#sim,day,budget,start,end,vidCoeff,mobCoeff,reach,demand,OML,OMH,OFL,OFH,YML,YMH,YFL,YFH,completion_percentage,profit,decision,revenue,budgetMillis,tartgetedImps,other,cost,ERR
 		return ltw;
 	}
 	
