@@ -19,6 +19,9 @@ from UcsManagerClass import ucsManager
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+    with open("runlog.log", "a+") as logFile:
+        print(*args, file=logFile, **kwargs)
+        #logFile.write(*args)
 
 def printException(e, functionName, whileDoingString):
     template = "While " + whileDoingString + " an exception of type {0} occurred. Arguments:\n{1!r}"
@@ -42,16 +45,19 @@ class Communicator:
         self.game = Game()
     
     def loadPickle(self):
+        loaded = True
         try:
             self.game = pickle.load( open("pickle//game.p", "rb"))
         except (OSError, IOError) as e:
+            loaded = False
             eprint("loadPickle: ", str(e), " making a new game since pickle isn't found")
             self.game = Game()
         
         try:
             MarketSegment.segments_init()
             eprint("#TODO: bring back to life again when can") #Campaign.statistic_campaigns_init() #TODO: bring back to life again when can
-            Campaign.setCampaigns(self.game.campaigns)
+            if loaded:
+                Campaign.setCampaigns(self.game.campaigns)
         except KeyError as e:
             template = "While initializing stuff an exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(e).__name__, e.args)
@@ -59,6 +65,9 @@ class Communicator:
             
             
     def dumpPickle(self):
+        if self.queryName == "StartInfo":
+            return
+        
         #update game:
         self.game.campaigns = Campaign.campaigns
         with open( "pickle//game.p", "wb" ) as pickleFile:
@@ -82,8 +91,12 @@ class Communicator:
         self.game.campaignOffer = camp
         
         initialBudget = self.game.agent.campaignOpportunityBid(camp)
+        eprint("handleGetUcsAndBudget: initialize_campaign_profitability_predictor")
         Campaign.initialize_campaign_profitability_predictor()
+        
+        eprint("handleGetUcsAndBudget: predict_campaign_profitability in")
         profitability, final_budget  = camp.predict_campaign_profitability(day,initialBudget,self.game.agent.quality)
+        eprint("handleGetUcsAndBudget: predict_campaign_profitability out")
 #        profitability = random.choice([1, -1]) #TODO: REMOVE
         if (profitability == -1):
             answer["budgetBid"] = str(int((camp.reach*self.game.agent.quality) - 1))
@@ -92,7 +105,8 @@ class Communicator:
             
         ongoingCamps = self.game.agent.getOnGoingCampaigns(day+1)
         ucsLevel = ucsManager.get_desired_UCS_level(day+1, ongoingCamps)
-        
+        eprint("handleGetUcsAndBudget: get_desired_UCS_level out")
+       
         numberOfActiveNetworks = sum(
                 [1 for opponent in self.game.opponents if any(camp.activeAtDay(day+1)
                     for camp in opponent.getOnGoingCampaigns(day+1))])
@@ -104,8 +118,9 @@ class Communicator:
         
         answer["UCSBid"] = str(float(ucsBid))
         
+        eprint("handleGetUcsAndBudget: print answer")
         print(json.dumps(answer, separators=(',', ':'))) #NEEDED
-        
+        eprint("handleGetUcsAndBudget: done")
         
     
     def handleInitialCampaignMessage(self):
@@ -221,10 +236,10 @@ class Communicator:
     def handleStartInfo(self):
         try:
             os.remove("pickle//game.p")
+            os.remove("runlog.log")
             eprint("removed last pickle")
         except OSError:
             eprint("Unable to remove pickle")
-            
     
     def handleBankStatus(self):
         '''currently undefined impl'''
@@ -263,7 +278,6 @@ def main(queryName, argsList):
     if queryName in Communicator.handlers:
         communicator = Communicator(queryName, argsList)
         
-            
         if queryName != "StartInfo":
             try:
                 communicator.loadPickle()
@@ -278,7 +292,7 @@ def main(queryName, argsList):
             traceback.print_exc()
             
         try:
-            communicator.dumpPickle()
+            communicator.dumpPickle() #will not do when startInfo
         except Exception as e:
             printException(e, "main", "dumping a pickle")
             traceback.print_exc()

@@ -13,7 +13,7 @@ import random
 import os, sys
 import glob
 import numpy as np
-import sklearn.cross_validation as cval
+#import sklearn.cross_validation as cval
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.ensemble import AdaBoostClassifier
@@ -21,6 +21,9 @@ from sklearn.tree import DecisionTreeClassifier
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+    with open("runlog.log", "a+") as logFile:
+        print(*args, file=logFile, **kwargs)
+        #logFile.write(*args)
 
 class Campaign:
     
@@ -261,12 +264,13 @@ class Campaign:
         data.to_csv('..//data//campaigns_profitability.csv', index = False)
     
     def predict_campaign_profitability(self, day, budget, quality):
+        eprint("predict_campaign_profitability inside")
         campaigns = Campaign.getCampaignList() + Campaign.getStatisticsCampaignListAtDays(self.startDay, self.endDay)
         max_budget = self.reach*quality
-        b = budget / 1000.0
+        budget = budget / 1000.0
         test = [{
                 "day":day,
-                "budget":b,
+                "budget":budget,
                 "start":self.startDay,
                 "end":self.endDay,
                 "vidCoeff":self.videoCoeff,
@@ -283,11 +287,15 @@ class Campaign:
                 "reach":self.reach,
 }]'''                                          
         eprint("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
-        for b in np.arange(b, max_budget, 0.1):
-            test[0]["budget"] = b
-            y_pred = Campaign.bdt.predict(pd.DataFrame(test))
-            if int(y_pred[0])== 1:
-                return int(y_pred[0]), b*1000.0   
+        b = budget
+        y_pred = Campaign.bdt.predict(pd.DataFrame(test))
+#        for b in np.arange(budget, max_budget, 0.5):
+#            test[0]["budget"] = b
+#            y_pred = Campaign.bdt.predict(pd.DataFrame(test))
+#            if int(y_pred[0])== 1:
+#                eprint("predict_campaign_profitability return")
+#                return int(y_pred[0]), b*1000.0  
+        eprint("predict_campaign_profitability return")
         return int(y_pred[0]), b*1000.0
     
     def is_last_day(self, day):
