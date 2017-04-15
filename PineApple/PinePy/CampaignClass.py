@@ -149,8 +149,9 @@ class Campaign:
     def initialize_campaign_profitability_predictor():
         train = pd.read_csv('..//data//campaigns_profitability.csv')        
         features = list(train.columns[3:-9])
+        #features = list(train.columns[3:-17])
         # TODO:  consider the value of n_estimators based on predict_proba
-        Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME.R", n_estimators=100)
+        Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME.R", n_estimators=30)
         Campaign.bdt.fit(train[features], train["decision"])
         
     def compute_campaign_desicion(profit, completion):
@@ -255,13 +256,25 @@ class Campaign:
                 "OML":self.contains_segment("OML"), "OMH":self.contains_segment("OMH"),
                 "OFL":self.contains_segment("OFL"), "OFH":self.contains_segment("OFH"),
                 "YML":self.contains_segment("YML"), "YMH":self.contains_segment("YMH"),
-                "YFL":self.contains_segment("YFL"), "YFH":self.contains_segment("YFH")}]                                          
-        #print("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
-        for i in range (1, 1000, 5):
+                "YFL":self.contains_segment("YFL"), "YFH":self.contains_segment("YFH")}]
+    
+        '''test = [{
+                "day":day,
+                "budget":budget,
+                "start":self.startDay,
+                "end":self.endDay,
+                "vidCoeff":self.videoCoeff,
+                "mobCoeff":self.mobileCoeff,
+                "reach":self.reach,
+                "demand":MarketSegment.segment_set_demand_forDays(self.segments,self.startDay,self.endDay,campaigns)
+}]         '''                                 
+        print("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
+        for i in range (1, 2000, 10):
+            test[0]["budget"] = budget + i
             y_pred = Campaign.bdt.predict(pd.DataFrame(test))
             if int(y_pred[0])== 1:
                 return int(y_pred[0]), budget    
-        return int(y_pred[0]), budget
+        return int(y_pred[0]), budget + i
     
     def is_last_day(self, day):
         if day == self.endDay:

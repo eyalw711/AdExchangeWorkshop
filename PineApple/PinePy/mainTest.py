@@ -77,17 +77,17 @@ def test_ImpsOptimization():
 def test_profitability_prediction():
     cc.Campaign.initialize_campaign_profitability_predictor()
     camp = cc.Campaign.campaigns[0]
-    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(1)))
+    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(1,camp.budget)))
     
     seg = [sc.MarketSegment.segments['OML']]+[sc.MarketSegment.segments['OMH']]
     #seg = [sc.MarketSegment.segments['OMH']]
     camp = cc.Campaign(10, 3, 7, seg , 3000, 1.1, 1.3)    
-    camp.assignCampaign(agents[0], {'Q_old':0.9}, budget = 5000)
+    camp.assignCampaign(agents[0], {'Q_old':0.9}, budget = 0.2)
     campaigns = cc.Campaign.getCampaignList() + cc.Campaign.getStatisticsCampaignListAtDays(camp.startDay, camp.endDay)
     #print("demand:" + str(sc.MarketSegment.segment_set_demand_forDays(camp.segments,camp.startDay,camp.endDay,campaigns)))
 
     
-    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(2)))
+    print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(2,camp.budget)))
     
 def test_statisticalCampaigns():
     for day in cc.Campaign.statistic_campaigns:
@@ -106,11 +106,11 @@ def main():
         action()
         
     # update campagn statistics CSV file
-    cc.Campaign.campagin_statistics_assignment()
+    #cc.Campaign.campagin_statistics_assignment()
     
     # update campaign profitability CSV file with decision and demand
-    Campaign.campagin_protabiloity_assign_desicion()
-    Campaign.campagin_protabiloity_assign_demand()
+    #Campaign.campagin_protabiloity_assign_desicion()
+    #Campaign.campagin_protabiloity_assign_demand()
     
     tests = [test_segments_and_demand, test_ImpsOptimization, test_ucs_desired_level, test_bidBundle, test_profitability_prediction, test_ucs_prediction]# test_statisticalCampaigns]
     for test in tests:
