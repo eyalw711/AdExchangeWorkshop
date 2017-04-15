@@ -28,13 +28,13 @@ class Agent:
     
     def campaignOpportunityBid(self, campaign): # as defined in the document
         COB = campaign.initial_budget_bid()
-        if (COB < campaign.reach*self.quality) and (COB > campaign.reach/(10*self.quality)):
+        if (COB < campaign.reach*self.quality) and (COB > campaign.reach/(10*self.quality)): #inside interval
                 return COB
-        elif COB >= campaign.reach*self.quality:
-            return (campaign.reach*self.quality) - 0.1
+        elif COB >= campaign.reach*self.quality:                                            #greater than maximum
+            return (campaign.reach*self.quality) - 1
         
-        else:
-            return campaign.reach/(10*self.quality) + 0.1
+        else:                                                                               #lower than minimum
+            return campaign.reach/(10*self.quality) + 1
         
     def formBidBundle(self, day):
         '''
@@ -59,28 +59,29 @@ class Agent:
                     goal_targeted_number_of_imps_for_day, cmp.impressions_goal, cmp.targetedImpressions, lvl_accuracy))
             # sort segments of campaign based on segment demand
             cmpSegmentsList = sorted(cmp.segments, key = lambda x: x.segment_demand(day, Campaign.getCampaignList()))
-            eprint("sorted campaigns for cid={} are {}".format(cid, cmpSegmentsList))
+            eprint("#formBidBundle: sorted campaigns for cid={} are {}".format(cid, cmpSegmentsList))
             bidSegments = []
             for i in range(len(cmpSegmentsList)):
-#                print("#formBidBundle: i={}, segSizeSum*acc={}, impsGoal={}".format(i,sum(seg.size for seg in cmpSegmentsList[:i]) * lvl_accuracy,goal_targeted_number_of_imps_for_day ))
                 if sum(seg.size for seg in cmpSegmentsList[:i]) * lvl_accuracy > goal_targeted_number_of_imps_for_day:
                     bidSegments = cmpSegmentsList[:i]
                     break
             if not bidSegments:
                 bidSegments = cmpSegmentsList
-            eprint("formBidBundle: for cid={} the bid segments are {}".format(cid ,bidSegments))
+            eprint("#formBidBundle: for cid={} the bid segments are {}".format(cid ,bidSegments))
             
             def mean(numbers):
                 return float(sum(numbers)) / max(len(numbers), 1)
             
             avgDem = mean([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments])
-            eprint("demands for segments are: {}".format([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments]))
+            eprint("#formBidBundle: demands for segments are: {}".format([seg.segment_demand(day, Campaign.getCampaignList()) for seg in bidSegments]))
+            if any(seg.segment_demand(day, Campaign.getCampaignList()) != avgDem for seg in bidSegments):
+                eprint("#formBidBundle: demand varies!")
+            
             NORMALING_FACTOR = 1.0 #TODO: think what that should be
             p = cmp.avg_p_per_imp
-            eprint("for camp {} the p is {} and avgDem is {}".format(cmp.cid, p, avgDem))
-            for x in itertools.product(bidSegments, ["Text","Video"], ["Desktop", "Mobile"]):
+            eprint("#formBidBundle: for camp {} the p is {} and avgDem is {}".format(cmp.cid, p, avgDem))
+            for x in itertools.product(bidSegments + [None], ["Text","Video"], ["Desktop", "Mobile"]):
                 seg = x[0]
-                demand = seg.segment_demand(day, Campaign.getCampaignList())
                 
                 coeffsMult = 1
                 if x[1] == "Video" and cmp.videoCoeff > 1:
@@ -88,29 +89,44 @@ class Agent:
                 if x[2] == "Mobile" and cmp.mobileCoeff > 1:
                     coeffsMult *= cmp.mobileCoeff
                 
+                if seg == None:                 #empty query (UNKNOWN)
+                    bid = p * coeffsMult
+                    
+                    #this stands for the impressions we don't expect to catch because of lack of ucs
+                    s = min(cmpSegmentsSize, (cmp.impressions_goal - cmp.targetedImpressions)) - goal_targeted_number_of_imps_for_day
+                    
+                    query = {
+                             "marketSegments" : [{"segmentName":"Unknown"}],
+                             "Device" : x[2],
+                             "adType" : x[1]
+                            }
+                    
+                else:                           #normal query
+                    demand = seg.segment_demand(day, Campaign.getCampaignList())
+                    eprint("#formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
+                    bid = float((p + (demand - avgDem) * NORMALING_FACTOR) * coeffsMult)
+                    if bid < 0:
+                        eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")
+                        bid = p
                 
-                if (not seg is bidSegments[-1]):
-                    s = seg.size
-                else:
-                    s = goal_targeted_number_of_imps_for_day - sum(segTag.size for segTag in bidSegments[:-1]) 
-                    if s < 0:
-                        eprint("formBidBundle: s = {}, goal_targeted_number_of_imps_for_day = {}, sum Of all segments but the last = {}, sum of all segments = {}, number of segments = {}".format(
-                                s, goal_targeted_number_of_imps_for_day, sum(segTag.size for segTag in bidSegments[:-1]), 
-                                sum(segTag.size for segTag in bidSegments), len(bidSegments )))
+                    if (not seg is bidSegments[-1]):
+                        s = seg.size
+                    else:
+                        s = goal_targeted_number_of_imps_for_day - sum(segTag.size for segTag in bidSegments[:-1]) 
+                        if s < 0:
+                            eprint("#formBidBundle: s = {}, goal_targeted_number_of_imps_for_day = {}, sum Of all segments but the last = {}, sum of all segments = {}, number of segments = {}".format(
+                                    s, goal_targeted_number_of_imps_for_day, sum(segTag.size for segTag in bidSegments[:-1]), 
+                                    sum(segTag.size for segTag in bidSegments), len(bidSegments )))
                 
-                query = {
-                        "marketSegments" : [{"segmentName":seg.name}],
-                         "Device" : x[2],
-                         "adType" : x[1]
-                        }
+                    query = {
+                            "marketSegments" : [{"segmentName":seg.name}],
+                             "Device" : x[2],
+                             "adType" : x[1]
+                            }
                 
                 
-                eprint("formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
                 
-                bid = float((p + (demand - avgDem) * NORMALING_FACTOR) * coeffsMult)
-                if bid < 0:
-                    eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")
-                    bid = p
+                
                 
                 bidsArray += [{"query" : query, 
                          "bid" : str(bid), 
