@@ -90,7 +90,8 @@ class Agent:
                     coeffsMult *= cmp.mobileCoeff
                 
                 if seg == None:                 #empty query (UNKNOWN)
-                    bid = p * coeffsMult
+                    #bid = p * coeffsMult
+                    bid = 0.0
                     
                     #this stands for the impressions we don't expect to catch because of lack of ucs
                     s = min(cmpSegmentsSize, (cmp.impressions_goal - cmp.targetedImpressions)) - goal_targeted_number_of_imps_for_day
@@ -103,7 +104,7 @@ class Agent:
                     
                 else:                           #normal query
                     demand = seg.segment_demand(day, Campaign.getCampaignList())
-                    eprint("#formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
+                    #eprint("#formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
                     bid = float((p + (demand - avgDem) * NORMALING_FACTOR) * coeffsMult)
                     if bid < 0:
                         eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")

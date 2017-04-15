@@ -10,7 +10,7 @@ import pandas as pd
 from scipy import optimize
 import math
 import random
-import os
+import os, sys
 import glob
 import numpy as np
 import sklearn.cross_validation as cval
@@ -18,6 +18,9 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 class Campaign:
     
@@ -155,8 +158,8 @@ class Campaign:
         features = list(train.columns[3:-9])
         #features = list(train.columns[3:-18])
         #features = list(train.columns[4:5])+list(train.columns[9:10])
-        print("*** FEATURES ***")
-        print(features)
+        #print("*** FEATURES ***")
+        #print(features)
         # TODO:  consider the value of n_estimators based on predict_proba
         Campaign.bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME.R", n_estimators=50)
         Campaign.bdt.fit(train[features], train["decision"])
@@ -279,7 +282,7 @@ class Campaign:
                 "budget":budget,
                 "reach":self.reach,
 }]'''                                          
-        print("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
+        eprint("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
         for b in np.arange(b, max_budget, 0.1):
             test[0]["budget"] = b
             y_pred = Campaign.bdt.predict(pd.DataFrame(test))
