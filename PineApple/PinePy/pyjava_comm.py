@@ -60,10 +60,10 @@ class Game:
 
 class Communicator:
     
-    def __init__(self, queryName, argsList):
+    def __init__(self, queryName, argsList, game):
         self.queryName = queryName
         self.argsList = argsList
-        self.game = Game()
+        self.game = game
     
     def loadPickle(self):
         loaded = True
@@ -141,7 +141,8 @@ class Communicator:
         answer["bidbundle"] = self.handleGetBidBundle(doPrint = False)
         
         eprint("handleGetUcsAndBudget: print answer")
-        print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+        sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+        sys.stdout.flush()
         eprint("handleGetUcsAndBudget: done")
         
     
@@ -185,7 +186,8 @@ class Communicator:
         else:
             answer = {}
             answer["bidbundle"] = bidBundle
-            print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+            sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+            sys.stdout.flush()
 
     def handleCampaignReport(self):
         number_of_campaign_stats = int(self.argsList[0])
@@ -333,49 +335,57 @@ class Communicator:
         handler = Communicator.handlers[self.queryName]
         handler(self)
     
-def main(queryName, argsList):
+def main(comm):
+    if comm.queryName in Communicator.handlers:
+#        if queryName == "InitialCampaignMessage": 
+#            communicator.handleStartInfo() #DELETES LAST PICKLE
+#            
+#        try:
+#            communicator.loadPickle()
+#        except Exception as e:
+#            printException(e, "main", "loading a pickle")
+#            traceback.print_exc()
+        
+        try:
+            comm.handleQuery()
+        except Exception as e:
+            printException(e, "main", "handling a query")
+            traceback.print_exc()
+            
+#        try:
+#            communicator.dumpPickle() #will not do when startInfo
+#        except Exception as e:
+#            printException(e, "main", "dumping a pickle")
+#            traceback.print_exc()
+
+    else:
+        eprint("Unexpected query: {}".format(queryName))
+#        sys.exit()
+
+if __name__ == "__main__":
+    
     origPath = os.getcwd()
     try:
         os.chdir(origPath + "//PinePy")
     except Exception:
         eprint("couldn't change to dir", origPath + "//PinePy")
     
-    if queryName in Communicator.handlers:
-        communicator = Communicator(queryName, argsList)
+    myGame = Game()
+    s = sys.stdin.readline().strip()
+    while s not in ['quit']:
+        arglist = s.split()
         
-        if queryName == "InitialCampaignMessage": 
-            communicator.handleStartInfo() #DELETES LAST PICKLE
-            
-        try:
-            communicator.loadPickle()
-        except Exception as e:
-            printException(e, "main", "loading a pickle")
-            traceback.print_exc()
+        if len(arglist) > 0:
+            startTime = time.time()
+            communicator = Communicator(arglist[0], arglist[1:], myGame)
+            main(communicator)
+            endTime = time.time()
+            eprint("Python {} Query elapsed time: {}".format(sys.argv[1], endTime - startTime))
+        else:
+            eprint("Expected a query name!")
+#            sys.exit()
         
-        try:
-            communicator.handleQuery()
-        except Exception as e:
-            printException(e, "main", "handling a query")
-            traceback.print_exc()
-            
-        try:
-            communicator.dumpPickle() #will not do when startInfo
-        except Exception as e:
-            printException(e, "main", "dumping a pickle")
-            traceback.print_exc()
-            
-        os.chdir(origPath)
-        
-    else:
-        eprint("Unexpected query: {}".format(queryName))
-        sys.exit()
-
-if __name__ == "__main__":
-    if len(sys.argv[1:]) > 0:
-        startTime = time.time()
-        main(sys.argv[1], sys.argv[2:])
-        endTime = time.time()
-        eprint("Python {} Query elapsed time: {}".format(sys.argv[1], endTime - startTime))
-    else:
-        eprint("Expected a query name!")
-        sys.exit()
+        s = sys.stdin.readline().strip()
+      
+    os.chdir(origPath)
+    sys.exit()
