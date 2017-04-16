@@ -57,7 +57,8 @@ public class PineAppleAgent extends Agent
 	private boolean DEBUG = true;
 	public boolean DEBUG_UCS = false;
 	
-	
+//		public static String pathAndCommand = "python3.6 ./PinePy/__pycache__/pyjava_comm.cpython-36.pyc "; //"python ./PinePy/pyjava_comm.py ";
+
 	public static String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py "; //"python ./PinePy/pyjava_comm.py ";
 	
 	private final Logger log = Logger
@@ -259,7 +260,7 @@ public class PineAppleAgent extends Agent
 		if(debugFlag)
 			System.out.println("DEBUG: run python - StartInfo");
 		runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()));
-		System.out.println("start info elapse: "+(System.currentTimeMillis()-startTime));
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~\t\t\tstart info elapse: "+(System.currentTimeMillis()-startTime));
 	}
 
 	/**
@@ -442,7 +443,7 @@ public class PineAppleAgent extends Agent
 			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
 			
 			sendMessage(demandAgentAddress, bids);
-                        System.out.println("campain oppertunity elapse: "+(System.currentTimeMillis()-startTime));
+                System.out.println("~~~~~~~~~~~~~~~~~~~\t\t\tcampain oppertunity elapse: "+(System.currentTimeMillis()-startTime));
 
 		}
 		catch (Exception e) {
@@ -546,7 +547,7 @@ public class PineAppleAgent extends Agent
 		sendBidAndAds();
 		System.out.println("Day " + day + " ended. Starting next day");
 		if (day == 60){
-                    DataToCSV.fillWithZero(60);
+                    DataToCSV.fillWithZeros(60);
                 }
                 
 		++day;
@@ -910,7 +911,7 @@ public class PineAppleAgent extends Agent
             e.printStackTrace();
             System.exit(-1);
         }
-        System.out.println("pyRunning elapsed: "+(System.currentTimeMillis()-startTime));
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~\t\t\tpyRunning elapsed: "+(System.currentTimeMillis()-startTime));
 
         return stdout;
 	}
