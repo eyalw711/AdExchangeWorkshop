@@ -18,7 +18,7 @@ public class DataToCSV {
 	private static int lastDayWithCamp = 0;
 	private static int index = 0;
 	private static String[] segments = new String[]{"OML","OMH","OFL","OFH","YML","YMH","YFL","YFH"};
-
+	
 	public static void createCSVFile(String filename, boolean append, String str){
 		FileWriter fileWriter = null;
 		File stat_dir = null;
@@ -52,7 +52,8 @@ public class DataToCSV {
 			}
 		}
 	}
-
+	
+	
 	public static String[] parseSegment(String segment){
 		String[] arr = segment.split(" ");
 		int power = (int)(Math.pow(2, (3-arr.length)));
@@ -98,7 +99,7 @@ public class DataToCSV {
 		String[] tokens = str.split(mySplit);
 		String[] parsedSegment = parseSegment(tokens[7]);
 		if (flag)
-                        System.out.println("$$$$$$$$$$$$$$$$$$$$");
+			System.out.println("$$$$$$$$$$$$$$$$$$$$");
 		
 		for (String el : segments) {
 			Boolean is_relevant = false;
@@ -114,11 +115,11 @@ public class DataToCSV {
 				line_to_write = Integer.toString(index) + ',' + "-1" + ',' + el + ',' + "0" + ',' + "0" + ',' + "0" +',' + "0" +',' + "0" + ',' + "0";
 				DataToCSV.createCSVFile(curr_filename, true, line_to_write);
 			}
-
+			
 			if (flag)
 				System.out.println(line_to_write);
-                }
-
+		}	
+	
 		if (flag)
 			System.out.println("$$$$$$$$$$$$$$$$$$$$");
 		lastDayWithCamp++;
@@ -134,13 +135,13 @@ public class DataToCSV {
 		// [][curr_day][][cid][][day_start][day_end][segment][][reach][v_coef][m_coef]
 		String[] tokens = str.split(mySplit);
 		String[] parsedSegment = parseSegment(tokens[7]);
-
+		
 		fill_with_zeros(Integer.parseInt(tokens[1]));
 		lastDayWithCamp = Integer.parseInt(tokens[1]);
-
+		
 		if (flag)
 			System.out.println("&&&&&&&&");
-
+		
 		for (String el : segments) {
 			Boolean is_relevant = false;
 			String line_to_write = null;
@@ -155,17 +156,17 @@ public class DataToCSV {
 				line_to_write = Integer.toString(index) + ',' + tokens[1] + ',' + el + ',' + "0" + ',' + "0" + ',' + "0" +',' + "0" +',' + "0" + ',' + "0";
 				DataToCSV.createCSVFile(curr_filename, true, line_to_write);
 			}
-
+			
 			if (flag)
 				System.out.println(line_to_write);
 		}
-
+		
 		if (flag)
 			System.out.println("&&&&&&&&");
-
+		
 		lastDayWithCamp++;
 	}
-
+	
 	public static void fill_with_zeros(int to){
 		for (int i = lastDayWithCamp; i<to; i++) {
 			for (String el : segments) {
@@ -174,16 +175,17 @@ public class DataToCSV {
 			}
 		}
 	}
-
+	
 	public static void createCampStatistics() {
 		FileWriter fileWriter = null;
 		int countSimu = new File(STAT_DIR).list().length;
 
 		HashMap<String, String> camp_stat_file = new HashMap<String,String>();
-
+		
+		
 		for (int i = 1; i < 489; i++)
 			camp_stat_file.put(Integer.toString(i), Integer.toString(i)+",0,0,0,0,0,0,0,0,0");
-
+		
 		try {
 			fileWriter = new FileWriter("./data/campaign_statistics.csv", false);
 			fileWriter.append(CAMP_STAT_HEADER.toString());
@@ -193,61 +195,61 @@ public class DataToCSV {
 			System.out.println("Error in CsvFileWriter !!!");
 			e.printStackTrace();
 		}
-
+		
 		File folder = new File(STAT_DIR);
 		for (File tempfile : folder.listFiles()) {
 			if (tempfile.getName().startsWith("~"))
 				countSimu--;
 		}
-
+		
 		for (File tempfile : folder.listFiles()) {
-
+			
 			try(BufferedReader br = new BufferedReader(new FileReader(tempfile))) {
 				String line;
 				br.readLine();
-			   while ((line = br.readLine()) != null) {
-                                String[] data = line.split(",");
+			    while ((line = br.readLine()) != null) {
+			    	String[] data = line.split(",");
 
-                                String index_line = camp_stat_file.get(data[0]);
-                                String[] line_data = index_line.split(",");
-                                System.out.println(index_line);
-                                line_data[1] = data[1];
-                                line_data[2] = data[2];
-                                line_data[3] = Integer.toString(Integer.parseInt(line_data[3])+1);
-
-                                int count = 0;
-
-                                if(Double.parseDouble(data[5]) != 0){
-                                        count = Integer.parseInt(line_data[9]);
-                                        line_data[9] = Integer.toString(count+1);
-                                        for (int i = 4; i < 8; i++) {
-                                                line_data[i] = Double.toString(((count*Double.parseDouble(line_data[i]))+Double.parseDouble(data[i]))/(count+1));
-
-                                        }
-                                }
-
-                                line_data[8] = Double.toString(Double.parseDouble(line_data[8])+Double.parseDouble(data[8])/countSimu);
-
-                                String temp = line_data[0];
-                                for (int i = 1; i <= 9; i++) {
-                                        temp = temp + "," +line_data[i];
-                                }
-                                camp_stat_file.put(line_data[0],temp);
-			   }
-
+			    	String index_line = camp_stat_file.get(data[0]);
+			    	String[] line_data = index_line.split(",");
+			    	System.out.println(index_line);
+			    	line_data[1] = data[1];
+			    	line_data[2] = data[2];
+			    	line_data[3] = Integer.toString(Integer.parseInt(line_data[3])+1);
+			    	
+			    	int count = 0;
+			    	
+			    	if(Double.parseDouble(data[5]) != 0){
+		    			count = Integer.parseInt(line_data[9]);
+		    			line_data[9] = Integer.toString(count+1);
+		    			for (int i = 4; i < 8; i++) {
+		    				line_data[i] = Double.toString(((count*Double.parseDouble(line_data[i]))+Double.parseDouble(data[i]))/(count+1));
+			    		
+			    		}
+			    	}
+			    	
+			    	line_data[8] = Double.toString(Double.parseDouble(line_data[8])+Double.parseDouble(data[8])/countSimu);
+			    	
+			    	String temp = line_data[0];
+			    	for (int i = 1; i <= 9; i++) {
+			    		temp = temp + "," +line_data[i];
+			    	}
+					camp_stat_file.put(line_data[0],temp);
+			    }
+			
 			}
 			catch (IOException e) {
 				continue;
 			}
-	   }
+	    }
 		try {
-
+			
 			for (int i = 1; i < 489; i++){
 				String curr = camp_stat_file.get(Integer.toString(i));
-                                fileWriter.append(curr);
+		    	fileWriter.append(curr);
 				fileWriter.append(NEW_LINE_SEPARATOR);
 			}
-
+			
 			fileWriter.flush();
 			fileWriter.close();
 		}
@@ -257,4 +259,3 @@ public class DataToCSV {
 		}
 	}
 }
-
