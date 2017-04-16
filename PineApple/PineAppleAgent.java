@@ -378,7 +378,7 @@ public class PineAppleAgent extends Agent
 			System.out.println("Day " + day + ": Campaign opportunity - " + pendingCampaign);
 			
 			String s_tmp = "Day " + day + ": Campaign opportunity - " + pendingCampaign;
-			DataToCSV.split_to_fields2(s_tmp, DEBUG);
+			DataToCSV.split_to_fields2(s_tmp, false);
 	
 			/*
 			 * The campaign requires com.getReachImps() impressions. The competing
@@ -570,8 +570,8 @@ public class PineAppleAgent extends Agent
 			
 			String outputString = runPythonScript("GetBidBundle");
 			
-			if(debugFlag)
-				System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
+			// if(debugFlag)
+				// System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
 			
 			if(outputString!=null)
 			{
@@ -697,8 +697,11 @@ public class PineAppleAgent extends Agent
 		for (PublisherCatalogEntry publisherKey : adxPublisherReport.keys()) 
 		{
 			AdxPublisherReportEntry entry = adxPublisherReport.getEntry(publisherKey);
-			System.out.println(entry.toString());
-			System.out.println("reserved price baseline: " + entry.getReservePriceBaseline());
+			if (entry.getReservePriceBaseline() != 0.0)
+			{
+				System.out.println(entry.toString());
+				System.out.println("reserved price baseline: " + entry.getReservePriceBaseline());
+			}
 		}
 	}
 
