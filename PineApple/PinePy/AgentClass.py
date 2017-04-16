@@ -34,10 +34,10 @@ class Agent:
         if (COB < campaign.reach*self.quality) and (COB > campaign.reach/(10*self.quality)): #inside interval
                 return COB
         elif COB >= campaign.reach*self.quality:                                            #greater than maximum
-            return (campaign.reach*self.quality) - 1
+            return (campaign.reach*self.quality) - 5
         
         else:                                                                               #lower than minimum
-            return campaign.reach/(10*self.quality) + 1
+            return campaign.reach/(10*self.quality) + 5
         
     def formBidBundle(self, day):
         '''

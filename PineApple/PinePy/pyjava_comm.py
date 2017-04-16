@@ -14,7 +14,7 @@ from CampaignClass import Campaign
 from AgentClass import Agent
 from SegmentClass import MarketSegment
 from UcsManagerClass import ucsManager
-
+import time
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -211,8 +211,12 @@ class Communicator:
         self.game.agent.quality = float(self.argsList[3])
         
         cid = int(self.argsList[4])
-        winner_name = self.argsList[5]
-        budgetOfCampaign = int(self.argsList[6])
+        if len(self.argsList) == 7:
+            winner_name = self.argsList[5]
+            budgetOfCampaign = int(self.argsList[6])
+        if len(self.argsList) == 6:
+            winner_name = "NOT_ALLOCATED"
+            budgetOfCampaign = int(self.argsList[5])
         
         try:
             eprint("handleAdNetworkDailyNotification processed args:" ,self.game.day,
@@ -341,7 +345,10 @@ def main(queryName, argsList):
 
 if __name__ == "__main__":
     if len(sys.argv[1:]) > 0:
+        startTime = time.time()
         main(sys.argv[1], sys.argv[2:])
+        endTime = time.time()
+        eprint("Python {} Query elapsed time: {}".format(sys.argv[1], endTime - startTime))
     else:
         eprint("Expected a query name!")
         sys.exit()
