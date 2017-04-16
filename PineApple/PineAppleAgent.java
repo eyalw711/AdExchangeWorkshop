@@ -535,8 +535,9 @@ public class PineAppleAgent extends Agent
 		System.out.println("Day " + day + " : Simulation Status Received");
 		sendBidAndAds();
 		System.out.println("Day " + day + " ended. Starting next day");
-		if (day == 60)
-                    DataToCSV.fill_with_zeros(60);
+		if (day == 60){
+                    DataToCSV.fillWithZeros(60);
+                }
                 
 		++day;
 	}

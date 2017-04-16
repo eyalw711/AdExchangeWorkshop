@@ -76,4 +76,10 @@ class ucsManager:
         clf = svm.SVR()
         clf.fit(training[X], training[y].values.ravel())
         y_pred = clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+segment_networks])
-        return float(y_pred)
+        pred = float(y_pred)
+        if day<18:
+            return pred
+        elif day<45:
+            return pred/1.1
+        else:
+            return pred/1.2

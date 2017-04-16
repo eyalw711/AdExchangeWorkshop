@@ -83,6 +83,11 @@ class Agent:
                 eprint("#formBidBundle: demand varies!")
             
             NORMALING_FACTOR = 25.0 #TODO: think what that should be
+            PANIC_FACTOR = 1.0
+            if cmp.endDay == day-1:
+                PANIC_FACTOR = 1.1
+            elif cmp.endDay == day:
+                PANIC_FACTOR = 1.2
             p = cmp.avg_p_per_imp
             eprint("#formBidBundle: for camp {} the p is {} and avgDem is {}".format(cmp.cid, p, avgDem))
             for x in itertools.product(bidSegments + [None], ["Text","Video"], ["Desktop", "Mobile"]):
@@ -110,10 +115,10 @@ class Agent:
                 else:                           #normal query
                     demand = seg.segment_demand(day, Campaign.getCampaignList())
                     #eprint("#formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
-                    bid = float((p * (demand / avgDem) * NORMALING_FACTOR) * coeffsMult)
+                    bid = float((p * (demand / avgDem) * NORMALING_FACTOR) * coeffsMult * PANIC_FACTOR)
                     if bid < 0:
                         eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")
-                        bid = p
+                        bid = p * PANIC_FACTOR 
                 
                     if (not seg is bidSegments[-1]):
                         s = seg.size
