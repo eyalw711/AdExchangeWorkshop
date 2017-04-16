@@ -254,10 +254,12 @@ public class PineAppleAgent extends Agent
 	 *            the start information.
 	 */
 	protected void handleStartInfo(StartInfo startInfo) {
+                long startTime = System.currentTimeMillis();
 		this.startInfo = startInfo;
 		if(debugFlag)
 			System.out.println("DEBUG: run python - StartInfo");
 		runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()));
+		System.out.println("start info elapse: "+(System.currentTimeMillis()-startTime));
 	}
 
 	/**
@@ -371,6 +373,8 @@ public class PineAppleAgent extends Agent
 	private void handleICampaignOpportunityMessage(CampaignOpportunityMessage com) 
 	{
 		try{
+			long startTime = System.currentTimeMillis();
+
 			day = com.getDay();
 			long cmpBidMillis;
 			
@@ -438,6 +442,8 @@ public class PineAppleAgent extends Agent
 			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
 			
 			sendMessage(demandAgentAddress, bids);
+                        System.out.println("campain oppertunity elapse: "+(System.currentTimeMillis()-startTime));
+
 		}
 		catch (Exception e) {
             System.out.println("exception happened at : handleICampaignOpportunityMessage" + e.getMessage());
@@ -519,9 +525,13 @@ public class PineAppleAgent extends Agent
 				+ " at price " + notificationMessage.getPrice()
 				+ " Quality Score is: " + notificationMessage.getQualityScore());
 		
+		
+		String nameWinner =  adNetworkDailyNotification.getWinner();
+		if (nameWinner == null || nameWinner.equals(""))
+                    nameWinner = "NOT_ALLOCATED";
 		if(debugFlag)
 			System.out.println("DEBUG: run python - AdNetworkDailyNotification");
-		String paramsToSend = Integer.toString(adNetworkDailyNotification.getEffectiveDay()) + " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " " + Double.toString(adNetworkDailyNotification.getPrice()) + " " + Double.toString(adNetworkDailyNotification.getQualityScore()) + " " + Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + adNetworkDailyNotification.getWinner() + " " + Long.toString(adNetworkDailyNotification.getCostMillis());
+		String paramsToSend = Integer.toString(adNetworkDailyNotification.getEffectiveDay()) + " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " " + Double.toString(adNetworkDailyNotification.getPrice()) + " " + Double.toString(adNetworkDailyNotification.getQualityScore()) + " " + Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + nameWinner + " " + Long.toString(adNetworkDailyNotification.getCostMillis());
 		runPythonScript("AdNetworkDailyNotification " + paramsToSend);	
 		
 	}
@@ -536,7 +546,7 @@ public class PineAppleAgent extends Agent
 		sendBidAndAds();
 		System.out.println("Day " + day + " ended. Starting next day");
 		if (day == 60){
-                    DataToCSV.fillWithZeros(60);
+                    DataToCSV.fillWithZero(60);
                 }
                 
 		++day;
@@ -853,6 +863,8 @@ public class PineAppleAgent extends Agent
 		String s = null;
 		String stdout = null;
 		String stderr = null;
+                long startTime = System.currentTimeMillis();
+
 
         try {
             // using the Runtime exec method:          
@@ -898,6 +910,8 @@ public class PineAppleAgent extends Agent
             e.printStackTrace();
             System.exit(-1);
         }
+        System.out.println("pyRunning elapsed: "+(System.currentTimeMillis()-startTime));
+
         return stdout;
 	}
 	
