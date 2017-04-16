@@ -27,7 +27,7 @@ def eprint(*args, **kwargs):
 
 class Campaign:
     
-    statistic_campaigns = {}    # dummy campaigns <kay : <key:val>> = <day ,<segment name : campagin objcect>>
+    statistic_campaigns = {}    # dummy campaigns <key : <key:val>> = <day ,<segment name : campagin object>>
     campaigns = {}
     bdt = None
     
@@ -53,12 +53,14 @@ class Campaign:
         
     
     def __repr__(self):
-        return "Campaign ID:{}, start:{}, ends:{}, segments:{}, reach:{}".format(
-                self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
+        template = "Campaign ID:{}, start:{}, ends:{}, segments:{}, reach:{}"
+        if self.agent.name == "PineApple":
+            return (template + ", imps_goal:{}").format(self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach, self.impressions_goal)
+        else:
+            return template.format(self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
     
     def __str__(self):
-        return "Campaign ID:{}, start:{}, ends:{}, segments:{}, reach:{}".format(
-                self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
+        return self.__repr__()
         
         
     ''' dummy campaigns '''
@@ -100,13 +102,14 @@ class Campaign:
     def activePeriodLength(self):
         return self.endDay - self.startDay + 1
     
-    '''TODO: unfinished!!!'''
     def assignCampaign(self, agent, goalObject = None, budget = 0, game = None):
+        '''this is called for a campaign which will start tomorrow'''
         self.agent = agent
         Campaign.campaigns[self.cid] = self
         agent.my_campaigns[self.cid] = self
         self.budget = budget
         
+        #put the campaign in the game.campaigns
         if game != None:
             game.campaigns[self.cid] = self
         
@@ -114,7 +117,6 @@ class Campaign:
             Q_old = goalObject["Q_old"]
             B = self.budget
             demand = self.campaign_demand_temp()
-#            R = self.reach
             
             f = lambda x: -self.campaign_profit_for_ImpsTarget_estim(x, Q_old)
             x0 = [self.reach]
@@ -138,8 +140,10 @@ class Campaign:
         return campaings_list
     
     def campaign_demand_temp(self):
+        ''' this method calculates the guessed demand for the campaign with statistics '''
+        campaigns = Campaign.getCampaignList() + Campaign.getStatisticsCampaignListAtDays(self.startDay, self.endDay)
         return MarketSegment.segment_set_demand_forDays(self.segments, self.startDay,
-                                                    self.endDay, Campaign.getCampaignList())
+                                                    self.endDay, campaigns)
     
     def ERR(self, imps):
         a = 4.08577
@@ -332,3 +336,4 @@ class Campaign:
             if self.is_last_day(day):
                 networks.add(campaign.agent)        
         return len(networks)
+             

@@ -10,7 +10,6 @@ import os
 import traceback
 import pickle
 import json
-import random #TODO: remove
 from CampaignClass import Campaign
 from AgentClass import Agent
 from SegmentClass import MarketSegment
@@ -77,7 +76,8 @@ class Communicator:
         
         try:
             MarketSegment.segments_init()
-            eprint("#TODO: bring back to life again when can") #Campaign.statistic_campaigns_init() #TODO: bring back to life again when can
+            Campaign.statistic_campaigns_init()
+            #eprint("#TODO: bring back to life again when can") #Campaign.statistic_campaigns_init() #TODO: bring back to life again when can
             if loaded:
                 Campaign.setCampaigns(self.game.campaigns)
         except KeyError as e:
@@ -89,9 +89,7 @@ class Communicator:
     def dumpPickle(self):
         if self.queryName == "StartInfo":
             return
-        
-        #update game:
-#NO NEED FOR THIS, UPDATE GAME AS YOU GO        self.game.campaigns = Campaign.campaigns
+
         with open( "pickle//game.p", "wb" ) as pickleFile:
             pickle.dump( self.game, pickleFile)
             
@@ -108,7 +106,7 @@ class Communicator:
         mobileCoeff = float(self.argsList[6])
         day = int(self.argsList[7])
         
-        camp = Campaign(cid, startDay, endDay, segmentNamesList, #TODO: segs or segNames
+        camp = Campaign(cid, startDay, endDay, segmentNamesList,
                                    reach, vidCoeff, mobileCoeff)
         self.game.campaignOffer = camp
         
@@ -119,7 +117,7 @@ class Communicator:
         eprint("handleGetUcsAndBudget: predict_campaign_profitability in")
         profitability, final_budget  = camp.predict_campaign_profitability(day,initialBudget,self.game.agent.quality)
         eprint("handleGetUcsAndBudget: predict_campaign_profitability out")
-#        profitability = random.choice([1, -1]) #TODO: REMOVE
+        
         if (profitability == -1):
             answer["budgetBid"] = str(int((camp.reach*self.game.agent.quality) - 1))
         else:
@@ -230,8 +228,12 @@ class Communicator:
         #TODO: Verify assign correctly
         cmp = self.game.campaignOffer
         
+        #NOT ALLOCATED
+        if winner_name == "NOT_ALLOCATED":
+            eprint("handleAdNetworkDailyNotification: campaign cid {}, not allocated to anyone".format(cid))
+        
         #WON
-        if budgetOfCampaign != 0:
+        elif budgetOfCampaign != 0:
             eprint("handleAdNetworkDailyNotification: Won campaign cid {}, assigned to myself!".format(cid))
             cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality}, budget = budgetOfCampaign, game = self.game)
         #LOST

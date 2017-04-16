@@ -101,7 +101,7 @@ def test_ucs_prediction():
 def main():
     print("PineApple!")    
     
-    init_actions = [sc.MarketSegment.segments_init] #, cc.Campaign.statistic_campaigns_init]
+    init_actions = [sc.MarketSegment.segments_init, cc.Campaign.statistic_campaigns_init]
     for action in init_actions:
         action()
         

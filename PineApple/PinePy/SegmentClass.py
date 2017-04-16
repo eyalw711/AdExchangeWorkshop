@@ -46,7 +46,9 @@ class MarketSegment:
         return list(MarketSegment.segments.values())
     
     def segment_indicator(self, day, campaign):
-        if (self.name in [seg.name for seg in campaign.segments]) and (campaign.activeAtDay(day)):
+        statistic = (campaign.__class__.__name__ == "StatisticCampaign")
+        valid = True if not statistic else campaign.valid
+        if (self.name in [seg.name for seg in campaign.segments]) and (campaign.activeAtDay(day)) and valid:
             return True
         else:
             return False
