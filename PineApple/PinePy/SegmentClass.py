@@ -22,11 +22,13 @@ class MarketSegment:
     def addSize(self, x):
         self.size += x
     
-    def getSegmentListFromStr(segmentStr):
+    def getSegmentListNamesFromStr(segmentStr):
+        '''returns a list fo segments NAMES'''
         segmentsList = []
         for comb in itertools.product(['O','Y'], ['M','F'], ['H', 'L']):
             if all(c in comb for c in segmentStr):
-                segmentsList.append(MarketSegment.segments[''.join(comb)])
+                segmentsList.append(''.join(comb))
+                #segmentsList.append(MarketSegment.segments[''.join(comb)]) 
         return segmentsList
         
     def segments_init():
@@ -44,7 +46,7 @@ class MarketSegment:
         return list(MarketSegment.segments.values())
     
     def segment_indicator(self, day, campaign):
-        if (self in campaign.segments) and (campaign.activeAtDay(day)):
+        if (self.name in [seg.name for seg in campaign.segments]) and (campaign.activeAtDay(day)):
             return True
         else:
             return False

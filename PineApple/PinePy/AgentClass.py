@@ -61,7 +61,9 @@ class Agent:
             eprint("#formBidBundle: goal_targeted_number_of_imps_for_day is {}, impressionsGoal = {}, targetedImps = {}, level_accuracy = {}".format(
                     goal_targeted_number_of_imps_for_day, cmp.impressions_goal, cmp.targetedImpressions, lvl_accuracy))
             # sort segments of campaign based on segment demand
-            cmpSegmentsList = sorted(cmp.segments, key = lambda x: x.segment_demand(day, Campaign.getCampaignList()))
+#            cmpSegmentsList = sorted(cmp.segments, key = lambda x: x.segment_demand(day, Campaign.getCampaignList()))
+            cmp.segments.sort(key = lambda x: x.segment_demand(day, Campaign.getCampaignList()))
+            cmpSegmentsList = cmp.segments
             eprint("#formBidBundle: sorted campaigns for cid={} are {}".format(cid, cmpSegmentsList))
             bidSegments = []
             for i in range(len(cmpSegmentsList)):
@@ -80,7 +82,7 @@ class Agent:
             if any(seg.segment_demand(day, Campaign.getCampaignList()) != avgDem for seg in bidSegments):
                 eprint("#formBidBundle: demand varies!")
             
-            NORMALING_FACTOR = 1.0 #TODO: think what that should be
+            NORMALING_FACTOR = 25.0 #TODO: think what that should be
             p = cmp.avg_p_per_imp
             eprint("#formBidBundle: for camp {} the p is {} and avgDem is {}".format(cmp.cid, p, avgDem))
             for x in itertools.product(bidSegments + [None], ["Text","Video"], ["Desktop", "Mobile"]):
@@ -108,7 +110,7 @@ class Agent:
                 else:                           #normal query
                     demand = seg.segment_demand(day, Campaign.getCampaignList())
                     #eprint("#formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
-                    bid = float((p + (demand - avgDem) * NORMALING_FACTOR) * coeffsMult)
+                    bid = float((p * (demand / avgDem) * NORMALING_FACTOR) * coeffsMult)
                     if bid < 0:
                         eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")
                         bid = p
@@ -127,10 +129,6 @@ class Agent:
                              "Device" : x[2],
                              "adType" : x[1]
                             }
-                
-                
-                
-                
                 
                 bidsArray += [{"query" : query, 
                          "bid" : str(bid), 

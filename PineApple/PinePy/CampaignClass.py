@@ -31,14 +31,17 @@ class Campaign:
     campaigns = {}
     bdt = None
     
-    def __init__(self, cid, startDay, endDay, segments, reach, 
+    def __init__(self, cid, startDay, endDay, segmentNames, reach, 
                  videoCoeff, mobileCoeff):
         self.cid = cid
         ''' integers'''
         self.startDay = startDay
         self.endDay = endDay
         '''list of segments'''
-        self.segments = segments
+        if len(segmentNames) > 0 and type(segmentNames[0]) != str:
+            raise ValueError("segmentNames contains elements which aren't strings!")
+            
+        self.segments = [MarketSegment.segments[name] for name in segmentNames]
         self.reach = reach
         self.videoCoeff = videoCoeff
         self.mobileCoeff = mobileCoeff
@@ -53,10 +56,16 @@ class Campaign:
         return "Campaign ID:{}, start:{}, ends:{}, segments:{}, reach:{}".format(
                 self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
     
+    def __str__(self):
+        return "Campaign ID:{}, start:{}, ends:{}, segments:{}, reach:{}".format(
+                self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
+        
+        
     ''' dummy campaigns '''
     def statistic_campaigns_init():
         camps = Campaign.statistic_campaigns
         statistics = pd.read_csv('..//data//campaign_statistics.csv')
+        statistic_campaigns_cid_cntr = 100
         # adding dummy campaings to dictionary sorted by day
         for index, row in statistics.iterrows():
                 day = row['day']
@@ -65,9 +74,10 @@ class Campaign:
                     camps[day] = newDictForDay
                 dayDict = camps[day]
                 segmentName = row['segment']
-                dayDict[segmentName] = Campaign("s{}".format(index), row['start'],
-                       row['end'], [MarketSegment.segments[segmentName]],
+                dayDict[segmentName] = Campaign("{}".format(statistic_campaigns_cid_cntr), row['start'],
+                       row['end'], [segmentName],
                           row['reach'], row['vidCoeff'], row['mobCoeff'])
+                statistic_campaigns_cid_cntr += 1
         #print("#statistic_campaigns_init: statistic campaigns initialized!")
 
     def setCampaigns(campaignsDict):
@@ -91,11 +101,15 @@ class Campaign:
         return self.endDay - self.startDay + 1
     
     '''TODO: unfinished!!!'''
-    def assignCampaign(self, agent, goalObject = None, budget = 0):
+    def assignCampaign(self, agent, goalObject = None, budget = 0, game = None):
         self.agent = agent
         Campaign.campaigns[self.cid] = self
         agent.my_campaigns[self.cid] = self
         self.budget = budget
+        
+        if game != None:
+            game.campaigns[self.cid] = self
+        
         if not (goalObject is None): # compute average price per impression for this campaign
             Q_old = goalObject["Q_old"]
             B = self.budget
@@ -147,6 +161,8 @@ class Campaign:
         
     
     def sizeOfSegments(self):
+        if (any(seg.size == 0 for seg in self.segments)):
+            raise Exception("segments are uninitialized!")
         return sum(seg.size for seg in self.segments)
     
     def initial_budget_bid(self):
@@ -225,8 +241,8 @@ class Campaign:
             indices = []
             (cid, budget, start, end, vidCoeff, mobCoeff, reach) = (data.at[i,"cid"], data.at[i,"budget"], data.at[i,"start"], data.at[i,"end"],
             data.at[i,"vidCoeff"], data.at[i,"mobCoeff"], data.at[i,"reach"])
-            segments = [MarketSegment.segments[seg_name] for seg_name in MarketSegment.segment_names if data.at[i,seg_name] == 1]
-            cmp = Campaign(cid, start, end, segments, reach, vidCoeff, mobCoeff)       
+            segmentsNames = [seg_name for seg_name in MarketSegment.segment_names if data.at[i,seg_name] == 1]
+            cmp = Campaign(cid, start, end, segmentsNames, reach, vidCoeff, mobCoeff)       
             campaigns[cid] = cmp
 
             indices += [i]
@@ -240,7 +256,7 @@ class Campaign:
             while current_sim == sim: # while the next campagin is part of the current simulation
                 (cid, budget, start, end, vidCoeff, mobCoeff, reach) = (data.at[i,"cid"], data.at[i,"budget"], data.at[i,"start"], data.at[i,"end"],
                 data.at[i,"vidCoeff"], data.at[i,"mobCoeff"], data.at[i,"reach"])
-                segments = [MarketSegment.segments[seg_name] for seg_name in MarketSegment.segment_names if data.at[i,seg_name] == 1]
+                segments = [seg_name for seg_name in MarketSegment.segment_names if data.at[i,seg_name] == 1]
                 cmp = Campaign(cid, start, end, segments, reach, vidCoeff, mobCoeff)       
                 campaigns[cid] = cmp
                 

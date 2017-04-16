@@ -36,6 +36,28 @@ class Game:
         self.campaignOffer = None
         self.day = 0
         
+    def getGameActiveCampaignsCampaignsList(self):
+        '''active campaigns today'''
+        return list(filter(lambda x: x.activeAtDay(self.day), list(self.campaigns.values())))
+        
+    
+     
+    def printStatus(self):
+        eprint("\nSUMMARY STATUS MESSAGE <DAY {}>".format(self.day))
+        eprint("Market Segments, Sizes, and Demands:")
+        
+        def segByName(segName):
+            return MarketSegment.segments[segName]
+        
+        eprint([(segByName(name).name, segByName(name).size, segByName(name).segment_demand(self.day, self.getGameActiveCampaignsCampaignsList())) for name in MarketSegment.segment_names])
+        
+        eprint("\nAll Active Campaigns in the Game ({} Campaigns)".format(len(self.getGameActiveCampaignsCampaignsList())))
+        for agent in [self.agent]+self.opponents:
+            agentActiveCampsList = list(filter( lambda x: x.activeAtDay(self.day), list(agent.my_campaigns.values())))
+            eprint("\nCampaigns of Agent {} ({} Campaigns)".format(agent.name if agent.name != "" else "Unnamed", len(agentActiveCampsList)))
+            eprint("\n".join(map(lambda x: str(x), agentActiveCampsList)))
+                
+
 
 class Communicator:
     
@@ -69,7 +91,7 @@ class Communicator:
             return
         
         #update game:
-        self.game.campaigns = Campaign.campaigns
+#NO NEED FOR THIS, UPDATE GAME AS YOU GO        self.game.campaigns = Campaign.campaigns
         with open( "pickle//game.p", "wb" ) as pickleFile:
             pickle.dump( self.game, pickleFile)
             
@@ -81,12 +103,12 @@ class Communicator:
         cid = int(self.argsList[0])
         reach = int(self.argsList[1])
         startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
-        segmentList = MarketSegment.getSegmentListFromStr(self.argsList[4])
+        segmentNamesList = MarketSegment.getSegmentListNamesFromStr(self.argsList[4])
         vidCoeff = float(self.argsList[5])
         mobileCoeff = float(self.argsList[6])
         day = int(self.argsList[7])
         
-        camp = Campaign(cid, startDay, endDay, segmentList,
+        camp = Campaign(cid, startDay, endDay, segmentNamesList, #TODO: segs or segNames
                                    reach, vidCoeff, mobileCoeff)
         self.game.campaignOffer = camp
         
@@ -127,24 +149,26 @@ class Communicator:
         cid = int(self.argsList[0])
         reach = int(self.argsList[1])
         startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
-        segmentList = MarketSegment.getSegmentListFromStr(self.argsList[4])
-        eprint("handleInitialCampaignMessage: segmentsList is ", segmentList)
+        segmentNamesList = MarketSegment.getSegmentListNamesFromStr(self.argsList[4])
+        eprint("handleInitialCampaignMessage: segmentsList is ", segmentNamesList)
         vidCoeff = float(self.argsList[5])
         mobileCoeff = float(self.argsList[6])
         budgetMillis = float(self.argsList[7])
-        initialCampaign = Campaign(cid, startDay, endDay, segmentList,
+        initialCampaign = Campaign(cid, startDay, endDay, segmentNamesList, #TODO: names
                                    reach, vidCoeff, mobileCoeff)
         
         initialCampaign.assignCampaign(self.game.agent,
                                        { "Q_old" : 1.0 },  #The starting quality is 1.0
-                                       budgetMillis)
+                                       budgetMillis,
+                                       game = self.game)
+        
         #TODO currently experiement - later maybe set as statistic campaigns:
         eprint("handleInitialCampaignMessage: NOTICE: making a wild assumption about initial campaigns! Think about this!")
         otherInitialCampaigns = [Campaign("{}".format(i+1), startDay, endDay,
-                                          segmentList, reach, vidCoeff,
+                                          segmentNamesList, reach, vidCoeff,
                                           mobileCoeff) for i in range(7)] #TODO: what are the other IDs???
         for (inx,camp) in enumerate(otherInitialCampaigns):
-            camp.assignCampaign(self.game.opponents[inx], None, budgetMillis)
+            camp.assignCampaign(self.game.opponents[inx], None, budgetMillis, game = self.game)
         
         eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
             
@@ -181,6 +205,8 @@ class Communicator:
     			6 - AdNetworkDailyNotification.costMillis
         '''
         self.game.day = int(self.argsList[0])
+        self.game.printStatus()
+        
         self.game.agent.dailyUCSLevel = float(self.argsList[1])
         #price of UCS in argList[3] (dont care)
         oldQuality = self.game.agent.quality
@@ -203,22 +229,30 @@ class Communicator:
         
         #TODO: Verify assign correctly
         cmp = self.game.campaignOffer
+        
+        #WON
         if budgetOfCampaign != 0:
             eprint("handleAdNetworkDailyNotification: Won campaign cid {}, assigned to myself!".format(cid))
-            cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality}, budget = budgetOfCampaign)
+            cmp.assignCampaign(self.game.agent, goalObject = {"Q_old":oldQuality}, budget = budgetOfCampaign, game = self.game)
+        #LOST
         else:
+            #NAMED OPPONENT
             if any(agent.name == winner_name for agent in self.game.opponents):
                 for agent in self.game.opponents:
                     if agent.name == winner_name:
-                         cmp.assignCampaign(agent, goalObject = None, budget = budgetOfCampaign)
+                         cmp.assignCampaign(agent, goalObject = None, budget = budgetOfCampaign, game = self.game)
                          break
+                     
+            #UNNAMED OPPONENT
             else:
                 for agent in self.game.opponents:
                     if agent.name == "":
                         agent.name = winner_name
-                        cmp.assignCampaign(agent, goalObject = None, budget = budgetOfCampaign)
+                        cmp.assignCampaign(agent, goalObject = None, budget = budgetOfCampaign, game = self.game)
                         break
             eprint("handleAdNetworkDailyNotification: Lost campaign cid {}, assigned to agent {}".format(cid, winner_name))
+        
+        self.game.campaigns[cmp.cid] = cmp
         eprint("handleAdNetworkDailyNotification: opponents names - {}".format([agent.name for agent in self.game.opponents]))
     
     def handleAdxPublisherReport(self):

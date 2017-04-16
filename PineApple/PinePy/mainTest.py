@@ -22,8 +22,8 @@ def test_segments_and_demand():
     global agents
     camps_segs = [['OMH','YFL'],['OMH'],['OMH','YFL'],['YML','OML','OFH']]
     for i in range(4):
-        camp_seg_list = [sc.MarketSegment.segments[name] for name in camps_segs[i]]
-        camp = cc.Campaign(i, i, i+3, camp_seg_list, (i+1)*1000 , 1, 1)
+        camp_seg_name_list = [sc.MarketSegment.segments[name].name for name in camps_segs[i]]
+        camp = cc.Campaign(i, i, i+3, camp_seg_name_list, (i+1)*1000 , 1, 1)
         camp.assignCampaign(agents[i%len(agents)], {'Q_old':0.9}, budget = (i+1)*0.9*1000)
         print("p_avg ",camp.avg_p_per_imp)
     print()
@@ -53,7 +53,7 @@ def test_bidBundle():
 def test_ucs_desired_level():
     seg = sc.MarketSegment.segments['OMH']
     size = 6*seg.size
-    camp = cc.Campaign(0, 1, 4, [seg], size , 1, 1)
+    camp = cc.Campaign(0, 1, 4, [seg.name], size , 1, 1)
     camp.targetedImpressions = size/2
     camp.impressions_goal = size+100
     print("desired level of UCS for campaigns = {}".format(ucs.ucsManager.get_desired_UCS_level(1, [camp])))
@@ -79,9 +79,9 @@ def test_profitability_prediction():
     camp = cc.Campaign.campaigns[0]
     print("profitability decision for this campaign is " + str(camp.predict_campaign_profitability(1,camp.budget,1)))
     
-    seg = [sc.MarketSegment.segments['OML']]+[sc.MarketSegment.segments['OMH']]
+    segName = [sc.MarketSegment.segments['OML'].name]+[sc.MarketSegment.segments['OMH'].name]
     #seg = [sc.MarketSegment.segments['OMH']]
-    camp = cc.Campaign(10, 12, 16, seg , 30000, 1.1, 1.3)    
+    camp = cc.Campaign(10, 12, 16, segName , 30000, 1.1, 1.3)    
     camp.assignCampaign(agents[0], {'Q_old':0.9}, budget = 10)
     campaigns = cc.Campaign.getCampaignList() + cc.Campaign.getStatisticsCampaignListAtDays(camp.startDay, camp.endDay)
     #print("demand:" + str(sc.MarketSegment.segment_set_demand_forDays(camp.segments,camp.startDay,camp.endDay,campaigns)))
@@ -101,7 +101,7 @@ def test_ucs_prediction():
 def main():
     print("PineApple!")    
     
-    init_actions = [sc.MarketSegment.segments_init, cc.Campaign.statistic_campaigns_init]
+    init_actions = [sc.MarketSegment.segments_init] #, cc.Campaign.statistic_campaigns_init]
     for action in init_actions:
         action()
         

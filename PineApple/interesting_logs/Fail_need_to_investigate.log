@@ -1,0 +1,2786 @@
+/mnt/c/Users/Eyal/Documents/Repos/AdExchangeWorkshop/PineApple
+
+DEBUG: run python - StartInfo
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+removed last pickle
+the stdout is:
+null
+Handling Publishers Catalog
+UNKNOWN Message Received: edu.umich.eecs.tac.props.AdvertiserInfo@bc76a1c1
+Initial_Campaign_Message:
+tau.tac.adx.report.demand.InitialCampaignMessage[701756550,3037,1,5,3037,[OLD, HIGH_INCOME],2.180703944734428,2.0303072140048783,demand,[]]
+Day 0: Allocated campaign - Campaign ID 701756550: day 1 to 5 [OLD, HIGH_INCOME], reach: 3037 coefs: (v=2.180703944734428, m=2.0303072140048783)
+$$$$$$$$$$$$$$$$$$$$
+1,-1,OML,0,0,0,0,0,0
+2,-1,OMH,1,1,5,2.180703944734428,2.0303072140048783,3037
+3,-1,OFL,0,0,0,0,0,0
+4,-1,OFH,1,1,5,2.180703944734428,2.0303072140048783,3037
+5,-1,YML,0,0,0,0,0,0
+6,-1,YMH,0,0,0,0,0,0
+7,-1,YFL,0,0,0,0,0,0
+8,-1,YFH,0,0,0,0,0,0
+$$$$$$$$$$$$$$$$$$$$
+DEBUG: run getSegmentsInitials - InitialCampaignMessage
+DEBUG: output getSegmentsInitials - InitialCampaignMessage: OH
+DEBUG: run python - InitialCampaignMessage
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+4
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+loadPickle:  [Errno 2] No such file or directory: 'pickle//game.p'  making a new game since pickle isn't found
+#TODO: bring back to life again when can
+handleInitialCampaignMessage: segmentsList is  [(OMH,808), (OFH,407)]
+handleInitialCampaignMessage: NOTICE: making a wild assumption about initial campaigns! Think about this!
+handleInitialCampaignMessage: all my CIDs are  dict_keys([701756550])
+the stdout is:
+null
+Day 0: Campaign opportunity - Campaign ID 1350878142: day 2 to 4 [YOUNG, FEMALE], reach: 1341 coefs: (v=2.904651082153304, m=2.0686733942953097)
+&&&&&&&&
+9,0,OML,0,0,0,0,0,0
+10,0,OMH,0,0,0,0,0,0
+11,0,OFL,0,0,0,0,0,0
+12,0,OFH,0,0,0,0,0,0
+13,0,YML,0,0,0,0,0,0
+14,0,YMH,0,0,0,0,0,0
+15,0,YFL,1,2,4,2.904651082153304,2.0686733942953097,1341
+16,0,YFH,1,2,4,2.904651082153304,2.0686733942953097,1341
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1350878142 1341 2 4 YF 2.904651082153304 2.0686733942953097 0
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1350878142', '1341', '2', '4', 'YF', '2.904651082153304', '2.0686733942953097', '0']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1350878142: the campagin is profitible with probability:0.507201402515
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: level_no_round = 1.4215891910060061, returned lvl = 0
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"135","UCSBid":"0.25724725050443886"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"135","UCSBid":"0.25724725050443886"}
+Day 0: Campaign total budget bid (millis): 135
+Day 0: ucsBid reported: 0.25724725050443886
+Day 0 :BankStatus[0.000000]
+Day 0 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550])
+#formBidBundle: PineApple: tomorrow is 1, ongoing camps tomorrow are [701756550]
+#get_desired_UCS_level: level_no_round = 1.4215891910060061, returned lvl = 0
+#formBidBundle: forming bids for cid 701756550
+#formBidBundle: goal_targeted_number_of_imps_for_day is 1215.0, impressionsGoal = 8636.154335361487, targetedImps = 0, level_accuracy = 1.0
+#formBidBundle: sorted campaigns for cid=701756550 are [(OMH,808), (OFH,407)]
+#formBidBundle: for cid=701756550 the bid segments are [(OMH,808), (OFH,407)]
+#formBidBundle: demands for segments are: [3.999341563786008, 3.999341563786008]
+#formBidBundle: for camp 701756550 the p is 0.01758016337127807 and avgDem is 3.999341563786008
+the stdout is:
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"}]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"}]}
+Day 0: Sending BidBundle
+Day 0 ended. Starting next day
+Day 1: Daily notification for campaign 1350878142
+Day 1:  WON at cost (Millis)154. UCS Level set to 1.0 at price 0.1953887806153804 Quality Score is: 1.0
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 1 1.0 1.0 1350878142 adv1 154
+handleAdNetworkDailyNotification: Won campaign cid 1350878142, assigned to myself!
+handleAdNetworkDailyNotification: opponents names - ['', '', '', '', '', '', '']
+the stdout is:
+null
+Day 1: Campaign opportunity - Campaign ID 1476920033: day 3 to 7 [HIGH_INCOME, FEMALE], reach: 2652 coefs: (v=2.4868862912639838, m=1.509382529381238)
+&&&&&&&&
+17,1,OML,0,0,0,0,0,0
+18,1,OMH,0,0,0,0,0,0
+19,1,OFL,0,0,0,0,0,0
+20,1,OFH,1,3,7,2.4868862912639838,1.509382529381238,2652
+21,1,YML,0,0,0,0,0,0
+22,1,YMH,0,0,0,0,0,0
+23,1,YFL,0,0,0,0,0,0
+24,1,YFH,1,3,7,2.4868862912639838,1.509382529381238,2652
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1476920033 2652 3 7 FH 2.4868862912639838 1.509382529381238 1
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1476920033', '2652', '3', '7', 'FH', '2.4868862912639838', '1.509382529381238', '1']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1476920033: the campagin is profitible with probability:0.505642325854
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: level_no_round = 1.7769864887575075, returned lvl = 0
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"266","UCSBid":"0.2575216189668177"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"266","UCSBid":"0.2575216189668177"}
+Day 1: Campaign total budget bid (millis): 266
+Day 1: ucsBid reported: 0.2575216189668177
+Day 1 :BankStatus[-0.195389]
+Publishers Report: 
+DEBUG: no entries in adxPublisherReport
+Day 1 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 2, ongoing camps tomorrow are [701756550, 1350878142]
+#get_desired_UCS_level: level_no_round = 1.7769864887575075, returned lvl = 0
+#formBidBundle: forming bids for cid 701756550
+#formBidBundle: goal_targeted_number_of_imps_for_day is 1215.0, impressionsGoal = 8636.154335361487, targetedImps = 0, level_accuracy = 1.0
+#formBidBundle: sorted campaigns for cid=701756550 are [(OMH,808), (OFH,407)]
+#formBidBundle: for cid=701756550 the bid segments are [(OMH,808), (OFH,407)]
+#formBidBundle: demands for segments are: [3.999341563786008, 3.999341563786008]
+#formBidBundle: for camp 701756550 the p is 0.01758016337127807 and avgDem is 3.999341563786008
+#formBidBundle: forming bids for cid 1350878142
+#formBidBundle: goal_targeted_number_of_imps_for_day is 2236.0, impressionsGoal = 4353.4415261935155, targetedImps = 0, level_accuracy = 1.0
+#formBidBundle: sorted campaigns for cid=1350878142 are [(YFH,256), (YFL,1980)]
+#formBidBundle: for cid=1350878142 the bid segments are [(YFH,256), (YFL,1980)]
+#formBidBundle: demands for segments are: [0.19991055456171736, 0.19991055456171736]
+#formBidBundle: for camp 1350878142 the p is 0.0011786163972140138 and avgDem is 0.19991055456171736
+the stdout is:
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"0.30172579768678753"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"0.6241721300471866"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"0.8764081647644962"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"1.8130022529914938"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"2.3336604664837473"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"4.827581318333709"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"6.7784693993504"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"14.022439300481084"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"}]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"0.30172579768678753"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"0.6241721300471866"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"0.8764081647644962"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"1.8130022529914938"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"2.3336604664837473"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"4.827581318333709"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"6.7784693993504"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"14.022439300481084"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"}]}
+Day 1: Sending BidBundle
+Day 1 ended. Starting next day
+Campaign Report:
+Day 2: Updating campaign 701756550 stats: 0.0 tgtImps 0.0 nonTgtImps. Cost of imps is 0.0
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 2: Daily notification for campaign 1476920033
+Day 2:  allocated to DummyAdnetwork-3. UCS Level set to 1.0 at price 0.19079776698175527 Quality Score is: 1.0
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 2 1.0 1.0 1476920033 DummyAdnetwork-3 0
+handleAdNetworkDailyNotification: Lost campaign cid 1476920033, assigned to agent DummyAdnetwork-3
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', '', '', '', '', '', '']
+the stdout is:
+null
+Day 2: Campaign opportunity - Campaign ID 1762451130: day 4 to 13 [LOW_INCOME, FEMALE], reach: 21905 coefs: (v=2.24746380163606, m=1.7705647209411504)
+&&&&&&&&
+25,2,OML,0,0,0,0,0,0
+26,2,OMH,0,0,0,0,0,0
+27,2,OFL,1,4,13,2.24746380163606,1.7705647209411504,21905
+28,2,OFH,0,0,0,0,0,0
+29,2,YML,0,0,0,0,0,0
+30,2,YMH,0,0,0,0,0,0
+31,2,YFL,1,4,13,2.24746380163606,1.7705647209411504,21905
+32,2,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1762451130 21905 4 13 FL 2.24746380163606 1.7705647209411504 2
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1762451130', '21905', '4', '13', 'FL', '2.24746380163606', '1.7705647209411504', '2']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1762451130: the campagin is profitible with probability:0.500024310213
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: level_no_round = 2.3693153183433435, returned lvl = 0
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"2191","UCSBid":"0.25576959513788605"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"2191","UCSBid":"0.25576959513788605"}
+Day 2: Campaign total budget bid (millis): 2191
+Day 2: ucsBid reported: 0.25576959513788605
+Day 2 :BankStatus[-0.386187]
+Publishers Report: 
+(publisher: tripadvisor popularity: 629 video: 254 text: 376)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3270 video: 934 text: 2337)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3062 video: 1901 text: 1162)
+reserved price baseline: 0.0
+(publisher: target popularity: 741 video: 295 text: 447)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2135 video: 1030 text: 1106)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1178 video: 612 text: 567)
+reserved price baseline: 0.0
+Day 2 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 3, ongoing camps tomorrow are [701756550, 1350878142]
+#get_desired_UCS_level: level_no_round = 2.3693153183433435, returned lvl = 0
+#formBidBundle: forming bids for cid 701756550
+#formBidBundle: goal_targeted_number_of_imps_for_day is 1215.0, impressionsGoal = 8636.154335361487, targetedImps = 0, level_accuracy = 1.0
+#formBidBundle: sorted campaigns for cid=701756550 are [(OMH,808), (OFH,407)]
+#formBidBundle: for cid=701756550 the bid segments are [(OMH,808), (OFH,407)]
+#formBidBundle: demands for segments are: [3.999341563786008, 3.999341563786008]
+#formBidBundle: for camp 701756550 the p is 0.01758016337127807 and avgDem is 3.999341563786008
+#formBidBundle: forming bids for cid 1350878142
+#formBidBundle: goal_targeted_number_of_imps_for_day is 2236.0, impressionsGoal = 4353.4415261935155, targetedImps = 0, level_accuracy = 1.0
+#formBidBundle: sorted campaigns for cid=1350878142 are [(YFH,256), (YFL,1980)]
+#formBidBundle: for cid=1350878142 the bid segments are [(YFH,256), (YFL,1980)]
+#formBidBundle: demands for segments are: [0.19991055456171736, 0.19991055456171736]
+#formBidBundle: for camp 1350878142 the p is 0.0011786163972140138 and avgDem is 0.19991055456171736
+the stdout is:
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"0.30172579768678753"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"0.6241721300471866"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"0.8764081647644962"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"1.8130022529914938"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"2.3336604664837473"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"4.827581318333709"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"6.7784693993504"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"14.022439300481084"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"}]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":8636,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":8636,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":8636,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":8636,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":8636,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"0.30172579768678753"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"0.6241721300471866"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"0.8764081647644962"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"1.8130022529914938"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"2.3336604664837473"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"4.827581318333709"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"6.7784693993504"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"14.022439300481084"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"}]}
+Day 2: Sending BidBundle
+Day 2 ended. Starting next day
+Campaign Report:
+Day 3: Updating campaign 701756550 stats: 889.895931030973 tgtImps 0.0 nonTgtImps. Cost of imps is 0.0
+Day 3: Updating campaign 1350878142 stats: 0.0 tgtImps 0.0 nonTgtImps. Cost of imps is 0.0
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 3: Daily notification for campaign 1762451130
+Day 3:  allocated to DummyAdnetwork-3. UCS Level set to 1.0 at price 0.18836119561724224 Quality Score is: 1.0
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 3 1.0 1.0 1762451130 DummyAdnetwork-3 0
+handleAdNetworkDailyNotification: Lost campaign cid 1762451130, assigned to agent DummyAdnetwork-3
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', '', '', '', '', '', '']
+the stdout is:
+null
+Day 3: Campaign opportunity - Campaign ID 1274744974: day 5 to 14 [MALE], reach: 24780 coefs: (v=2.9591849285459397, m=2.3997104656262387)
+&&&&&&&&
+33,3,OML,1,5,14,2.9591849285459397,2.3997104656262387,24780
+34,3,OMH,1,5,14,2.9591849285459397,2.3997104656262387,24780
+35,3,OFL,0,0,0,0,0,0
+36,3,OFH,0,0,0,0,0,0
+37,3,YML,1,5,14,2.9591849285459397,2.3997104656262387,24780
+38,3,YMH,1,5,14,2.9591849285459397,2.3997104656262387,24780
+39,3,YFL,0,0,0,0,0,0
+40,3,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1274744974 24780 5 14 M 2.9591849285459397 2.3997104656262387 3
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1274744974', '24780', '5', '14', 'M', '2.9591849285459397', '2.3997104656262387', '3']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1274744974: the campagin is profitible with probability:0.490558504341
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: level_no_round = 3.188129356115838, returned lvl = 0
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"24779","UCSBid":"0.2515453532855922"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"24779","UCSBid":"0.2515453532855922"}
+Day 3: Campaign total budget bid (millis): 24779
+Day 3: ucsBid reported: 0.2515453532855922
+Day 3 :BankStatus[-0.574548]
+Publishers Report: 
+(publisher: tripadvisor popularity: 606 video: 248 text: 359)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3272 video: 935 text: 2338)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3109 video: 1940 text: 1170)
+reserved price baseline: 0.0
+(publisher: target popularity: 737 video: 331 text: 407)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2143 video: 1026 text: 1118)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1195 video: 638 text: 558)
+reserved price baseline: 0.0
+Day 3 : AdNetworkReport
+Day 3 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 4, ongoing camps tomorrow are [701756550, 1350878142]
+#get_desired_UCS_level: level_no_round = 3.188129356115838, returned lvl = 0
+#formBidBundle: forming bids for cid 701756550
+#formBidBundle: goal_targeted_number_of_imps_for_day is 1215.0, impressionsGoal = 8636.154335361487, targetedImps = 889, level_accuracy = 1.0
+#formBidBundle: sorted campaigns for cid=701756550 are [(OMH,808), (OFH,407)]
+#formBidBundle: for cid=701756550 the bid segments are [(OMH,808), (OFH,407)]
+#formBidBundle: demands for segments are: [3.999341563786008, 3.999341563786008]
+#formBidBundle: for camp 701756550 the p is 0.01758016337127807 and avgDem is 3.999341563786008
+#formBidBundle: forming bids for cid 1350878142
+#formBidBundle: goal_targeted_number_of_imps_for_day is 2236.0, impressionsGoal = 4353.4415261935155, targetedImps = 0, level_accuracy = 1.0
+#formBidBundle: sorted campaigns for cid=1350878142 are [(YFH,256), (YFL,1980)]
+#formBidBundle: for cid=1350878142 the bid segments are [(YFH,256), (YFL,1980)]
+#formBidBundle: demands for segments are: [0.19991055456171736, 0.19991055456171736]
+#formBidBundle: for camp 1350878142 the p is 0.0011786163972140138 and avgDem is 0.19991055456171736
+the stdout is:
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":7747,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":7747,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":7747,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":7747,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":7747,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":7747,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":7747,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":7747,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":7747,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":7747,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":7747,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":7747,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"0.30172579768678753"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"0.6241721300471866"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"0.8764081647644962"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"1.8130022529914938"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"2.3336604664837473"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"4.827581318333709"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"6.7784693993504"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"14.022439300481084"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"}]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":7747,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":7747,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":7747,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":7747,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":7747,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":7747,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":7747,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":7747,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":7747,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":7747,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":7747,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":7747,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"0.30172579768678753"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"0.6241721300471866"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"0.8764081647644962"},{"query":{"marketSegments":[{"segmentName":"YFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"1.8130022529914938"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Text"},"bid":"0.0011786163972140138","campaignId":1350878142,"weight":4353,"dailyLimit":"2.3336604664837473"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Text"},"bid":"0.002438172382996823","campaignId":1350878142,"weight":4353,"dailyLimit":"4.827581318333709"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Desktop","adType":"Video"},"bid":"0.0034234693936113134","campaignId":1350878142,"weight":4353,"dailyLimit":"6.7784693993504"},{"query":{"marketSegments":[{"segmentName":"YFL"}],"Device":"Mobile","adType":"Video"},"bid":"0.0070820400507480225","campaignId":1350878142,"weight":4353,"dailyLimit":"14.022439300481084"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":1350878142,"weight":4353,"dailyLimit":"0.0"}]}
+Day 3: Sending BidBundle
+Day 3 ended. Starting next day
+Campaign Report:
+Day 4: Updating campaign 701756550 stats: 2423.1074056404054 tgtImps 0.0 nonTgtImps. Cost of imps is 0.0
+Day 4: Updating campaign 1350878142 stats: 4678.301117373633 tgtImps 0.0 nonTgtImps. Cost of imps is 0.0
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 4: Daily notification for campaign 1274744974
+Day 4:  allocated to DummyAdnetwork. UCS Level set to 1.0 at price 0.193341084256148 Quality Score is: 1.0
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 4 1.0 1.0 1274744974 DummyAdnetwork 0
+handleAdNetworkDailyNotification: Lost campaign cid 1274744974, assigned to agent DummyAdnetwork
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', '', '', '', '', '']
+the stdout is:
+null
+Day 4: Campaign opportunity - Campaign ID 1350451976: day 6 to 10 [OLD, HIGH_INCOME], reach: 1215 coefs: (v=2.18866639501989, m=2.004842293077469)
+&&&&&&&&
+41,4,OML,0,0,0,0,0,0
+42,4,OMH,1,6,10,2.18866639501989,2.004842293077469,1215
+43,4,OFL,0,0,0,0,0,0
+44,4,OFH,1,6,10,2.18866639501989,2.004842293077469,1215
+45,4,YML,0,0,0,0,0,0
+46,4,YMH,0,0,0,0,0,0
+47,4,YFL,0,0,0,0,0,0
+48,4,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1350451976 1215 6 10 OH 2.18866639501989 2.004842293077469 4
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1350451976', '1215', '6', '10', 'OH', '2.18866639501989', '2.004842293077469', '4']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1350451976: the campagin is profitible with probability:0.507201402515
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: level_no_round = 5.1137072719024586, returned lvl = 0
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"122","UCSBid":"0.2552556467671168"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"122","UCSBid":"0.2552556467671168"}
+Day 4: Campaign total budget bid (millis): 122
+Day 4: ucsBid reported: 0.2552556467671168
+Day 4 :BankStatus[-0.767889]
+Publishers Report: 
+(publisher: tripadvisor popularity: 591 video: 244 text: 348)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3244 video: 932 text: 2313)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3137 video: 1973 text: 1165)
+reserved price baseline: 0.0
+(publisher: target popularity: 750 video: 328 text: 423)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1165 video: 626 text: 540)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2222 video: 1047 text: 1176)
+reserved price baseline: 0.0
+Day 4 : AdNetworkReport
+Day 4 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 5, ongoing camps tomorrow are [701756550]
+#get_desired_UCS_level: level_no_round = 5.1137072719024586, returned lvl = 0
+#formBidBundle: forming bids for cid 701756550
+#formBidBundle: goal_targeted_number_of_imps_for_day is 1215.0, impressionsGoal = 8636.154335361487, targetedImps = 2423, level_accuracy = 1.0
+#formBidBundle: sorted campaigns for cid=701756550 are [(OMH,808), (OFH,407)]
+#formBidBundle: for cid=701756550 the bid segments are [(OMH,808), (OFH,407)]
+#formBidBundle: demands for segments are: [3.999341563786008, 3.999341563786008]
+#formBidBundle: for camp 701756550 the p is 0.01758016337127807 and avgDem is 3.999341563786008
+the stdout is:
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":6213,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":6213,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":6213,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":6213,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":6213,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":6213,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":6213,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":6213,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":6213,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":6213,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":6213,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":6213,"dailyLimit":"0.0"}]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":6213,"dailyLimit":"14.20477200399268"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":6213,"dailyLimit":"28.840051073000872"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":6213,"dailyLimit":"30.97640234316"},{"query":{"marketSegments":[{"segmentName":"OMH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":6213,"dailyLimit":"62.89161314123537"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Text"},"bid":"0.01758016337127807","campaignId":701756550,"weight":6213,"dailyLimit":"7.155126492110175"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Text"},"bid":"0.03569313251609019","campaignId":701756550,"weight":6213,"dailyLimit":"14.527104934048706"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Desktop","adType":"Video"},"bid":"0.03833713161282178","campaignId":701756550,"weight":6213,"dailyLimit":"15.603212566418465"},{"query":{"marketSegments":[{"segmentName":"OFH"}],"Device":"Mobile","adType":"Video"},"bid":"0.07783615487776654","campaignId":701756550,"weight":6213,"dailyLimit":"31.679315035250983"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":6213,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Text"},"bid":"0.0","campaignId":701756550,"weight":6213,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Desktop","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":6213,"dailyLimit":"0.0"},{"query":{"marketSegments":[{"segmentName":"Unknown"}],"Device":"Mobile","adType":"Video"},"bid":"0.0","campaignId":701756550,"weight":6213,"dailyLimit":"0.0"}]}
+Day 4: Sending BidBundle
+Day 4 ended. Starting next day
+Campaign Report:
+Day 5: Updating campaign 701756550 stats: 4227.580779797925 tgtImps 0.0 nonTgtImps. Cost of imps is 0.0
+Day 5: Updating campaign 1350878142 stats: 5966.613168140023 tgtImps 0.0 nonTgtImps. Cost of imps is 0.0
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 5: Daily notification for campaign 1350451976
+Day 5:  allocated to DummyAdnetwork. UCS Level set to 1.0 at price 0.1876227168559861 Quality Score is: 1.211219267311142
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 5 1.0 1.211219267311142 1350451976 DummyAdnetwork 0
+handleAdNetworkDailyNotification: Lost campaign cid 1350451976, assigned to agent DummyAdnetwork
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', '', '', '', '', '']
+the stdout is:
+null
+Day 5: Campaign opportunity - Campaign ID 809008415: day 7 to 16 [YOUNG], reach: 9178 coefs: (v=2.933097431368317, m=2.482709466780716)
+&&&&&&&&
+49,5,OML,0,0,0,0,0,0
+50,5,OMH,0,0,0,0,0,0
+51,5,OFL,0,0,0,0,0,0
+52,5,OFH,0,0,0,0,0,0
+53,5,YML,1,7,16,2.933097431368317,2.482709466780716,9178
+54,5,YMH,1,7,16,2.933097431368317,2.482709466780716,9178
+55,5,YFL,1,7,16,2.933097431368317,2.482709466780716,9178
+56,5,YFH,1,7,16,2.933097431368317,2.482709466780716,9178
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 809008415 9178 7 16 Y 2.933097431368317 2.482709466780716 5
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['809008415', '9178', '7', '16', 'Y', '2.933097431368317', '2.482709466780716', '5']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 809008415: the campagin is profitible with probability:0.490558504341
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"11115","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"11115","UCSBid":"0.0"}
+Day 5: Campaign total budget bid (millis): 11115
+Day 5: ucsBid reported: 0.0
+Day 5 :BankStatus[-0.747299]
+Publishers Report: 
+(publisher: tripadvisor popularity: 581 video: 228 text: 354)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3310 video: 989 text: 2322)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3101 video: 1903 text: 1199)
+reserved price baseline: 0.0
+(publisher: target popularity: 755 video: 323 text: 433)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2266 video: 1063 text: 1204)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1148 video: 562 text: 587)
+reserved price baseline: 0.0
+Day 5 : AdNetworkReport
+Day 5 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 6, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 5: Sending BidBundle
+Day 5 ended. Starting next day
+Campaign Report:
+Day 6: Updating campaign 701756550 stats: 5665.95119573752 tgtImps 0.0 nonTgtImps. Cost of imps is 0.0
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 6: Daily notification for campaign 809008415
+Day 6:  allocated to DummyAdnetwork-2. UCS Level set to 1.0 at price 0.1838428887641369 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 6 1.0 1.2514188666996238 809008415 DummyAdnetwork-2 0
+handleAdNetworkDailyNotification: Lost campaign cid 809008415, assigned to agent DummyAdnetwork-2
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', '', '', '', '']
+the stdout is:
+null
+Day 6: Campaign opportunity - Campaign ID 1017017702: day 8 to 12 [LOW_INCOME, FEMALE], reach: 4381 coefs: (v=2.868470140598508, m=1.782254581702999)
+&&&&&&&&
+57,6,OML,0,0,0,0,0,0
+58,6,OMH,0,0,0,0,0,0
+59,6,OFL,1,8,12,2.868470140598508,1.782254581702999,4381
+60,6,OFH,0,0,0,0,0,0
+61,6,YML,0,0,0,0,0,0
+62,6,YMH,0,0,0,0,0,0
+63,6,YFL,1,8,12,2.868470140598508,1.782254581702999,4381
+64,6,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1017017702 4381 8 12 FL 2.868470140598508 1.782254581702999 6
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1017017702', '4381', '8', '12', 'FL', '2.868470140598508', '1.782254581702999', '6']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1017017702: the campagin is profitible with probability:0.500024310213
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"351","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"351","UCSBid":"0.0"}
+Day 6: Campaign total budget bid (millis): 351
+Day 6: ucsBid reported: 0.0
+Day 6 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 608 video: 251 text: 358)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3259 video: 891 text: 2369)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3063 video: 1903 text: 1161)
+reserved price baseline: 0.0
+(publisher: target popularity: 803 video: 349 text: 455)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2194 video: 1050 text: 1145)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1170 video: 597 text: 574)
+reserved price baseline: 0.0
+Day 6 : AdNetworkReport
+Day 6 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 7, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 6: Sending BidBundle
+Day 6 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 7: Daily notification for campaign 1017017702
+Day 7:  allocated to DummyAdnetwork-4. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 7 0.47829690000000014 1.2514188666996238 1017017702 DummyAdnetwork-4 0
+handleAdNetworkDailyNotification: Lost campaign cid 1017017702, assigned to agent DummyAdnetwork-4
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', '', '', '']
+the stdout is:
+null
+Day 7: Campaign opportunity - Campaign ID 975101064: day 9 to 18 [YOUNG, MALE], reach: 4706 coefs: (v=2.999310428108785, m=1.9572737136945773)
+&&&&&&&&
+65,7,OML,0,0,0,0,0,0
+66,7,OMH,0,0,0,0,0,0
+67,7,OFL,0,0,0,0,0,0
+68,7,OFH,0,0,0,0,0,0
+69,7,YML,1,9,18,2.999310428108785,1.9572737136945773,4706
+70,7,YMH,1,9,18,2.999310428108785,1.9572737136945773,4706
+71,7,YFL,0,0,0,0,0,0
+72,7,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 975101064 4706 9 18 YM 2.999310428108785 1.9572737136945773 7
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['975101064', '4706', '9', '18', 'YM', '2.999310428108785', '1.9572737136945773', '7']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 975101064: the campagin is profitible with probability:0.490558504341
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"5888","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"5888","UCSBid":"0.0"}
+Day 7: Campaign total budget bid (millis): 5888
+Day 7: ucsBid reported: 0.0
+Day 7 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 598 video: 242 text: 357)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3294 video: 932 text: 2363)
+reserved price baseline: 0.0
+(publisher: target popularity: 725 video: 332 text: 394)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3078 video: 1935 text: 1144)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1230 video: 637 text: 594)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2223 video: 1099 text: 1125)
+reserved price baseline: 0.0
+Day 7 : AdNetworkReport
+Day 7 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 8, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 7: Sending BidBundle
+Day 7 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 8: Daily notification for campaign 975101064
+Day 8:  allocated to DummyAdnetwork-7. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 8 0.47829690000000014 1.2514188666996238 975101064 DummyAdnetwork-7 0
+handleAdNetworkDailyNotification: Lost campaign cid 975101064, assigned to agent DummyAdnetwork-7
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', '', '']
+the stdout is:
+null
+Day 8: Campaign opportunity - Campaign ID 1060375908: day 10 to 12 [MALE, LOW_INCOME], reach: 5446 coefs: (v=2.866804712011093, m=2.310205768409281)
+&&&&&&&&
+73,8,OML,1,10,12,2.866804712011093,2.310205768409281,5446
+74,8,OMH,0,0,0,0,0,0
+75,8,OFL,0,0,0,0,0,0
+76,8,OFH,0,0,0,0,0,0
+77,8,YML,1,10,12,2.866804712011093,2.310205768409281,5446
+78,8,YMH,0,0,0,0,0,0
+79,8,YFL,0,0,0,0,0,0
+80,8,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1060375908 5446 10 12 ML 2.866804712011093 2.310205768409281 8
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1060375908', '5446', '10', '12', 'ML', '2.866804712011093', '2.310205768409281', '8']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1060375908: the campagin is profitible with probability:0.490558504341
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"6814","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"6814","UCSBid":"0.0"}
+Day 8: Campaign total budget bid (millis): 6814
+Day 8: ucsBid reported: 0.0
+Day 8 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 609 video: 248 text: 362)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3297 video: 947 text: 2351)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3069 video: 1884 text: 1186)
+reserved price baseline: 0.0
+(publisher: target popularity: 712 video: 278 text: 435)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2203 video: 1047 text: 1157)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1214 video: 620 text: 595)
+reserved price baseline: 0.0
+Day 8 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 9, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 8: Sending BidBundle
+Day 8 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 9: Daily notification for campaign 1060375908
+Day 9:  allocated to DummyAdnetwork-4. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 9 0.47829690000000014 1.2514188666996238 1060375908 DummyAdnetwork-4 0
+handleAdNetworkDailyNotification: Lost campaign cid 1060375908, assigned to agent DummyAdnetwork-4
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', '', '']
+the stdout is:
+null
+Day 9: Campaign opportunity - Campaign ID 794825437: day 11 to 20 [OLD, HIGH_INCOME, FEMALE], reach: 2035 coefs: (v=2.274652935644203, m=1.5124766080372911)
+&&&&&&&&
+81,9,OML,0,0,0,0,0,0
+82,9,OMH,0,0,0,0,0,0
+83,9,OFL,0,0,0,0,0,0
+84,9,OFH,1,11,20,2.274652935644203,1.5124766080372911,2035
+85,9,YML,0,0,0,0,0,0
+86,9,YMH,0,0,0,0,0,0
+87,9,YFL,0,0,0,0,0,0
+88,9,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 794825437 2035 11 20 OFH 2.274652935644203 1.5124766080372911 9
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['794825437', '2035', '11', '20', 'OFH', '2.274652935644203', '1.5124766080372911', '9']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 794825437: the campagin is profitible with probability:0.505642325854
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"163","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"163","UCSBid":"0.0"}
+Day 9: Campaign total budget bid (millis): 163
+Day 9: ucsBid reported: 0.0
+Day 9 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 582 video: 271 text: 312)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3319 video: 932 text: 2388)
+reserved price baseline: 0.0
+(publisher: target popularity: 784 video: 345 text: 440)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3080 video: 1946 text: 1135)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2191 video: 1052 text: 1140)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1136 video: 590 text: 547)
+reserved price baseline: 0.0
+Day 9 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 10, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 9: Sending BidBundle
+Day 9 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 10: Daily notification for campaign 794825437
+Day 10:  allocated to DummyAdnetwork-6. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 10 0.47829690000000014 1.2514188666996238 794825437 DummyAdnetwork-6 0
+handleAdNetworkDailyNotification: Lost campaign cid 794825437, assigned to agent DummyAdnetwork-6
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', '']
+the stdout is:
+null
+Day 10: Campaign opportunity - Campaign ID 2113576587: day 12 to 16 [HIGH_INCOME], reach: 4970 coefs: (v=2.3438348848163657, m=1.6277885811598758)
+&&&&&&&&
+89,10,OML,0,0,0,0,0,0
+90,10,OMH,1,12,16,2.3438348848163657,1.6277885811598758,4970
+91,10,OFL,0,0,0,0,0,0
+92,10,OFH,1,12,16,2.3438348848163657,1.6277885811598758,4970
+93,10,YML,0,0,0,0,0,0
+94,10,YMH,1,12,16,2.3438348848163657,1.6277885811598758,4970
+95,10,YFL,0,0,0,0,0,0
+96,10,YFH,1,12,16,2.3438348848163657,1.6277885811598758,4970
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 2113576587 4970 12 16 H 2.3438348848163657 1.6277885811598758 10
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['2113576587', '4970', '12', '16', 'H', '2.3438348848163657', '1.6277885811598758', '10']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 2113576587: the campagin is profitible with probability:0.505642325854
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"398","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"398","UCSBid":"0.0"}
+Day 10: Campaign total budget bid (millis): 398
+Day 10: ucsBid reported: 0.0
+Day 10 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 621 video: 251 text: 371)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3307 video: 956 text: 2352)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3112 video: 1892 text: 1221)
+reserved price baseline: 0.0
+(publisher: target popularity: 774 video: 338 text: 437)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2168 video: 1084 text: 1085)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1124 video: 585 text: 540)
+reserved price baseline: 0.0
+Day 10 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 11, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 10: Sending BidBundle
+Day 10 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 11: Daily notification for campaign 2113576587
+Day 11:  allocated to DummyAdnetwork. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 11 0.47829690000000014 1.2514188666996238 2113576587 DummyAdnetwork 0
+handleAdNetworkDailyNotification: Lost campaign cid 2113576587, assigned to agent DummyAdnetwork
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', '']
+the stdout is:
+null
+Day 11: Campaign opportunity - Campaign ID 1559914320: day 13 to 17 [MALE, HIGH_INCOME], reach: 5300 coefs: (v=2.0246639508667426, m=2.36271498029828)
+&&&&&&&&
+97,11,OML,0,0,0,0,0,0
+98,11,OMH,1,13,17,2.0246639508667426,2.36271498029828,5300
+99,11,OFL,0,0,0,0,0,0
+100,11,OFH,0,0,0,0,0,0
+101,11,YML,0,0,0,0,0,0
+102,11,YMH,1,13,17,2.0246639508667426,2.36271498029828,5300
+103,11,YFL,0,0,0,0,0,0
+104,11,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1559914320 5300 13 17 MH 2.0246639508667426 2.36271498029828 11
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1559914320', '5300', '13', '17', 'MH', '2.0246639508667426', '2.36271498029828', '11']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1559914320: the campagin is profitible with probability:0.507201402515
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"424","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"424","UCSBid":"0.0"}
+Day 11: Campaign total budget bid (millis): 424
+Day 11: ucsBid reported: 0.0
+Day 11 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 617 video: 275 text: 343)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3316 video: 946 text: 2371)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3133 video: 1971 text: 1163)
+reserved price baseline: 0.0
+(publisher: target popularity: 742 video: 313 text: 430)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1143 video: 584 text: 560)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2175 video: 1090 text: 1086)
+reserved price baseline: 0.0
+Day 11 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 12, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 11: Sending BidBundle
+Day 11 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 12: Daily notification for campaign 1559914320
+Day 12:  allocated to DummyAdnetwork. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 12 0.47829690000000014 1.2514188666996238 1559914320 DummyAdnetwork 0
+handleAdNetworkDailyNotification: Lost campaign cid 1559914320, assigned to agent DummyAdnetwork
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', '']
+the stdout is:
+null
+Day 12: Campaign opportunity - Campaign ID 120802599: day 14 to 18 [YOUNG, FEMALE], reach: 8944 coefs: (v=2.0754182038300013, m=1.8526160483587109)
+&&&&&&&&
+105,12,OML,0,0,0,0,0,0
+106,12,OMH,0,0,0,0,0,0
+107,12,OFL,0,0,0,0,0,0
+108,12,OFH,0,0,0,0,0,0
+109,12,YML,0,0,0,0,0,0
+110,12,YMH,0,0,0,0,0,0
+111,12,YFL,1,14,18,2.0754182038300013,1.8526160483587109,8944
+112,12,YFH,1,14,18,2.0754182038300013,1.8526160483587109,8944
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 120802599 8944 14 18 YF 2.0754182038300013 1.8526160483587109 12
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['120802599', '8944', '14', '18', 'YF', '2.0754182038300013', '1.8526160483587109', '12']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 120802599: the campagin is profitible with probability:0.507201402515
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"715","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"715","UCSBid":"0.0"}
+Day 12: Campaign total budget bid (millis): 715
+Day 12: ucsBid reported: 0.0
+Day 12 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 599 video: 235 text: 365)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3249 video: 941 text: 2309)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3101 video: 1973 text: 1129)
+reserved price baseline: 0.0
+(publisher: target popularity: 780 video: 337 text: 444)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2157 video: 1071 text: 1087)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1158 video: 579 text: 580)
+reserved price baseline: 0.0
+Day 12 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 13, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 12: Sending BidBundle
+Day 12 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 13: Daily notification for campaign 120802599
+Day 13:  allocated to DummyAdnetwork-2. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 13 0.47829690000000014 1.2514188666996238 120802599 DummyAdnetwork-2 0
+handleAdNetworkDailyNotification: Lost campaign cid 120802599, assigned to agent DummyAdnetwork-2
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', '']
+the stdout is:
+null
+Day 13: Campaign opportunity - Campaign ID 1746719215: day 15 to 17 [YOUNG, MALE], reach: 3529 coefs: (v=2.2043420105165152, m=2.0817142786242275)
+&&&&&&&&
+113,13,OML,0,0,0,0,0,0
+114,13,OMH,0,0,0,0,0,0
+115,13,OFL,0,0,0,0,0,0
+116,13,OFH,0,0,0,0,0,0
+117,13,YML,1,15,17,2.2043420105165152,2.0817142786242275,3529
+118,13,YMH,1,15,17,2.2043420105165152,2.0817142786242275,3529
+119,13,YFL,0,0,0,0,0,0
+120,13,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1746719215 3529 15 17 YM 2.2043420105165152 2.0817142786242275 13
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1746719215', '3529', '15', '17', 'YM', '2.2043420105165152', '2.0817142786242275', '13']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1746719215: the campagin is profitible with probability:0.490558504341
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"4415","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"4415","UCSBid":"0.0"}
+Day 13: Campaign total budget bid (millis): 4415
+Day 13: ucsBid reported: 0.0
+Day 13 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 613 video: 234 text: 380)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3272 video: 932 text: 2341)
+reserved price baseline: 0.0
+(publisher: target popularity: 745 video: 330 text: 416)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3060 video: 1892 text: 1169)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2165 video: 1042 text: 1124)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1206 video: 594 text: 613)
+reserved price baseline: 0.0
+Day 13 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 14, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 13: Sending BidBundle
+Day 13 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 14: Daily notification for campaign 1746719215
+Day 14:  allocated to DummyAdnetwork-4. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 14 0.47829690000000014 1.2514188666996238 1746719215 DummyAdnetwork-4 0
+handleAdNetworkDailyNotification: Lost campaign cid 1746719215, assigned to agent DummyAdnetwork-4
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', '']
+the stdout is:
+null
+Day 14: Campaign opportunity - Campaign ID 1741290107: day 16 to 18 [MALE, LOW_INCOME], reach: 2178 coefs: (v=2.3444001236682563, m=2.327967587314021)
+&&&&&&&&
+121,14,OML,1,16,18,2.3444001236682563,2.327967587314021,2178
+122,14,OMH,0,0,0,0,0,0
+123,14,OFL,0,0,0,0,0,0
+124,14,OFH,0,0,0,0,0,0
+125,14,YML,1,16,18,2.3444001236682563,2.327967587314021,2178
+126,14,YMH,0,0,0,0,0,0
+127,14,YFL,0,0,0,0,0,0
+128,14,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1741290107 2178 16 18 ML 2.3444001236682563 2.327967587314021 14
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1741290107', '2178', '16', '18', 'ML', '2.3444001236682563', '2.327967587314021', '14']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1741290107: the campagin is profitible with probability:0.490558504341
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"2724","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"2724","UCSBid":"0.0"}
+Day 14: Campaign total budget bid (millis): 2724
+Day 14: ucsBid reported: 0.0
+Day 14 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 607 video: 284 text: 324)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3226 video: 974 text: 2253)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3058 video: 1955 text: 1104)
+reserved price baseline: 0.0
+(publisher: target popularity: 802 video: 322 text: 481)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2165 video: 1014 text: 1152)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1192 video: 620 text: 573)
+reserved price baseline: 0.0
+Day 14 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 15, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 14: Sending BidBundle
+Day 14 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 15: Daily notification for campaign 1741290107
+Day 15:  allocated to DummyAdnetwork-4. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 15 0.47829690000000014 1.2514188666996238 1741290107 DummyAdnetwork-4 0
+handleAdNetworkDailyNotification: Lost campaign cid 1741290107, assigned to agent DummyAdnetwork-4
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', '']
+the stdout is:
+null
+Day 15: Campaign opportunity - Campaign ID 154286644: day 17 to 19 [OLD, HIGH_INCOME], reach: 729 coefs: (v=2.0887523347195547, m=2.2504517550904897)
+&&&&&&&&
+129,15,OML,0,0,0,0,0,0
+130,15,OMH,1,17,19,2.0887523347195547,2.2504517550904897,729
+131,15,OFL,0,0,0,0,0,0
+132,15,OFH,1,17,19,2.0887523347195547,2.2504517550904897,729
+133,15,YML,0,0,0,0,0,0
+134,15,YMH,0,0,0,0,0,0
+135,15,YFL,0,0,0,0,0,0
+136,15,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 154286644 729 17 19 OH 2.0887523347195547 2.2504517550904897 15
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['154286644', '729', '17', '19', 'OH', '2.0887523347195547', '2.2504517550904897', '15']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 154286644: the campagin is profitible with probability:0.505642325854
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"59","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"59","UCSBid":"0.0"}
+Day 15: Campaign total budget bid (millis): 59
+Day 15: ucsBid reported: 0.0
+Day 15 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 610 video: 261 text: 350)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3233 video: 967 text: 2267)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3090 video: 1941 text: 1150)
+reserved price baseline: 0.0
+(publisher: target popularity: 780 video: 326 text: 455)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2145 video: 1007 text: 1139)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1234 video: 628 text: 607)
+reserved price baseline: 0.0
+Day 15 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 16, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 15: Sending BidBundle
+Day 15 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 16: Daily notification for campaign 154286644
+Day 16:  allocated to DummyAdnetwork-6. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 16 0.47829690000000014 1.2514188666996238 154286644 DummyAdnetwork-6 0
+handleAdNetworkDailyNotification: Lost campaign cid 154286644, assigned to agent DummyAdnetwork-6
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', '']
+the stdout is:
+null
+Day 16: Campaign opportunity - Campaign ID 1623306037: day 18 to 20 [MALE, OLD, HIGH_INCOME], reach: 1212 coefs: (v=2.2003738581194368, m=2.322172529907056)
+&&&&&&&&
+137,16,OML,0,0,0,0,0,0
+138,16,OMH,1,18,20,2.2003738581194368,2.322172529907056,1212
+139,16,OFL,0,0,0,0,0,0
+140,16,OFH,0,0,0,0,0,0
+141,16,YML,0,0,0,0,0,0
+142,16,YMH,0,0,0,0,0,0
+143,16,YFL,0,0,0,0,0,0
+144,16,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1623306037 1212 18 20 OMH 2.2003738581194368 2.322172529907056 16
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1623306037', '1212', '18', '20', 'OMH', '2.2003738581194368', '2.322172529907056', '16']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1623306037: the campagin is profitible with probability:0.507201402515
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"97","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"97","UCSBid":"0.0"}
+Day 16: Campaign total budget bid (millis): 97
+Day 16: ucsBid reported: 0.0
+Day 16 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 634 video: 269 text: 366)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3338 video: 1007 text: 2332)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3075 video: 1915 text: 1161)
+reserved price baseline: 0.0
+(publisher: target popularity: 703 video: 299 text: 405)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1118 video: 599 text: 520)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2262 video: 1118 text: 1145)
+reserved price baseline: 0.0
+Day 16 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 17, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 16: Sending BidBundle
+Day 16 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 17: Daily notification for campaign 1623306037
+Day 17:  allocated to DummyAdnetwork-2. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 17 0.47829690000000014 1.2514188666996238 1623306037 DummyAdnetwork-2 0
+handleAdNetworkDailyNotification: Lost campaign cid 1623306037, assigned to agent DummyAdnetwork-2
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', '']
+the stdout is:
+null
+Day 17: Campaign opportunity - Campaign ID 331095552: day 19 to 23 [YOUNG, MALE, LOW_INCOME], reach: 7344 coefs: (v=2.404611464271352, m=2.0542676712247125)
+&&&&&&&&
+145,17,OML,0,0,0,0,0,0
+146,17,OMH,0,0,0,0,0,0
+147,17,OFL,0,0,0,0,0,0
+148,17,OFH,0,0,0,0,0,0
+149,17,YML,1,19,23,2.404611464271352,2.0542676712247125,7344
+150,17,YMH,0,0,0,0,0,0
+151,17,YFL,0,0,0,0,0,0
+152,17,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 331095552 7344 19 23 YML 2.404611464271352 2.0542676712247125 17
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['331095552', '7344', '19', '23', 'YML', '2.404611464271352', '2.0542676712247125', '17']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 331095552: the campagin is profitible with probability:0.490558504341
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"9189","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"9189","UCSBid":"0.0"}
+Day 17: Campaign total budget bid (millis): 9189
+Day 17: ucsBid reported: 0.0
+Day 17 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 576 video: 239 text: 338)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3243 video: 949 text: 2295)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3150 video: 1941 text: 1210)
+reserved price baseline: 0.0
+(publisher: target popularity: 781 video: 342 text: 440)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2197 video: 1062 text: 1136)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1147 video: 581 text: 567)
+reserved price baseline: 0.0
+Day 17 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 18, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 17: Sending BidBundle
+Day 17 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 18: Daily notification for campaign 331095552
+Day 18:  allocated to DummyAdnetwork-5. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 18 0.47829690000000014 1.2514188666996238 331095552 DummyAdnetwork-5 0
+handleAdNetworkDailyNotification: Lost campaign cid 331095552, assigned to agent DummyAdnetwork-5
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', 'DummyAdnetwork-5']
+the stdout is:
+null
+Day 18: Campaign opportunity - Campaign ID 422679961: day 20 to 22 [MALE, OLD, LOW_INCOME], reach: 1077 coefs: (v=2.2134815642341534, m=2.442228636733467)
+&&&&&&&&
+153,18,OML,1,20,22,2.2134815642341534,2.442228636733467,1077
+154,18,OMH,0,0,0,0,0,0
+155,18,OFL,0,0,0,0,0,0
+156,18,OFH,0,0,0,0,0,0
+157,18,YML,0,0,0,0,0,0
+158,18,YMH,0,0,0,0,0,0
+159,18,YFL,0,0,0,0,0,0
+160,18,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 422679961 1077 20 22 OML 2.2134815642341534 2.442228636733467 18
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['422679961', '1077', '20', '22', 'OML', '2.2134815642341534', '2.442228636733467', '18']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 422679961: the campagin is profitible with probability:0.507201402515
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"87","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"87","UCSBid":"0.0"}
+Day 18: Campaign total budget bid (millis): 87
+Day 18: ucsBid reported: 0.0
+Day 18 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 626 video: 269 text: 358)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3206 video: 952 text: 2255)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3034 video: 1894 text: 1141)
+reserved price baseline: 0.0
+(publisher: target popularity: 791 video: 355 text: 437)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1190 video: 618 text: 573)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2208 video: 1091 text: 1118)
+reserved price baseline: 0.0
+Day 18 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 19, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 18: Sending BidBundle
+Day 18 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 19: Daily notification for campaign 422679961
+Day 19:  allocated to DummyAdnetwork-7. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 19 0.47829690000000014 1.2514188666996238 422679961 DummyAdnetwork-7 0
+handleAdNetworkDailyNotification: Lost campaign cid 422679961, assigned to agent DummyAdnetwork-7
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', 'DummyAdnetwork-5']
+the stdout is:
+null
+Day 19: Campaign opportunity - Campaign ID 1106857350: day 21 to 25 [YOUNG, MALE, LOW_INCOME], reach: 1836 coefs: (v=2.059886761910096, m=1.932974664984357)
+&&&&&&&&
+161,19,OML,0,0,0,0,0,0
+162,19,OMH,0,0,0,0,0,0
+163,19,OFL,0,0,0,0,0,0
+164,19,OFH,0,0,0,0,0,0
+165,19,YML,1,21,25,2.059886761910096,1.932974664984357,1836
+166,19,YMH,0,0,0,0,0,0
+167,19,YFL,0,0,0,0,0,0
+168,19,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1106857350 1836 21 25 YML 2.059886761910096 1.932974664984357 19
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1106857350', '1836', '21', '25', 'YML', '2.059886761910096', '1.932974664984357', '19']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1106857350: the campagin is profitible with probability:0.490558504341
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"2296","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"2296","UCSBid":"0.0"}
+Day 19: Campaign total budget bid (millis): 2296
+Day 19: ucsBid reported: 0.0
+Day 19 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 640 video: 276 text: 365)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3223 video: 935 text: 2289)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3189 video: 1996 text: 1194)
+reserved price baseline: 0.0
+(publisher: target popularity: 736 video: 320 text: 417)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2213 video: 1066 text: 1148)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1131 video: 592 text: 540)
+reserved price baseline: 0.0
+Day 19 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 20, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 19: Sending BidBundle
+Day 19 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 20: Daily notification for campaign 1106857350
+Day 20:  allocated to DummyAdnetwork-5. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 20 0.47829690000000014 1.2514188666996238 1106857350 DummyAdnetwork-5 0
+handleAdNetworkDailyNotification: Lost campaign cid 1106857350, assigned to agent DummyAdnetwork-5
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', 'DummyAdnetwork-5']
+the stdout is:
+null
+Day 20: Campaign opportunity - Campaign ID 1621714793: day 22 to 31 [LOW_INCOME], reach: 64096 coefs: (v=2.2104781298917193, m=2.3704342524170685)
+&&&&&&&&
+169,20,OML,1,22,31,2.2104781298917193,2.3704342524170685,64096
+170,20,OMH,0,0,0,0,0,0
+171,20,OFL,1,22,31,2.2104781298917193,2.3704342524170685,64096
+172,20,OFH,0,0,0,0,0,0
+173,20,YML,1,22,31,2.2104781298917193,2.3704342524170685,64096
+174,20,YMH,0,0,0,0,0,0
+175,20,YFL,1,22,31,2.2104781298917193,2.3704342524170685,64096
+176,20,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1621714793 64096 22 31 L 2.2104781298917193 2.3704342524170685 20
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetUcsAndBudget: ArgsList is ['1621714793', '64096', '22', '31', 'L', '2.2104781298917193', '2.3704342524170685', '20']
+handleGetUcsAndBudget: initialize_campaign_profitability_predictor
+handleGetUcsAndBudget: predict_campaign_profitability in
+predict_campaign_profitability inside
+#predict_campaign_profitability: ada boost predict_proba results for campagin number 1621714793: the campagin is profitible with probability:0.483385910264
+predict_campaign_profitability return
+handleGetUcsAndBudget: predict_campaign_profitability out
+#get_desired_UCS_level: No ongoing campaigns
+handleGetUcsAndBudget: get_desired_UCS_level out
+handleGetUcsAndBudget: print answer
+handleGetUcsAndBudget: done
+the stdout is:
+{"budgetBid":"80209","UCSBid":"0.0"}
+DEBUG: output python - GetUcsAndBudget
+{"budgetBid":"80209","UCSBid":"0.0"}
+Day 20: Campaign total budget bid (millis): 80209
+Day 20: ucsBid reported: 0.0
+Day 20 :BankStatus[2.950808]
+Publishers Report: 
+(publisher: tripadvisor popularity: 590 video: 240 text: 351)
+reserved price baseline: 0.0
+(publisher: ebay popularity: 3248 video: 927 text: 2322)
+reserved price baseline: 0.0
+(publisher: target popularity: 752 video: 311 text: 442)
+reserved price baseline: 0.0
+(publisher: hfn popularity: 3111 video: 1940 text: 1172)
+reserved price baseline: 0.0
+(publisher: fox popularity: 1227 video: 638 text: 590)
+reserved price baseline: 0.0
+(publisher: weather popularity: 2133 video: 1069 text: 1065)
+reserved price baseline: 0.0
+Day 20 : Simulation Status Received
+DEBUG: run python - GetBidBundle
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleGetBidBundle: all my CIDs are  dict_keys([701756550, 1350878142])
+#formBidBundle: PineApple: tomorrow is 21, ongoing camps tomorrow are []
+#get_desired_UCS_level: No ongoing campaigns
+the stdout is:
+{"bidbundle":[]}
+DEBUG: output python - GetBidBundle
+{"bidbundle":[]}
+Day 20: Sending BidBundle
+Day 20 ended. Starting next day
+Campaign Report:
+DEBUG: run python - CampaignReport
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+the stdout is:
+null
+Day 21: Daily notification for campaign 1621714793
+Day 21:  allocated to DummyAdnetwork-6. UCS Level set to 0.47829690000000014 at price 0.0 Quality Score is: 1.2514188666996238
+DEBUG: run python - AdNetworkDailyNotification
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
+0
+1
+2
+3
+Read all the streams
+DEBUG: python std outputs:
+--------------------------
+the stderr is:
+null
+#TODO: bring back to life again when can
+handleAdNetworkDailyNotification processed args: 21 0.47829690000000014 1.2514188666996238 1621714793 DummyAdnetwork-6 0
+handleAdNetworkDailyNotification: Lost campaign cid 1621714793, assigned to agent DummyAdnetwork-6
+handleAdNetworkDailyNotification: opponents names - ['DummyAdnetwork-3', 'DummyAdnetwork', 'DummyAdnetwork-2', 'DummyAdnetwork-4', 'DummyAdnetwork-7', 'DummyAdnetwork-6', 'DummyAdnetwork-5']
+the stdout is:
+null
+Day 21: Campaign opportunity - Campaign ID 1221338369: day 23 to 27 [LOW_INCOME], reach: 20030 coefs: (v=2.881500767685588, m=1.6743696023987942)
+&&&&&&&&
+177,21,OML,1,23,27,2.881500767685588,1.6743696023987942,20030
+178,21,OMH,0,0,0,0,0,0
+179,21,OFL,1,23,27,2.881500767685588,1.6743696023987942,20030
+180,21,OFH,0,0,0,0,0,0
+181,21,YML,1,23,27,2.881500767685588,1.6743696023987942,20030
+182,21,YMH,0,0,0,0,0,0
+183,21,YFL,1,23,27,2.881500767685588,1.6743696023987942,20030
+184,21,YFH,0,0,0,0,0,0
+&&&&&&&&
+DEBUG: run python - GetUcsAndBudget
+DEBUG: run python - GetUcsAndBudget param: 1221338369 20030 23 27 L 2.881500767685588 1.6743696023987942 21
+DEBUG: start exec
+DEBUG: DONE exec
+alloced BufferedReaders
