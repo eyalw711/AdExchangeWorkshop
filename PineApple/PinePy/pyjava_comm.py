@@ -138,7 +138,7 @@ class Communicator:
         
         answer["UCSBid"] = str(float(ucsBid))
         
-        answer["bidbundle"] = self.handleGetBidBundle()
+        answer["bidbundle"] = self.handleGetBidBundle(doPrint = False)
         
         eprint("handleGetUcsAndBudget: print answer")
         print(json.dumps(answer, separators=(',', ':'))) #NEEDED
@@ -174,14 +174,18 @@ class Communicator:
         
         eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
             
-    def handleGetBidBundle(self):
+    def handleGetBidBundle(self, doPrint = True):
         '''returns a bidbundle'''
         eprint("handleGetBidBundle: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
-#        answer = {}
-        bidBundle = self.game.agent.formBidBundle(self.game.day+1)
-        return bidBundle
-#        answer["bidbundle"] = bidBundle
-#        print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+            
+        if not doPrint:
+            bidBundle = self.game.agent.formBidBundle(self.game.day+1)
+            return bidBundle
+        
+        else:
+            answer = {}
+            answer["bidbundle"] = bidBundle
+            print(json.dumps(answer, separators=(',', ':'))) #NEEDED
 
     def handleCampaignReport(self):
         number_of_campaign_stats = int(self.argsList[0])
@@ -205,6 +209,8 @@ class Communicator:
         args for campaign                           7 args for daily
             report                                  notification
         '''
+        
+        afterDelimiterIndex = 1
         try:
             afterDelimiterIndex = self.argsList.index("DAILYNOTIFICATION") + 1
         except ValueError as e:

@@ -12,6 +12,7 @@ import pandas as pd
 from sklearn import svm
 import sys
 
+#import pickle
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -67,14 +68,25 @@ class ucsManager:
         segment_networks = [sc.MarketSegment.segments[segment].number_of_active_netowrks_on_segment(day, cc.Campaign.getCampaignList()) for segment in sc.MarketSegment.segment_names]
         if ucs_level >= 7:
             return 0
-        training = pd.read_csv('..//data//ucs_level_statistics.csv')        
+        
+        #from here not needed
+        training = pd.read_csv('..//data//ucs_level_statistics.csv')
+        
         X = list(training.columns[2:-7])
         y = [training.columns[-7 + ucs_level]]
+            
         #print("#predict_required_price_to_win_desired_UCS_level: ", training.head(1))
         #print("#predict_required_price_to_win_desired_UCS_level: ", X)
         #print("#predict_required_price_to_win_desired_UCS_level: ", y)
         clf = svm.SVR()
         clf.fit(training[X], training[y].values.ravel())
+        #until here not needed
+        
+#        with open( "pickle//ucs_clf.p", "wb" ) as pickleFile:
+#            pickle.dump( clf, pickleFile) 
+        
+        #TODO: clf load here
+        
         y_pred = clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+segment_networks])
         pred = float(y_pred)
         if day<18:

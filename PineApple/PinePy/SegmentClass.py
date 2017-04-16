@@ -8,6 +8,7 @@ Created on Sat Feb 18 16:53:51 2017
 import pandas as pd
 import math
 import itertools
+#import pickle
 
 class MarketSegment:
     segments = {}
@@ -34,12 +35,18 @@ class MarketSegment:
     def segments_init():
         segments = MarketSegment.segments
         population = pd.read_csv('..//data//population.csv')
+            
         for index, row in population.iterrows():
             name = row['age']+row['gender']+row['income']
             if not name in segments:
                 segments[name] = MarketSegment(name, row['size'])
             else:
                 segments[name].addSize(row['size'])
+        
+#        with open( "pickle//population.p", "wb" ) as pickleFile:
+#            pickle.dump( segments, pickleFile)    
+            
+        #TODO: load segments here
         #print("#segments_init: segments initialized!")
      
     def getSegmentsList():
