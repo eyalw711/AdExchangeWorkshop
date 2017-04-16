@@ -11,9 +11,9 @@ import itertools
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-    with open("runlog.log", "a+") as logFile:
-        print(*args, file=logFile, **kwargs)
-        #logFile.write(*args)
+#    with open("runlog.log", "a+") as logFile:
+#        print(*args, file=logFile, **kwargs)
+#        #logFile.write(*args)
 
 class Agent:
     def __init__(self, name):

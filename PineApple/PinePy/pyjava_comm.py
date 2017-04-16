@@ -18,8 +18,8 @@ import time
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-    with open("runlog.log", "a+") as logFile:
-        print(*args, file=logFile, **kwargs)
+#    with open("runlog.log", "a+") as logFile:
+#        print(*args, file=logFile, **kwargs)
         #logFile.write(*args)
 
 def printException(e, functionName, whileDoingString):
@@ -199,6 +199,21 @@ class Communicator:
     
     def handleAdNetworkDailyNotification(self):
         '''
+        inputs are:
+            
+        |________________|  "DAILYNOTIFICATION" |__________________|
+        args for campaign                           7 args for daily
+            report                                  notification
+        '''
+        try:
+            afterDelimiterIndex = self.argsList.index("DAILYNOTIFICATION") + 1
+        except ValueError as e:
+            eprint("handleAdNetworkDailyNotification CRITICAL: need to have DAILYNOTIFICATION delimiter")
+        
+        if afterDelimiterIndex != 1: #There is a campaign report!
+            self.handleCampaignReport()
+        
+        '''
         inputs:
             0 - AdNetworkDailyNotification.effectiveDay
         		1 - AdNetworkDailyNotification.serviceLevel
@@ -208,21 +223,19 @@ class Communicator:
     			5 - AdNetworkDailyNotification.winner
     			6 - AdNetworkDailyNotification.costMillis
         '''
-        self.game.day = int(self.argsList[0])
+        self.game.day = int(self.argsList[afterDelimiterIndex + 0])
         self.game.printStatus()
         
-        self.game.agent.dailyUCSLevel = float(self.argsList[1])
-        #price of UCS in argList[3] (dont care)
+        self.game.agent.dailyUCSLevel = float(self.argsList[afterDelimiterIndex + 1])
+        #price of UCS in argList[afterDelimiterIndex + 2] (dont care)
         oldQuality = self.game.agent.quality
-        self.game.agent.quality = float(self.argsList[3])
+        self.game.agent.quality = float(self.argsList[afterDelimiterIndex + 3])
         
-        cid = int(self.argsList[4])
-        if len(self.argsList) == 7:
-            winner_name = self.argsList[5]
-            budgetOfCampaign = int(self.argsList[6])
-        if len(self.argsList) == 6:
-            winner_name = "NOT_ALLOCATED"
-            budgetOfCampaign = int(self.argsList[5])
+        cid = int(self.argsList[afterDelimiterIndex + 4])
+       
+        winner_name = self.argsList[afterDelimiterIndex + 5]
+        budgetOfCampaign = int(self.argsList[afterDelimiterIndex + 6])
+       
         
         try:
             eprint("handleAdNetworkDailyNotification processed args:" ,self.game.day,
