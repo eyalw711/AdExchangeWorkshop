@@ -138,12 +138,16 @@ class Communicator:
         
         answer["UCSBid"] = str(float(ucsBid))
         
+        answer["bidbundle"] = self.handleGetBidBundle()
+        
         eprint("handleGetUcsAndBudget: print answer")
         print(json.dumps(answer, separators=(',', ':'))) #NEEDED
         eprint("handleGetUcsAndBudget: done")
         
     
     def handleInitialCampaignMessage(self):
+        self.handleStartInfo()
+        
         cid = int(self.argsList[0])
         reach = int(self.argsList[1])
         startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
@@ -171,11 +175,13 @@ class Communicator:
         eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
             
     def handleGetBidBundle(self):
+        '''returns a bidbundle'''
         eprint("handleGetBidBundle: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
-        answer = {}
+#        answer = {}
         bidBundle = self.game.agent.formBidBundle(self.game.day+1)
-        answer["bidbundle"] = bidBundle
-        print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+        return bidBundle
+#        answer["bidbundle"] = bidBundle
+#        print(json.dumps(answer, separators=(',', ':'))) #NEEDED
 
     def handleCampaignReport(self):
         number_of_campaign_stats = int(self.argsList[0])
@@ -318,12 +324,14 @@ def main(queryName, argsList):
     if queryName in Communicator.handlers:
         communicator = Communicator(queryName, argsList)
         
-        if queryName != "StartInfo":
-            try:
-                communicator.loadPickle()
-            except Exception as e:
-                printException(e, "main", "loading a pickle")
-                traceback.print_exc()
+        if queryName == "InitialCampaignMessage": 
+            communicator.handleStartInfo() #DELETES LAST PICKLE
+            
+        try:
+            communicator.loadPickle()
+        except Exception as e:
+            printException(e, "main", "loading a pickle")
+            traceback.print_exc()
         
         try:
             communicator.handleQuery()
