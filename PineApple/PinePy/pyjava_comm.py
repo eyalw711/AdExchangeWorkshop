@@ -18,14 +18,14 @@ import time
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-#    with open("runlog.log", "a+") as logFile:
-#        print(*args, file=logFile, **kwargs)
-        #logFile.write(*args)
+    with open("runlog.log", "a+") as logFile:
+        print(*args, file=logFile, **kwargs)
+#        logFile.write(*args)
 
 def printException(e, functionName, whileDoingString):
     template = "While " + whileDoingString + " an exception of type {0} occurred. Arguments:\n{1!r}"
     message = template.format(type(e).__name__, e.args)
-    eprint(functionName, ": Error Loading Pickle: ", message)
+    eprint(functionName, message)
     
 class Game:
     def __init__(self):
@@ -138,17 +138,27 @@ class Communicator:
         
         answer["UCSBid"] = str(float(ucsBid))
         
-        answer["bidbundle"] = self.handleGetBidBundle(doPrint = False)
+        try:
+            answer["bidbundle"] = self.handleGetBidBundle(doPrint = False)
+        except Exception as e:
+            printException(e, "handleGetUcsAndBudget", "handleGetBidBundle")
         
-        eprint("handleGetUcsAndBudget: print answer")
-        sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+        eprint("handleGetUcsAndBudget: print answer: " + json.dumps(answer, separators=(',', ':')))
+            
+        print(json.dumps(answer, separators=(',', ':')), file=sys.stdout)
+#        sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
         sys.stdout.flush()
         eprint("handleGetUcsAndBudget: done")
         
     
     def handleInitialCampaignMessage(self):
-        self.handleStartInfo()
+#        self.handleStartInfo()
         
+        try:
+            os.remove("runlog.log")
+        except OSError:
+            eprint("Unable to remove logfile")
+            
         cid = int(self.argsList[0])
         reach = int(self.argsList[1])
         startDay, endDay = int(self.argsList[2]), int(self.argsList[3])
@@ -178,15 +188,16 @@ class Communicator:
     def handleGetBidBundle(self, doPrint = True):
         '''returns a bidbundle'''
         eprint("handleGetBidBundle: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
+        bidBundle = self.game.agent.formBidBundle(self.game.day+1)    
             
         if not doPrint:
-            bidBundle = self.game.agent.formBidBundle(self.game.day+1)
             return bidBundle
         
         else:
             answer = {}
             answer["bidbundle"] = bidBundle
-            sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+            print(json.dumps(answer, separators=(',', ':')), file=sys.stdout)
+#            sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
             sys.stdout.flush()
 
     def handleCampaignReport(self):
@@ -245,16 +256,16 @@ class Communicator:
         budgetOfCampaign = int(self.argsList[afterDelimiterIndex + 6])
        
         
-        try:
-            eprint("handleAdNetworkDailyNotification processed args:" ,self.game.day,
-                   self.game.agent.dailyUCSLevel,
-                   self.game.agent.quality,
-                   cid,
-                   self.argsList[5],
-                   int(self.argsList[6]))
-        except Exception as e:
-            eprint("handleAdNetworkDailyNotification failed! ", str(e))
-            return
+#        try:
+#            eprint("handleAdNetworkDailyNotification processed args:" ,self.game.day,
+#                   self.game.agent.dailyUCSLevel,
+#                   self.game.agent.quality,
+#                   cid,
+#                   self.argsList[5],
+#                   int(self.argsList[6]))
+#        except Exception as e:
+#            eprint("handleAdNetworkDailyNotification failed! ", str(e))
+#            return
         
         #TODO: Verify assign correctly
         cmp = self.game.campaignOffer
@@ -359,7 +370,7 @@ def main(comm):
 #            traceback.print_exc()
 
     else:
-        eprint("Unexpected query: {}".format(queryName))
+        eprint("Unexpected query: {}".format(comm.queryName))
 #        sys.exit()
 
 if __name__ == "__main__":
@@ -371,21 +382,29 @@ if __name__ == "__main__":
         eprint("couldn't change to dir", origPath + "//PinePy")
     
     myGame = Game()
-    s = sys.stdin.readline().strip()
-    while s not in ['quit']:
-        arglist = s.split()
-        
-        if len(arglist) > 0:
-            startTime = time.time()
-            communicator = Communicator(arglist[0], arglist[1:], myGame)
-            main(communicator)
-            endTime = time.time()
-            eprint("Python {} Query elapsed time: {}".format(sys.argv[1], endTime - startTime))
-        else:
-            eprint("Expected a query name!")
-#            sys.exit()
-        
+    MarketSegment.segments_init()
+    #Campaign.statistic_campaigns_init()
+    
+    try:
         s = sys.stdin.readline().strip()
-      
+        eprint("********MainLoop: new line from java", s)
+        while s not in ['quit']:
+            arglist = s.split()
+            
+            if len(arglist) > 0:
+                startTime = time.time()
+                communicator = Communicator(arglist[0], arglist[1:], myGame)
+                main(communicator)
+                endTime = time.time()
+                eprint("Python {} Query elapsed time: {}".format(arglist[0], endTime - startTime))
+            else:
+                eprint("Expected a query name!")
+    #            sys.exit()
+            
+            s = sys.stdin.readline().strip()
+            eprint("********MainLoop: new line from java", s)
+    except Exception as e:
+        printException(e, "outerLoop", "outerLoop")
+                
     os.chdir(origPath)
     sys.exit()

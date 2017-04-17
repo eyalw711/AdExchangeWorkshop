@@ -83,20 +83,32 @@ public class PineAppleAgent extends Agent
 	
 //		public static String pathAndCommand = "python3.6 ./PinePy/__pycache__/pyjava_comm.cpython-36.pyc "; //"python ./PinePy/pyjava_comm.py ";
 
-        public static String pipe(String msg, boolean waitToAns){
+        public static String pipe(String msg, boolean waitToAns)
+		{
             String ret = null;
+			String lastRet = null;
             
             try{
                 outputPy.write(msg + "\n");
                 outputPy.flush();
                 if(waitToAns)
-                    ret = inp.readLine();
-                return ret;
+				{
+					int i = 0;
+                    while((ret = inp.readLine()) != null)
+                	{
+						System.out.println(ret);
+						System.out.println(i++);
+						return ret;
+                	}
+				}
+				System.out.println("out of the goddamned pipe");
+                return lastRet;
             }
             
             catch(Exception err){
             
             }
+			System.out.println("out of the goddamned pipe");
             return "";
         }
 
@@ -416,7 +428,7 @@ public class PineAppleAgent extends Agent
 		
 		if(debugFlag)
 			System.out.println("DEBUG: run python - InitialCampaignMessage");
-		runPythonScript("InitialCampaignMessage " + paramString,false);
+		runPythonScript("InitialCampaignMessage " + paramString, false);
                 System.out.println("DEBUG: returned run python - InitialCampaignMessage");
 	}
 
@@ -618,14 +630,14 @@ public class PineAppleAgent extends Agent
 	private void handleAdNetworkDailyNotification(
 			AdNetworkDailyNotification notificationMessage) 
 	{
-                if(lastBetweenDaily == 0){
-                    System.out.println("FIRST DAILY");
-                    lastBetweenDaily = System.currentTimeMillis();
-                }
-                else{
-                    System.out.println("@@@@@@@@ FROM LAST DAILY: " + (System.currentTimeMillis()-lastBetweenDaily));
-                    lastBetweenDaily = System.currentTimeMillis();
-                }
+		if(lastBetweenDaily == 0){
+			System.out.println("FIRST DAILY");
+			lastBetweenDaily = System.currentTimeMillis();
+		}
+		else{
+			System.out.println("@@@@@@@@ FROM LAST DAILY: " + (System.currentTimeMillis()-lastBetweenDaily));
+			lastBetweenDaily = System.currentTimeMillis();
+		}
                     
                 
 		adNetworkDailyNotification = notificationMessage;
@@ -662,10 +674,10 @@ public class PineAppleAgent extends Agent
 		if(debugFlag)
 			System.out.println("DEBUG: run python - AdNetworkDailyNotification");
 		
-		String paramsToSend = Integer.toString(adNetworkDailyNotification.getEffectiveDay()) + " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " " + Double.toString(adNetworkDailyNotification.getPrice()) + " " + Double.toString(adNetworkDailyNotification.getQualityScore()) + " " + Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + nameWinner + " " + Long.toString(adNetworkDailyNotification.getCostMillis());
+		String paramsToSend = " DAILYNOTIFICATION " + Integer.toString(adNetworkDailyNotification.getEffectiveDay()) + " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " " + Double.toString(adNetworkDailyNotification.getPrice()) + " " + Double.toString(adNetworkDailyNotification.getQualityScore()) + " " + Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + nameWinner + " " + Long.toString(adNetworkDailyNotification.getCostMillis());
 		
 		if(campReportSavedDay == day){
-                    paramsToSend = cmpReportLastParams + " DAILYNOTIFICATION " + paramsToSend;
+                    paramsToSend = cmpReportLastParams + paramsToSend;
                     campReportSavedDay = -1;
                     cmpReportLastParams = "";
 		}
@@ -684,8 +696,8 @@ public class PineAppleAgent extends Agent
 		sendBidAndAds();
 		System.out.println("Day " + day + " ended. Starting next day");
 		if (day == 60){
-                    DataToCSV.fillWithZeros(60);
-                    
+                    //DataToCSV.fillWithZeros(60);
+                    System.out.println("quitting");
                     pipe("quit",false);
                     try{
                     inp.close();
@@ -722,7 +734,8 @@ public class PineAppleAgent extends Agent
 	
 	protected void sendBidAndAds() 
 	{
-		try{
+		try
+		{
 
 			//if(debugFlag)
 			//	System.out.println("DEBUG: run python - GetBidBundle");		
@@ -733,67 +746,67 @@ public class PineAppleAgent extends Agent
 			
 			// if(debugFlag)
 				// System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
-			if (dayLastCampOpp!=day){
-                                    
-                                    
-                                    if(debugFlag)
-                                        System.out.println("DEBUG: run python - GetBidBundle");		
-			
-                                    String outputString = runPythonScript("GetBidBundle",true);
-                                    
-                                    if(outputString!=null){
-                                    
-                                    bidBundle = new AdxBidBundle();
-                    
-                                    int dayBiddingFor = day + 1;
-                    
-                                    JSONObject JbidBundle = new JSONObject(outputString);
-                                    JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
-                                    JSONObject JbidBundleElement;
-                                    AdxQuery query, emptyQuery;
-                                    Device device;
-                                    AdType adtype; 
-                                    for (int i = 0; i < JbidsArray.length(); i++) 
-                                    {	
-                                            JbidBundleElement = JbidsArray.getJSONObject(i);
-                                            JSONObject JQuery = JbidBundleElement.getJSONObject("query");
-                                            if(JQuery.getString("Device").equals("Desktop"))
-                                                    device = Device.pc;
-                                            else
-                                                    device = Device.mobile;
-                                            if(JQuery.getString("adType").equals("Text"))
-                                                    adtype = AdType.text;
-                                            else
-                                                    adtype = AdType.video;
-                                            
-                                            for (String publisherName : publisherNames )
-                                            {	
-                                                    String marketSegmentName = JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName");
-                                                    Set<MarketSegment> segment;
-                                                    
-                                                    if (marketSegmentName.compareTo("Unknown") == 0) //equals
-                                                    {
-                                                            segment = new HashSet<MarketSegment>();
-                                                    }
-                                                    else
-                                                    {
-                                                            segment = createSegmentFromPython(marketSegmentName);
-                                                    }
-                                                    query = new AdxQuery(publisherName, 
-                                                                    segment,
-                                                                    device,
-                                                                    adtype);
-                                                    
-                                                    
-                                                    bidBundle.addQuery(query, 
-                                                                    Double.parseDouble(JbidBundleElement.getString("bid")),
-                                                                    new Ad(null),
-                                                                    JbidBundleElement.getInt("campaignId"),
-                                                                    JbidBundleElement.getInt("weight"),
-                                                                    Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
-                                            }
-                                            
-                                    }
+			if (dayLastCampOpp!=day)
+			{                 
+				if(debugFlag)
+					System.out.println("DEBUG: run python - GetBidBundle");		
+
+				String outputString = runPythonScript("GetBidBundle",true);
+				System.out.println("sendBidAndAds: got outputString with: " + outputString);
+				
+				if(outputString!=null){
+				
+				bidBundle = new AdxBidBundle();
+
+				int dayBiddingFor = day + 1;
+
+				JSONObject JbidBundle = new JSONObject(outputString);
+				JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
+				JSONObject JbidBundleElement;
+				AdxQuery query, emptyQuery;
+				Device device;
+				AdType adtype; 
+				for (int i = 0; i < JbidsArray.length(); i++) 
+				{	
+						JbidBundleElement = JbidsArray.getJSONObject(i);
+						JSONObject JQuery = JbidBundleElement.getJSONObject("query");
+						if(JQuery.getString("Device").equals("Desktop"))
+								device = Device.pc;
+						else
+								device = Device.mobile;
+						if(JQuery.getString("adType").equals("Text"))
+								adtype = AdType.text;
+						else
+								adtype = AdType.video;
+						
+						for (String publisherName : publisherNames )
+						{	
+								String marketSegmentName = JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName");
+								Set<MarketSegment> segment;
+								
+								if (marketSegmentName.compareTo("Unknown") == 0) //equals
+								{
+										segment = new HashSet<MarketSegment>();
+								}
+								else
+								{
+										segment = createSegmentFromPython(marketSegmentName);
+								}
+								query = new AdxQuery(publisherName, 
+												segment,
+												device,
+												adtype);
+								
+								
+								bidBundle.addQuery(query, 
+												Double.parseDouble(JbidBundleElement.getString("bid")),
+												new Ad(null),
+												JbidBundleElement.getInt("campaignId"),
+												JbidBundleElement.getInt("weight"),
+												Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
+						}
+						
+				}
 			}
 			
 			else{
@@ -1023,43 +1036,41 @@ public class PineAppleAgent extends Agent
 	//run a new proccess and activate the inputed cmd  - taken from http://alvinalexander.com
 	public static String runPythonScript(String queryToRun, boolean waitForAnswer){
 		
-                long startTime = System.currentTimeMillis();
-                String s=null;
-                String stderr=null;
-                String retVal=null;
+		long startTime = System.currentTimeMillis();
+		String s = null;
+		String stderr = null;
+		String retVal = null;
 
         try {
         
-
-            
             System.out.println("EnterToPipe, send: " + queryToRun + " i am waiting: " + waitForAnswer);
             retVal = pipe(queryToRun,waitForAnswer);
             System.out.println("returned from pipe! :)");
             
             int i=0;
             
-            // read any errors from the attempted command
+            /*// read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
                 System.out.println(i++);
 
             	stderr= stderr + "\n" + s;
 
-            }
+            }*/
             
             if(debugFlagStatic)
             {
                 
                 System.out.println("DEBUG: python std outputs:");
                 System.out.println("--------------------------");
-                System.out.println("the stderr is:");
-            	System.out.println(stderr);
+                //System.out.println("the stderr is:");
+            	//System.out.println(stderr);
             	System.out.println("the stdout is:");
             	System.out.println(retVal);
                            	
             }
             
         }
-        catch (IOException e) {
+        catch (Exception e) {
             System.out.println("exception happened (runPythonScript) - here's what I know: ");
             e.printStackTrace();
             System.exit(-1);
