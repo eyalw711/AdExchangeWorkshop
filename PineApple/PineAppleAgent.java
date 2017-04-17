@@ -51,16 +51,57 @@ import tools.DataToCSV;
 
 public class PineAppleAgent extends Agent 
 {
+
+        
+        
 	public boolean debugFlag = true;
 	public boolean testTrue = true;
 	public static boolean debugFlagStatic = true;
 	private boolean DEBUG = true;
 	public boolean DEBUG_UCS = false;
 	
+	public static long lastBetweenDaily = 0;
+	
+	public static String cmpReportLastParams = "";
+	public static int campReportSavedDay = -1;
+	public static int dayLastCampOpp = -1;
+	
+	
+	
+	public static String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py "; //"python ./PinePy/pyjava_comm.py ";
+        
+        
+        public static BufferedReader inp;
+	public static BufferedWriter outputPy;
+	public static BufferedReader stdError;
+	
+	
+	
+	public static Process pythonProccess;
+	  
+        
+	
 //		public static String pathAndCommand = "python3.6 ./PinePy/__pycache__/pyjava_comm.cpython-36.pyc "; //"python ./PinePy/pyjava_comm.py ";
 
-	public static String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py "; //"python ./PinePy/pyjava_comm.py ";
-	
+        public static String pipe(String msg, boolean waitToAns){
+            String ret = null;
+            
+            try{
+                outputPy.write(msg + "\n");
+                outputPy.flush();
+                if(waitToAns)
+                    ret = inp.readLine();
+                return ret;
+            }
+            
+            catch(Exception err){
+            
+            }
+            return "";
+        }
+
+	  
+            
 	private final Logger log = Logger
 			.getLogger(PineAppleAgent.class.getName());
 
@@ -257,10 +298,24 @@ public class PineAppleAgent extends Agent
 	protected void handleStartInfo(StartInfo startInfo) {
                 long startTime = System.currentTimeMillis();
 		this.startInfo = startInfo;
-		if(debugFlag)
-			System.out.println("DEBUG: run python - StartInfo");
-		runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()));
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~\t\t\tstart info elapse: "+(System.currentTimeMillis()-startTime));
+		try{
+                    pythonProccess = Runtime.getRuntime().exec(pathAndCommand);
+                                outputPy = new BufferedWriter(new 
+                 OutputStreamWriter(pythonProccess.getOutputStream())); 
+            
+            inp = new BufferedReader(new 
+                 InputStreamReader(pythonProccess.getInputStream()));
+
+            stdError = new BufferedReader(new 
+                 InputStreamReader(pythonProccess.getErrorStream()));
+                }
+                catch (Exception err){
+                    err.printStackTrace();
+                }
+		//if(debugFlag)
+		//	System.out.println("DEBUG: run python - StartInfo");
+		//runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()));
+		//System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~\t\t\tstart info elapse: "+(System.currentTimeMillis()-startTime));
 	}
 
 	/**
@@ -361,8 +416,8 @@ public class PineAppleAgent extends Agent
 		
 		if(debugFlag)
 			System.out.println("DEBUG: run python - InitialCampaignMessage");
-		runPythonScript("InitialCampaignMessage " + paramString);
-	
+		runPythonScript("InitialCampaignMessage " + paramString,false);
+                System.out.println("DEBUG: returned run python - InitialCampaignMessage");
 	}
 
 	/**
@@ -406,15 +461,15 @@ public class PineAppleAgent extends Agent
 				System.out.println("DEBUG: run python - GetUcsAndBudget param: " + paramString);		
 			}
 			
-			String outputString = runPythonScript("GetUcsAndBudget " + paramString);
+			String outputString = runPythonScript("GetUcsAndBudget " + paramString,true);
 			
 			if(debugFlag)
 				System.out.println("DEBUG: output python - GetUcsAndBudget\n" + outputString);
 					
 			if(outputString == null){
 				System.out.println("GetUcsAndBudget returned null");
-				cmpBidMillis =  com.getReachImps();
-				ucsBid = 0.000001;
+				cmpBidMillis =  com.getReachImps()/5;
+				ucsBid = 0.202;
 				AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);		
 				sendMessage(demandAgentAddress, bids);
 				return;
@@ -424,6 +479,8 @@ public class PineAppleAgent extends Agent
 			
 			cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
 					
+					
+                    
 			pendingCampaignBudget = cmpBidMillis;
 	
 			System.out.println("Day " + day + ": Campaign total budget bid (millis): " + cmpBidMillis);
@@ -443,6 +500,69 @@ public class PineAppleAgent extends Agent
 			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
 			
 			sendMessage(demandAgentAddress, bids);
+			
+			
+			//yossi
+                                dayLastCampOpp = day;
+				
+				bidBundle = new AdxBidBundle();
+		
+				int dayBiddingFor = day + 1;
+		
+				JSONObject JbidBundle = new JSONObject(outputString);
+				JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
+				JSONObject JbidBundleElement;
+				AdxQuery query, emptyQuery;
+				Device device;
+				AdType adtype; 
+				for (int i = 0; i < JbidsArray.length(); i++) 
+				{	
+					JbidBundleElement = JbidsArray.getJSONObject(i);
+					JSONObject JQuery = JbidBundleElement.getJSONObject("query");
+					if(JQuery.getString("Device").equals("Desktop"))
+						device = Device.pc;
+					else
+						device = Device.mobile;
+					if(JQuery.getString("adType").equals("Text"))
+						adtype = AdType.text;
+					else
+						adtype = AdType.video;
+					
+					for (String publisherName : publisherNames )
+					{	
+						String marketSegmentName = JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName");
+						Set<MarketSegment> segment;
+						
+						if (marketSegmentName.compareTo("Unknown") == 0) //equals
+						{
+							segment = new HashSet<MarketSegment>();
+						}
+						else
+						{
+							segment = createSegmentFromPython(marketSegmentName);
+						}
+						query = new AdxQuery(publisherName, 
+								segment,
+								device,
+								adtype);
+						
+						
+						bidBundle.addQuery(query, 
+								Double.parseDouble(JbidBundleElement.getString("bid")),
+								new Ad(null),
+								JbidBundleElement.getInt("campaignId"),
+								JbidBundleElement.getInt("weight"),
+								Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
+					}
+					
+				}
+			
+				
+			
+		
+			//yossi
+			
+
                 System.out.println("~~~~~~~~~~~~~~~~~~~\t\t\tcampain oppertunity elapse: "+(System.currentTimeMillis()-startTime));
 
 		}
@@ -498,7 +618,16 @@ public class PineAppleAgent extends Agent
 	private void handleAdNetworkDailyNotification(
 			AdNetworkDailyNotification notificationMessage) 
 	{
-
+                if(lastBetweenDaily == 0){
+                    System.out.println("FIRST DAILY");
+                    lastBetweenDaily = System.currentTimeMillis();
+                }
+                else{
+                    System.out.println("@@@@@@@@ FROM LAST DAILY: " + (System.currentTimeMillis()-lastBetweenDaily));
+                    lastBetweenDaily = System.currentTimeMillis();
+                }
+                    
+                
 		adNetworkDailyNotification = notificationMessage;
 
 		System.out.println("Day " + day + ": Daily notification for campaign "
@@ -532,8 +661,16 @@ public class PineAppleAgent extends Agent
                     nameWinner = "NOT_ALLOCATED";
 		if(debugFlag)
 			System.out.println("DEBUG: run python - AdNetworkDailyNotification");
+		
 		String paramsToSend = Integer.toString(adNetworkDailyNotification.getEffectiveDay()) + " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " " + Double.toString(adNetworkDailyNotification.getPrice()) + " " + Double.toString(adNetworkDailyNotification.getQualityScore()) + " " + Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + nameWinner + " " + Long.toString(adNetworkDailyNotification.getCostMillis());
-		runPythonScript("AdNetworkDailyNotification " + paramsToSend);	
+		
+		if(campReportSavedDay == day){
+                    paramsToSend = cmpReportLastParams + " DAILYNOTIFICATION " + paramsToSend;
+                    campReportSavedDay = -1;
+                    cmpReportLastParams = "";
+		}
+		
+		runPythonScript("AdNetworkDailyNotification " + paramsToSend,false);	
 		
 	}
 
@@ -548,6 +685,16 @@ public class PineAppleAgent extends Agent
 		System.out.println("Day " + day + " ended. Starting next day");
 		if (day == 60){
                     DataToCSV.fillWithZeros(60);
+                    
+                    pipe("quit",false);
+                    try{
+                    inp.close();
+                    outputPy.close();
+                    stdError.close();
+                    }
+                    catch (Exception err) {
+                        err.printStackTrace();
+                    }
                 }
                 
 		++day;
@@ -577,78 +724,90 @@ public class PineAppleAgent extends Agent
 	{
 		try{
 
-			if(debugFlag)
-				System.out.println("DEBUG: run python - GetBidBundle");		
+			//if(debugFlag)
+			//	System.out.println("DEBUG: run python - GetBidBundle");		
 			
-			String outputString = runPythonScript("GetBidBundle");
+			//String outputString = runPythonScript("GetBidBundle");
+			
+			//String outputString = bidBundleScriptOutput;
 			
 			// if(debugFlag)
 				// System.out.println("DEBUG: output python - GetBidBundle\n" + outputString);
+			if (dayLastCampOpp!=day){
+                                    
+                                    
+                                    if(debugFlag)
+                                        System.out.println("DEBUG: run python - GetBidBundle");		
 			
-			if(outputString!=null)
-			{
-				
-				bidBundle = new AdxBidBundle();
-		
-				int dayBiddingFor = day + 1;
-		
-				JSONObject JbidBundle = new JSONObject(outputString);
-				JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
-				JSONObject JbidBundleElement;
-				AdxQuery query, emptyQuery;
-				Device device;
-				AdType adtype; 
-				for (int i = 0; i < JbidsArray.length(); i++) 
-				{	
-					JbidBundleElement = JbidsArray.getJSONObject(i);
-					JSONObject JQuery = JbidBundleElement.getJSONObject("query");
-					if(JQuery.getString("Device").equals("Desktop"))
-						device = Device.pc;
-					else
-						device = Device.mobile;
-					if(JQuery.getString("adType").equals("Text"))
-						adtype = AdType.text;
-					else
-						adtype = AdType.video;
-					
-					for (String publisherName : publisherNames )
-					{	
-						String marketSegmentName = JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName");
-						Set<MarketSegment> segment;
-						
-						if (marketSegmentName.compareTo("Unknown") == 0) //equals
-						{
-							segment = new HashSet<MarketSegment>();
-						}
-						else
-						{
-							segment = createSegmentFromPython(marketSegmentName);
-						}
-						query = new AdxQuery(publisherName, 
-								segment,
-								device,
-								adtype);
-						
-						
-						bidBundle.addQuery(query, 
-								Double.parseDouble(JbidBundleElement.getString("bid")),
-								new Ad(null),
-								JbidBundleElement.getInt("campaignId"),
-								JbidBundleElement.getInt("weight"),
-								Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
-					}
-					
-				}
+                                    String outputString = runPythonScript("GetBidBundle",true);
+                                    
+                                    if(outputString!=null){
+                                    
+                                    bidBundle = new AdxBidBundle();
+                    
+                                    int dayBiddingFor = day + 1;
+                    
+                                    JSONObject JbidBundle = new JSONObject(outputString);
+                                    JSONArray JbidsArray = JbidBundle.getJSONArray("bidbundle");
+                                    JSONObject JbidBundleElement;
+                                    AdxQuery query, emptyQuery;
+                                    Device device;
+                                    AdType adtype; 
+                                    for (int i = 0; i < JbidsArray.length(); i++) 
+                                    {	
+                                            JbidBundleElement = JbidsArray.getJSONObject(i);
+                                            JSONObject JQuery = JbidBundleElement.getJSONObject("query");
+                                            if(JQuery.getString("Device").equals("Desktop"))
+                                                    device = Device.pc;
+                                            else
+                                                    device = Device.mobile;
+                                            if(JQuery.getString("adType").equals("Text"))
+                                                    adtype = AdType.text;
+                                            else
+                                                    adtype = AdType.video;
+                                            
+                                            for (String publisherName : publisherNames )
+                                            {	
+                                                    String marketSegmentName = JQuery.getJSONArray("marketSegments").getJSONObject(0).getString("segmentName");
+                                                    Set<MarketSegment> segment;
+                                                    
+                                                    if (marketSegmentName.compareTo("Unknown") == 0) //equals
+                                                    {
+                                                            segment = new HashSet<MarketSegment>();
+                                                    }
+                                                    else
+                                                    {
+                                                            segment = createSegmentFromPython(marketSegmentName);
+                                                    }
+                                                    query = new AdxQuery(publisherName, 
+                                                                    segment,
+                                                                    device,
+                                                                    adtype);
+                                                    
+                                                    
+                                                    bidBundle.addQuery(query, 
+                                                                    Double.parseDouble(JbidBundleElement.getString("bid")),
+                                                                    new Ad(null),
+                                                                    JbidBundleElement.getInt("campaignId"),
+                                                                    JbidBundleElement.getInt("weight"),
+                                                                    Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
+                                            }
+                                            
+                                    }
+			}
 			
-				if (bidBundle != null) 
+			else{
+                            System.out.println("getBidBundle returned null");
+                            return;
+                            }
+                        }
+                        
+			if (bidBundle != null) 
 				{
 					System.out.println("Day " + day + ": Sending BidBundle");
 					sendMessage(adxAgentAddress, bidBundle);
 				}
-			}
-		
-			else
-				System.out.println("GetBidBundle returned null");
+				
 
 		}
 		catch(Exception e){
@@ -689,9 +848,11 @@ public class PineAppleAgent extends Agent
 			paramsToSend = paramsToSend + " " + Integer.toString(cmpId) + " " + Double.toString(cstats.getTargetedImps()) + " " + Double.toString(cstats.getOtherImps()) + " " + Double.toString(cstats.getCost());						
 		}
 		
-		if(debugFlag)
-			System.out.println("DEBUG: run python - CampaignReport");
-		runPythonScript("CampaignReport " + paramsToSend);
+		//if(debugFlag)
+		//	System.out.println("DEBUG: run python - CampaignReport");
+		//runPythonScript("CampaignReport " + paramsToSend);
+		cmpReportLastParams = paramsToSend;
+		campReportSavedDay = day;
 		
 	}
 
@@ -860,37 +1021,29 @@ public class PineAppleAgent extends Agent
 	}
 
 	//run a new proccess and activate the inputed cmd  - taken from http://alvinalexander.com
-	public static String runPythonScript(String queryToRun){
-		String s = null;
-		String stdout = null;
-		String stderr = null;
+	public static String runPythonScript(String queryToRun, boolean waitForAnswer){
+		
                 long startTime = System.currentTimeMillis();
-
+                String s=null;
+                String stderr=null;
+                String retVal=null;
 
         try {
-            // using the Runtime exec method:          
-            if(debugFlagStatic)
-                System.out.println("DEBUG: start exec");
-            
-            Process p = Runtime.getRuntime().exec(pathAndCommand + queryToRun);
         
-            if(debugFlagStatic)
-                System.out.println("DEBUG: DONE exec");
-                
-            BufferedReader stdInput = new BufferedReader(new 
-                 InputStreamReader(p.getInputStream()));
 
-            BufferedReader stdError = new BufferedReader(new 
-                 InputStreamReader(p.getErrorStream()));
             
-            // read the output from the command
-            while ((s = stdInput.readLine()) != null) {
-            	stdout=s;
-            }
+            System.out.println("EnterToPipe, send: " + queryToRun + " i am waiting: " + waitForAnswer);
+            retVal = pipe(queryToRun,waitForAnswer);
+            System.out.println("returned from pipe! :)");
+            
+            int i=0;
             
             // read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
+                System.out.println(i++);
+
             	stderr= stderr + "\n" + s;
+
             }
             
             if(debugFlagStatic)
@@ -901,7 +1054,7 @@ public class PineAppleAgent extends Agent
                 System.out.println("the stderr is:");
             	System.out.println(stderr);
             	System.out.println("the stdout is:");
-            	System.out.println(stdout);
+            	System.out.println(retVal);
                            	
             }
             
@@ -913,7 +1066,8 @@ public class PineAppleAgent extends Agent
         }
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~\t\t\tpyRunning elapsed: "+(System.currentTimeMillis()-startTime));
 
-        return stdout;
+        return retVal;
+        
 	}
 	
 	public class CampaignData 
