@@ -144,11 +144,11 @@ class Communicator:
             printException(e, "handleGetUcsAndBudget", "handleGetBidBundle")
         
         eprint("handleGetUcsAndBudget: print answer: " + json.dumps(answer, separators=(',', ':')))
-            
         print(json.dumps(answer, separators=(',', ':')), file=sys.stdout)
-#        sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
         sys.stdout.flush()
-        eprint("handleGetUcsAndBudget: done")
+            
+#        sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
+        eprint("handleGetUcsAndBudget: out of this func")
         
     
     def handleInitialCampaignMessage(self):
@@ -191,6 +191,7 @@ class Communicator:
         bidBundle = self.game.agent.formBidBundle(self.game.day+1)    
             
         if not doPrint:
+            eprint("handleGetBidBundle: out of this func. returning the bid bundle")
             return bidBundle
         
         else:
@@ -199,6 +200,7 @@ class Communicator:
             print(json.dumps(answer, separators=(',', ':')), file=sys.stdout)
 #            sys.stdout.write(json.dumps(answer, separators=(',', ':'))) #print(json.dumps(answer, separators=(',', ':'))) #NEEDED
             sys.stdout.flush()
+            eprint("handleGetBidBundle: out of this func. printed the bid bundle")
 
     def handleCampaignReport(self):
         number_of_campaign_stats = int(self.argsList[0])
@@ -231,6 +233,11 @@ class Communicator:
         
         if afterDelimiterIndex != 1: #There is a campaign report!
             self.handleCampaignReport()
+        
+        try:
+            raise ValueError("I bet this wouldn't print")
+        except Exception as e:
+            printException(e, "handleAdNetworkDailyNotification", "checking if exceptions print")
         
         '''
         inputs:
@@ -370,7 +377,7 @@ def main(comm):
 #            traceback.print_exc()
 
     else:
-        eprint("Unexpected query: {}".format(comm.queryName))
+        eprint("FAIL - Unexpected query: {}".format(comm.queryName))
 #        sys.exit()
 
 if __name__ == "__main__":
@@ -398,7 +405,7 @@ if __name__ == "__main__":
                 endTime = time.time()
                 eprint("Python {} Query elapsed time: {}".format(arglist[0], endTime - startTime))
             else:
-                eprint("Expected a query name!")
+                eprint("FAIL - Expected a query name!")
     #            sys.exit()
             
             s = sys.stdin.readline().strip()
