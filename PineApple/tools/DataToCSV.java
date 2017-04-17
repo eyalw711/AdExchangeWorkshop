@@ -136,7 +136,7 @@ public class DataToCSV {
 		String[] tokens = str.split(mySplit);
 		String[] parsedSegment = parseSegment(tokens[7]);
 		
-		fillWithZero(Integer.parseInt(tokens[1]));
+		DataToCSV.fillWithZeros(Integer.parseInt(tokens[1]));
 		lastDayWithCamp = Integer.parseInt(tokens[1]);
 		
 		if (flag)
@@ -167,7 +167,7 @@ public class DataToCSV {
 		lastDayWithCamp++;
 	}
 	
-	public static void fillWithZero(int to){
+	public static void fillWithZeros(int to){
 		for (int i = lastDayWithCamp; i<to; i++) {
 			for (String el : segments) {
 				String line_to_write = Integer.toString(index) + ',' + Integer.toString(i) + ',' + el + ',' + "0" + ',' + "0" + ',' + "0" +',' + "0" +',' + "0" + ',' + "0";
