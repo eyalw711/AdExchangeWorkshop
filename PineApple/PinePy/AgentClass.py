@@ -10,7 +10,7 @@ from UcsManagerClass import ucsManager
 import itertools
 
 def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+#    print(*args, file=sys.stderr, **kwargs)
     with open("runlog.log", "a+") as logFile:
         print(*args, file=logFile, **kwargs)
 #        logFile.write(*args)
@@ -82,7 +82,7 @@ class Agent:
             if any(seg.segment_demand(day, Campaign.getCampaignList()) != avgDem for seg in bidSegments):
                 eprint("#formBidBundle: demand varies!")
             
-            NORMALING_FACTOR = 25.0 #TODO: think what that should be
+            NORMALING_FACTOR = 50.0 #TODO: think what that should be
             PANIC_FACTOR = 1.0
             if cmp.endDay == day-1:
                 PANIC_FACTOR = 1.1
@@ -98,6 +98,12 @@ class Agent:
                     coeffsMult *= cmp.videoCoeff
                 if x[2] == "Mobile" and cmp.mobileCoeff > 1:
                     coeffsMult *= cmp.mobileCoeff
+                
+                outputCoeff = 1
+                dailyImpsAvg = cmp.impressions_goal / cmp.activePeriodLength()
+                dailyImpsAvgTogo = (cmp.impressions_goal - cmp.targetedImpressions) / (cmp.endDay - day + 1)
+                if dailyImpsAvgTogo > dailyImpsAvg:
+                    outputCoeff = dailyImpsAvgTogo / dailyImpsAvg
                 
                 if seg == None:                 #empty query (UNKNOWN)
                     #bid = p * coeffsMult
@@ -115,10 +121,11 @@ class Agent:
                 else:                           #normal query
                     demand = seg.segment_demand(day, Campaign.getCampaignList())
                     #eprint("#formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
-                    bid = float((p * (demand / avgDem) * NORMALING_FACTOR) * coeffsMult * PANIC_FACTOR)
-                    if bid < 0:
-                        eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")
-                        bid = p * PANIC_FACTOR 
+                    
+                    bid = float((p * (demand / avgDem) * NORMALING_FACTOR) * coeffsMult * PANIC_FACTOR * outputCoeff)
+#                    if bid < 0:
+#                        eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")
+#                        bid = p * PANIC_FACTOR * outputCoeff
                 
                     if (not seg is bidSegments[-1]):
                         s = seg.size

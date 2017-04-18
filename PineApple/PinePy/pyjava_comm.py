@@ -17,7 +17,7 @@ from UcsManagerClass import ucsManager
 import time
 
 def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+#    print(*args, file=sys.stderr, **kwargs)
     with open("runlog.log", "a+") as logFile:
         print(*args, file=logFile, **kwargs)
 #        logFile.write(*args)
@@ -233,11 +233,6 @@ class Communicator:
         
         if afterDelimiterIndex != 1: #There is a campaign report!
             self.handleCampaignReport()
-        
-        try:
-            raise ValueError("I bet this wouldn't print")
-        except Exception as e:
-            printException(e, "handleAdNetworkDailyNotification", "checking if exceptions print")
         
         '''
         inputs:
