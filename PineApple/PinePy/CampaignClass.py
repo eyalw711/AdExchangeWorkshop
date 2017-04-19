@@ -51,9 +51,11 @@ class Campaign:
         
     
     def __repr__(self):
-        template = "Campaign ID:{}, start:{}, ends:{}, segments:{}, reach:{}"
+        template = "CID:{}, start:{}, end:{}, segs:{}, reach:{}"
         if self.agent.name == "PineApple":
-            return (template + ", imps_goal:{}").format(self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach, self.impressions_goal)
+            return (template + ", imps_goal:{}, CMPR: {}").format(self.cid, self.startDay,
+                   self.endDay, [seg for seg in self.segments],
+                   self.reach, self.impressions_goal, (self.targetedImpressions / self.reach))
         else:
             return template.format(self.cid, self.startDay, self.endDay, [seg for seg in self.segments], self.reach)
     
@@ -107,13 +109,14 @@ class Campaign:
         '''this is called for a campaign which will start tomorrow'''
         self.agent = agent
         Campaign.campaigns[self.cid] = self
-        agent.my_campaigns[self.cid] = self
+        agent.my_cids += [self.cid]             #        agent.my_campaigns[self.cid] = self
         self.budget = budget
-        
-        #put the campaign in the game.campaigns
-        if game != None:
-            game.campaigns[self.cid] = self
-        
+  
+#DISABLED: only campaign class holds all campaigns      
+#        #put the campaign in the game.campaigns
+#        if game != None:
+#            game.campaigns[self.cid] = self
+       
         if not (goalObject is None): # compute average price per impression for this campaign
             Q_old = goalObject["Q_old"]
             B = self.budget

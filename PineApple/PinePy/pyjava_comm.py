@@ -31,7 +31,7 @@ class Game:
     def __init__(self):
         self.agent = Agent("PineApple")
         self.opponents = [Agent("") for i in range(7)]
-        self.campaigns = {}
+#        self.campaigns = {}
         self.campaignOffer = None
         self.day = 0
         
@@ -40,7 +40,7 @@ class Game:
         
     def getGameActiveCampaignsCampaignsList(self):
         '''active campaigns today'''
-        return list(filter(lambda x: x.activeAtDay(self.day), list(self.campaigns.values())))
+        return list(filter(lambda x: x.activeAtDay(self.day), list(Campaign.campaigns.values())))
         
     
      
@@ -56,7 +56,7 @@ class Game:
         eprint("Daily UCS Level {}, Yesterday wished for Level {}".format(self.agent.dailyUCSLevel, self.ucs_level_requested_yesterday))
         eprint("\nAll Active Campaigns in the Game ({} Campaigns)".format(len(self.getGameActiveCampaignsCampaignsList())))
         for agent in [self.agent]+self.opponents:
-            agentActiveCampsList = list(filter( lambda x: x.activeAtDay(self.day), list(agent.my_campaigns.values())))
+            agentActiveCampsList =  agent.getOnGoingCampaigns(self.day) # list(filter( lambda x: x.activeAtDay(self.day), list(agent.my_campaigns.values())))
             eprint("\nCampaigns of Agent {} ({} Campaigns)".format(agent.name if agent.name != "" else "Unnamed", len(agentActiveCampsList)))
             eprint("\n".join(map(lambda x: str(x), agentActiveCampsList)))
                 
@@ -70,36 +70,6 @@ class Communicator:
         self.argsList = argsList
         self.game = game
         
-    ''' UNUSED '''
-    def loadPickle(self):
-        loaded = True
-        try:
-            self.game = pickle.load( open("pickle//game.p", "rb"))
-        except (OSError, IOError) as e:
-            loaded = False
-            eprint("loadPickle: ", str(e), " making a new game since pickle isn't found")
-            self.game = Game()
-        
-        try:
-            MarketSegment.segments_init()
-            Campaign.statistic_campaigns_init()
-            #eprint("#TODO: bring back to life again when can") #Campaign.statistic_campaigns_init() #TODO: bring back to life again when can
-            if loaded:
-                Campaign.setCampaigns(self.game.campaigns)
-        except KeyError as e:
-            template = "While initializing stuff an exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(e).__name__, e.args)
-            eprint("loadPickle: Error Loading Pickle: ", message)  
-            
-            
-    ''' UNUSED '''
-    def dumpPickle(self):
-        if self.queryName == "StartInfo":
-            return
-
-        with open( "pickle//game.p", "wb" ) as pickleFile:
-            pickle.dump( self.game, pickleFile)
-            
     
     def handleGetUcsAndBudget(self):
         eprint("handleGetUcsAndBudget: ArgsList is {}".format(self.argsList))
@@ -190,11 +160,11 @@ class Communicator:
         for (inx,camp) in enumerate(otherInitialCampaigns):
             camp.assignCampaign(self.game.opponents[inx], None, budgetMillis, game = self.game)
         
-        eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_campaigns.keys())
+        eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_cids)
             
     def handleGetBidBundle(self, doPrint = True):
         '''returns a bidbundle'''
-        eprint("handleGetBidBundle: all my CIDs are ", self.game.agent.my_campaigns.keys())
+        eprint("handleGetBidBundle: all my CIDs are ", self.game.agent.my_cids)
         bidBundle = self.game.agent.formBidBundle(self.game.day+1)    
             
         if not doPrint:
@@ -217,9 +187,7 @@ class Communicator:
 #           nonTargetedImpressions = self.argsList[3+4*i]
 #           cost = self.argsList[4+4*i]
             #update:
-            if cid in self.game.agent.my_campaigns:
-                self.game.agent.my_campaigns[cid].targetedImpressions = targetedImpressions
-            if cid in Campaign.campaigns:
+            if cid in self.game.agent.my_cids:
                 Campaign.campaigns[cid].targetedImpressions = targetedImpressions
                 
     
@@ -305,7 +273,7 @@ class Communicator:
                         break
             eprint("handleAdNetworkDailyNotification: Lost campaign cid {}, assigned to agent {}".format(cid, winner_name))
         
-        self.game.campaigns[cmp.cid] = cmp
+        Campaign.campaigns[cmp.cid] = cmp
         eprint("handleAdNetworkDailyNotification: opponents names - {}".format([agent.name for agent in self.game.opponents]))
     
     def handleAdxPublisherReport(self):

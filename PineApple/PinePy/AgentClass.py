@@ -23,13 +23,17 @@ class Agent:
         self.quality = 1.0 #starting quality is 1.0
         ''' powers of 0.9 '''
         self.dailyUCSLevel = 0.9 #starting UCS Level is 0.9 
-        self.my_campaigns = {}
+        ''' list of CIDs'''
+        self.my_cids = []
          
     def __repr__(self):
-        return "Agent {}: Q: {} Campaigns: {}".format(self.name, self.quality, self.my_campaigns.values())
+        return "Agent {}: Q: {} Campaigns: {}".format(self.name, self.quality, self.my_campaigns())
+    
+    def my_campaigns(self):
+        return [Campaign.campaigns[cid] for cid in self.my_cids]
     
     def getOnGoingCampaigns(self, day):
-        return [camp for (key, camp) in self.my_campaigns.items() if camp.activeAtDay(day)]
+        return [camp for camp in self.my_campaigns() if camp.activeAtDay(day)]
     
     def campaignOpportunityBid(self, campaign): # as defined in the document
         COB = campaign.initial_budget_bid()
@@ -47,14 +51,13 @@ class Agent:
         param day is (current game day + 1)
         '''
         bidsArray = []
-        ongoing_camps = [cmp for cid,cmp in self.my_campaigns.items() if cmp.activeAtDay(day)]
+        ongoing_camps = self.getOnGoingCampaigns(day) 
         eprint("#formBidBundle: {}: tomorrow is {}, ongoing camps tomorrow are {}".format(self.name, day, [cmp.cid for cmp in ongoing_camps]))
         ucs_level = ucsManager.get_desired_UCS_level(day, ongoing_camps) #day is tomorrow as this function expects
         if ucs_level > 0:
             ucs_level -= 1
         lvl_accuracy = ucsManager.level_accuracy(ucs_level)
       
-        #for cid, cmp in self.my_campaigns.items():
         for cmp in ongoing_camps:
             cid = cmp.cid
             eprint("#formBidBundle: forming bids for cid {}".format(cid))
@@ -90,6 +93,12 @@ class Agent:
                 PANIC_FACTOR = 1.1
             elif cmp.endDay == day:
                 PANIC_FACTOR = 1.2
+                
+            outputCoeff = 1
+            dailyImpsAvg = cmp.impressions_goal / cmp.activePeriodLength()
+            dailyImpsAvgTogo = (cmp.impressions_goal - cmp.targetedImpressions) / (cmp.endDay - day + 1)
+            if dailyImpsAvgTogo > dailyImpsAvg:
+                outputCoeff = dailyImpsAvgTogo / dailyImpsAvg
             
             p = cmp.avg_p_per_imp
             eprint("#formBidBundle: for camp {} the p is {} and avgDem is {}".format(cmp.cid, p, avgDem))
@@ -102,15 +111,9 @@ class Agent:
                 if x[2] == "Mobile" and cmp.mobileCoeff > 1:
                     coeffsMult *= cmp.mobileCoeff
                 
-                outputCoeff = 1
-                dailyImpsAvg = cmp.impressions_goal / cmp.activePeriodLength()
-                dailyImpsAvgTogo = (cmp.impressions_goal - cmp.targetedImpressions) / (cmp.endDay - day + 1)
-                if dailyImpsAvgTogo > dailyImpsAvg:
-                    outputCoeff = dailyImpsAvgTogo / dailyImpsAvg
-                
                 if seg == None:                 #empty query (UNKNOWN)
                     #bid = p * coeffsMult
-                    bid = 0.0
+                    bid = 0.005
                     
                     #this stands for the impressions we don't expect to catch because of lack of ucs
                     s = min(cmpSegmentsSize, (cmp.impressions_goal - cmp.targetedImpressions)) - goal_targeted_number_of_imps_for_day
