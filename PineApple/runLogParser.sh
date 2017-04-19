@@ -7,7 +7,7 @@
 TACAA_HOME=`pwd`
 echo $TACAA_HOME
 echo $CLASSPATH
-java -cp "lib/*" se.sics.tasim.logtool.Main -handler tau.tac.adx.parser.GeneralHandler -file /home/sleviim/Workspaces/PineApple/logs/sims/ -ucs -rating -bank -campaign -adnet
+java -cp "lib/*" se.sics.tasim.logtool.Main -handler tau.tac.adx.parser.GeneralHandler -file /home/yossid/Documents/adx/adx_1.3.0/adx-server/logs/sims/localhost_sim186.slg -ucs -rating -bank -campaign -adnet
 
 #java -cp "lib/*" se.sics.tasim.logtool.Main -handler tau.tac.adx.parser.GeneralHandler -file LOG_FILE_PATH/game.slg.gz -ucs -rating -bank -campaign -adnet
 

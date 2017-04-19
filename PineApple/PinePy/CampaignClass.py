@@ -239,7 +239,15 @@ class Campaign:
 #                eprint("predict_campaign_profitability return")
 #                return int(y_pred[0]), b*1000.0  
 #        eprint("predict_campaign_profitability return")
+        min_budget = self.reach/(quality*10.0)+5
+        if self.is_big_campaign:
+            return 1, min_budget
         return int(y_pred[0]), b*1000.0
+    
+    def is_big_campaign(self):
+        if self.endDay-self.startDay >= 4 and self.reach > 10000:
+            return True
+        return False
     
     def is_last_day(self, day):
         if day == self.endDay:

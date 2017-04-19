@@ -386,7 +386,7 @@ def main(comm):
 #        sys.exit()
 
 if __name__ == "__main__":
-    
+    sys.stdout.flush()
     origPath = os.getcwd()
     try:
         os.chdir(origPath + "//PinePy")
