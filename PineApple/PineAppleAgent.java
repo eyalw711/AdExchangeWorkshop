@@ -47,59 +47,34 @@ import tools.DataToCSV;
 
 public class PineAppleAgent extends Agent {
 
+	// Debug flags
 	public boolean debugFlag = true;
 	public boolean testTrue = true;
 	public static boolean debugFlagStatic = true;
 	private boolean DEBUG = true;
 	public boolean DEBUG_UCS = false;
 
-	public static long dailyNotificationTime = 0;
-
-	public static String cmpReportLastParams = "";
-	public static int campReportSavedDay = -1;
-	public static int dayLastCampOpp = -1;
-
-	public static String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py "; // "python
-																				// ./PinePy/pyjava_comm.py
-																				// ";
-
-	public static BufferedReader inp;
-	public static BufferedWriter outputPy;
-	public static BufferedReader stdError;
-
-	public static Process pythonProccess;
+	private final Logger log = Logger.getLogger(PineAppleAgent.class.getName());
 
 	// public static String pathAndCommand = "python3.6
 	// ./PinePy/__pycache__/pyjava_comm.cpython-36.pyc "; //"python
 	// ./PinePy/pyjava_comm.py ";
 
-	public static String pipe(String msg, boolean waitToAns) {
-		String ret = null;
-		String lastRet = null;
+	// Python engine and streams:
+	public static Process pythonProccess;
+	public static BufferedReader inputStreamPythonApp;
+	public static BufferedWriter outputStreamPythonApp;
+	public static BufferedReader errorStreamPythonApp;
+	public static final String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py ";
 
-		try {
-			outputPy.write(msg + "\n");
-			outputPy.flush();
-			if (waitToAns) {
-				int i = 0;
-				while ((ret = inp.readLine()) != null) {
-					System.out.println(ret);
-					System.out.println(i++);
-					return ret;
-				}
-			}
-			System.out.println("out of the goddamned pipe");
-			return lastRet;
-		}
-
-		catch (Exception err) {
-
-		}
-		System.out.println("out of the goddamned pipe");
-		return "";
-	}
-
-	private final Logger log = Logger.getLogger(PineAppleAgent.class.getName());
+	// Communication w/ server
+	/**
+	 * The addresses of server entities to which the agent should send the daily
+	 * bids data
+	 */
+	private String demandAgentAddress;
+	private String adxAgentAddress;
+	private int simulationId;
 
 	/*
 	 * Basic simulation information. An agent should receive the {@link
@@ -122,16 +97,12 @@ public class PineAppleAgent extends Agent {
 	private InitialCampaignMessage initialCampaignMessage;
 	private AdNetworkDailyNotification adNetworkDailyNotification;
 
+	/* UNUSED */
 	public enum Day {
 		bid, alloc, start
 	};
 
-	/**
-	 * The addresses of server entities to which the agent should send the daily
-	 * bids data
-	 */
-	private String demandAgentAddress;
-	private String adxAgentAddress;
+	// -- various objects of the game:
 
 	/**
 	 * we maintain a list of queries - each characterized by the web site (the
@@ -173,17 +144,99 @@ public class PineAppleAgent extends Agent {
 	private CampaignData currCampaign;
 	private long pendingCampaignBudget;
 
-	public PineAppleAgent() 
+	// Times
+	public static long dailyNotificationTime = 0;
+
+	public static String cmpReportLastParams = "";
+	public static int campReportSavedDay = -1;
+	public static int dayLastCampOpp = -1;
+
+	// #############################
+	// Function declarations #
+	// #############################
+
+	// Communication w/ python engine
+
+	public static String pipe(String msg, boolean waitToAns) {
+		String ret = null;
+		String lastRet = null;
+
+		try {
+			outputStreamPythonApp.write(msg + "\n");
+			outputStreamPythonApp.flush();
+			if (waitToAns) {
+				while ((ret = inputStreamPythonApp.readLine()) != null) {
+					System.out.println(ret);
+					return ret;
+				}
+			}
+			return lastRet;
+		}
+
+		catch (Exception err) {
+			System.out.println("exception in function pipe: " + err.toString());
+		}
+		return "";
+	}
+
+	// run a new proccess and activate the inputed cmd - taken from
+	// http://alvinalexander.com
+	public static String runPythonScript(String queryToRun, boolean waitForAnswer) 
 	{
+
+		long startTime = System.currentTimeMillis();
+		String stderr = null;
+		String retVal = null;
+
 		try 
 		{
+			System.out.println("EnterToPipe, send: " + queryToRun + " i am waiting: " + waitForAnswer);
+			retVal = pipe(queryToRun, waitForAnswer);
+			System.out.println("returned from pipe.");
+
+			int i = 0;
+
+			/*
+			 * // read any errors from the attempted command while ((s =
+			 * errorStreamPythonApp.readLine()) != null) {
+			 * System.out.println(i++);
+			 * 
+			 * stderr= stderr + "\n" + s;
+			 * 
+			 * }
+			 */
+
+			if (debugFlagStatic)
+			{
+
+				System.out.println("DEBUG: python  returned after " + (System.currentTimeMillis() - startTime) + " ms with:");
+				// System.out.println("the stderr is:");
+				// System.out.println(stderr);
+				System.out.println(retVal);
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("exception happened (runPythonScript) - here's what I know: ");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		return retVal;
+	}
+
+	/* constructor */
+	public PineAppleAgent()
+	{
+		System.out.println("PineAppleAgent Constructor called! Have a tropical day!");
+		try {
+			log.fine("Bringing up the python engine process!");
 			pythonProccess = Runtime.getRuntime().exec(pathAndCommand);
-			outputPy = new BufferedWriter(new OutputStreamWriter(pythonProccess.getOutputStream()));
+			outputStreamPythonApp = new BufferedWriter(new OutputStreamWriter(pythonProccess.getOutputStream()));
+			inputStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getInputStream()));
+			errorStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getErrorStream()));
 
-			inp = new BufferedReader(new InputStreamReader(pythonProccess.getInputStream()));
-
-			stdError = new BufferedReader(new InputStreamReader(pythonProccess.getErrorStream()));
 		} catch (Exception err) {
+			log.severe("Failed to bring up the python engine!");
 			err.printStackTrace();
 		}
 		campaignReports = new LinkedList<CampaignReport>();
@@ -191,21 +244,11 @@ public class PineAppleAgent extends Agent {
 	}
 
 	/**
-	 * currently works for n+2 returns the open campaigns sorted by:
+	 * Entry point to the implementation of the PineAppleAgent
 	 * 
-	 * @return
+	 * @param message:
+	 *            received from game server
 	 */
-	private LinkedList<CampaignData> getAllOpenCampaignsAtDayPlus(int n) {
-		int eday = day + n;
-		LinkedList<CampaignData> retList = new LinkedList<>();
-		for (Map.Entry<Integer, CampaignData> entry : myCampaigns.entrySet()) {
-			if (entry.getValue().dayStart <= eday && entry.getValue().dayEnd >= eday) {
-				retList.add(entry.getValue());
-			}
-		}
-		return retList;
-	}
-
 	@Override
 	protected void messageReceived(Message message) {
 		try {
@@ -251,10 +294,15 @@ public class PineAppleAgent extends Agent {
 		}
 	}
 
-	private void handleCampaignAuctionReport(CampaignAuctionReport content) {
-		// ingoring - this message is obsolete
-	}
+	// #######################################
+	// HANDLER FUNCTIONS #
+	// #######################################
 
+	/**
+	 * This doesn't come as a consideration to us during the game.
+	 * 
+	 * @param content
+	 */
 	private void handleBankStatus(BankStatus content) {
 		System.out.println("Day " + day + " :" + content.toString());
 		// if(debugFlag)
@@ -272,7 +320,9 @@ public class PineAppleAgent extends Agent {
 	protected void handleStartInfo(StartInfo startInfo) {
 		long startTime = System.currentTimeMillis();
 		this.startInfo = startInfo;
-		
+		this.simulationId = startInfo.getSimulationID();
+		// TODO: notify python for logging purposes.
+
 		// if(debugFlag)
 		// System.out.println("DEBUG: run python - StartInfo");
 		// runPythonScript("StartInfo " +
@@ -291,39 +341,6 @@ public class PineAppleAgent extends Agent {
 		this.publisherCatalog = publisherCatalog;
 		generateAdxQuerySpace();
 		getPublishersNames();
-	}
-
-	public static String getSegmentsInitials(String[] splitedSegments) {
-		char[] letterForSegmet = new char[splitedSegments.length];
-		String segmentToUse = "";
-
-		for (int i = 0; i < splitedSegments.length; i++) {
-			// System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$:
-			// "+splitedSegments[i]);
-			letterForSegmet[i] = splitedSegments[i].charAt(0);
-		}
-
-		for (int i = 0; i < 3; i++)
-			for (int j = 0; j < letterForSegmet.length; j++) {
-				String segOption;
-				if (i == 0) {
-					segOption = "OY";
-					if (segOption.indexOf(letterForSegmet[j]) != -1)
-						segmentToUse = segmentToUse + Character.toString(letterForSegmet[j]);
-				}
-				if (i == 1) {
-					segOption = "MF";
-					if (segOption.indexOf(letterForSegmet[j]) != -1)
-						segmentToUse = segmentToUse + Character.toString(letterForSegmet[j]);
-				}
-				if (i == 2) {
-					segOption = "HL";
-					if (segOption.indexOf(letterForSegmet[j]) != -1)
-						segmentToUse = segmentToUse + Character.toString(letterForSegmet[j]);
-				}
-
-			}
-		return segmentToUse;
 	}
 
 	/**
@@ -402,7 +419,7 @@ public class PineAppleAgent extends Agent {
 			System.out.println("Day " + day + ": Campaign opportunity - " + pendingCampaign);
 
 			String s_tmp = "Day " + day + ": Campaign opportunity - " + pendingCampaign;
-			//DataToCSV.split_to_fields2(s_tmp, false);
+			// DataToCSV.split_to_fields2(s_tmp, false);
 
 			/*
 			 * The campaign requires com.getReachImps() impressions. The
@@ -424,13 +441,15 @@ public class PineAppleAgent extends Agent {
 					+ Integer.toString(com.getDay());
 
 			if (debugFlag) {
-				System.out.println("handleICampaignOpportunityMessage: run python - GetUcsAndBudget param: " + paramString);
+				System.out.println(
+						"handleICampaignOpportunityMessage: run python - GetUcsAndBudget param: " + paramString);
 			}
 
 			String outputString = runPythonScript("GetUcsAndBudget " + paramString, true);
 
 			if (debugFlag)
-				System.out.println("handleICampaignOpportunityMessage: output python - GetUcsAndBudget\n" + outputString);
+				System.out
+						.println("handleICampaignOpportunityMessage: output python - GetUcsAndBudget\n" + outputString);
 
 			if (outputString == null) {
 				System.out.println("handleICampaignOpportunityMessage: GetUcsAndBudget returned null");
@@ -441,18 +460,15 @@ public class PineAppleAgent extends Agent {
 				return;
 			}
 
+			// python also returns bidbundle:
 			JSONObject obj = new JSONObject(outputString);
 
 			cmpBidMillis = Long.parseLong(obj.getString("budgetBid"));
 
 			pendingCampaignBudget = cmpBidMillis;
 
-			System.out.println("handleICampaignOpportunityMessage: Day " + day + ": Campaign total budget bid (millis): " + cmpBidMillis);
-
-			/*
-			 * Adjust ucs bid s.t. target level is achieved. Note: The bid for
-			 * the user classification service is piggybacked
-			 */
+			System.out.println("handleICampaignOpportunityMessage: Day " + day
+					+ ": Campaign total budget bid (millis): " + cmpBidMillis);
 
 			ucsBid = Double.parseDouble(obj.getString("UCSBid"));
 
@@ -462,10 +478,11 @@ public class PineAppleAgent extends Agent {
 			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
 
 			sendMessage(demandAgentAddress, bids);
-			System.out.println("handleICampaignOpportunityMessage: start of func to after sendMessage elapsed: " + (System.currentTimeMillis() - startTime));
-
-			// yossi
+			System.out.println("handleICampaignOpportunityMessage: start of func to after sendMessage elapsed: "
+					+ (System.currentTimeMillis() - startTime));
 			dayLastCampOpp = day;
+
+			// python also returns a bidbundle:
 
 			bidBundle = new AdxBidBundle();
 
@@ -484,6 +501,7 @@ public class PineAppleAgent extends Agent {
 					device = Device.pc;
 				else
 					device = Device.mobile;
+
 				if (JQuery.getString("adType").equals("Text"))
 					adtype = AdType.text;
 				else
@@ -495,11 +513,10 @@ public class PineAppleAgent extends Agent {
 					Set<MarketSegment> segment;
 
 					if (marketSegmentName.compareTo("Unknown") == 0) // equals
-					{
 						segment = new HashSet<MarketSegment>();
-					} else {
+					else
 						segment = createSegmentFromPython(marketSegmentName);
-					}
+
 					query = new AdxQuery(publisherName, segment, device, adtype);
 
 					bidBundle.addQuery(query, Double.parseDouble(JbidBundleElement.getString("bid")), new Ad(null),
@@ -508,15 +525,204 @@ public class PineAppleAgent extends Agent {
 				}
 			}
 
-			System.out.println(
-					"handleICampaignOpportunityMessage: elapsed: " + (System.currentTimeMillis() - startTime));
+			System.out
+					.println("handleICampaignOpportunityMessage: elapsed: " + (System.currentTimeMillis() - startTime));
 
 		} catch (Exception e) {
-			System.out.println("exception happened at : handleICampaignOpportunityMessage" + e.getMessage());
+			System.out.println(
+					"CRITICAL ERROR: exception happened at : handleICampaignOpportunityMessage" + e.getMessage());
 			e.printStackTrace();
+			System.out.println("Exiting program");
 			System.exit(-1);
 		}
 
+	}
+
+	/**
+	 * On day n ( > 0), the result of the UserClassificationService and Campaign
+	 * auctions (for which the competing agents sent bids during day n -1) are
+	 * reported. The reported Campaign starts in day n+1 or later and the user
+	 * classification service level is applicable starting from day n+1.
+	 */
+	private void handleAdNetworkDailyNotification(AdNetworkDailyNotification notificationMessage) {
+		dailyNotificationTime = System.currentTimeMillis();
+
+		adNetworkDailyNotification = notificationMessage;
+
+		System.out.println("Day " + day + ": Daily notification (results of opportunity) for campaign "
+				+ adNetworkDailyNotification.getCampaignId());
+
+		String campaignAllocatedTo = " allocated to " + notificationMessage.getWinner();
+
+		if ((pendingCampaign.id == adNetworkDailyNotification.getCampaignId())
+				&& (notificationMessage.getCostMillis() != 0)) {
+			/* add campaign to list of won campaigns */
+			pendingCampaign.setBudget(notificationMessage.getCostMillis() / 1000.0);
+			currCampaign = pendingCampaign;
+			genCampaignQueries(currCampaign);
+			myCampaigns.put(pendingCampaign.id, pendingCampaign);
+
+			campaignAllocatedTo = "PineAppleAgent WON campaign " + adNetworkDailyNotification.getCampaignId()
+					+ " at cost (Millis)" + notificationMessage.getCostMillis();
+		}
+
+		System.out.println("Day " + day + ": " + campaignAllocatedTo + ". UCS Level set to "
+				+ notificationMessage.getServiceLevel() + " at price " + notificationMessage.getPrice()
+				+ " Quality Score is: " + notificationMessage.getQualityScore());
+
+		String nameWinner = adNetworkDailyNotification.getWinner();
+		if (nameWinner == null || nameWinner.equals(""))
+			nameWinner = "NOT_ALLOCATED";
+		if (debugFlag)
+			System.out.println("DEBUG: run python - AdNetworkDailyNotification");
+
+		String paramsToSend = " DAILYNOTIFICATION " + Integer.toString(adNetworkDailyNotification.getEffectiveDay())
+				+ " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " "
+				+ Double.toString(adNetworkDailyNotification.getPrice()) + " "
+				+ Double.toString(adNetworkDailyNotification.getQualityScore()) + " "
+				+ Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + nameWinner + " "
+				+ Long.toString(adNetworkDailyNotification.getCostMillis());
+
+		if (campReportSavedDay == day) {
+			paramsToSend = cmpReportLastParams + paramsToSend;
+			campReportSavedDay = -1;
+			cmpReportLastParams = "";
+		}
+
+		runPythonScript("AdNetworkDailyNotification " + paramsToSend, false);
+	}
+
+	/**
+	 * The SimulationStatus message received on day n indicates that the
+	 * calculation time is up and the agent is requested to send its bid bundle
+	 * to the AdX.
+	 */
+	private void handleSimulationStatus(SimulationStatus simulationStatus) {
+		System.out.println("Day " + day + " : Simulation Status Received");
+		sendBidAndAds();
+		System.out.println(
+				"from dailyNotification to send of bidBundle: " + (System.currentTimeMillis() - dailyNotificationTime));
+		if (day == 60) {
+			// DataToCSV.fillWithZeros(60);
+			System.out.println("quitting");
+			pipe("quit", false);
+			try {
+				inputStreamPythonApp.close();
+				outputStreamPythonApp.close();
+				errorStreamPythonApp.close();
+			} catch (Exception err) {
+				err.printStackTrace();
+			}
+		}
+
+		++day;
+	}
+
+	/**
+	 * Campaigns performance w.r.t. each allocated campaign
+	 */
+	private void handleCampaignReport(CampaignReport campaignReport) {
+		campaignReports.add(campaignReport);
+
+		String paramsToSend = Integer.toString(campaignReport.keys().size());
+		System.out.println("Campaign Report:");
+
+		/*
+		 * for each campaign, the accumulated statistics from day 1 up to day
+		 * n-1 are reported
+		 */
+		for (CampaignReportKey campaignKey : campaignReport.keys()) {
+			int cmpId = campaignKey.getCampaignId();
+			CampaignStats cstats = campaignReport.getCampaignReportEntry(campaignKey).getCampaignStats();
+			myCampaigns.get(cmpId).setStats(cstats);
+
+			String strToPrint = "Day " + day + ": Updating campaign " + cmpId + " stats: " + cstats.getTargetedImps()
+					+ " tgtImps " + cstats.getOtherImps() + " nonTgtImps. Cost of imps is " + cstats.getCost();
+			System.out.println(strToPrint);
+
+			paramsToSend = paramsToSend + " " + Integer.toString(cmpId) + " "
+					+ Double.toString(cstats.getTargetedImps()) + " " + Double.toString(cstats.getOtherImps()) + " "
+					+ Double.toString(cstats.getCost());
+		}
+
+		// if(debugFlag)
+		// System.out.println("DEBUG: run python - CampaignReport");
+		// runPythonScript("CampaignReport " + paramsToSend);
+		cmpReportLastParams = paramsToSend;
+		campReportSavedDay = day;
+
+	}
+
+	/**
+	 * Users and Publishers statistics: popularity and ad type orientation
+	 */
+	private void handleAdxPublisherReport(AdxPublisherReport adxPublisherReport) {
+		System.out.println("Publishers Report: ");
+
+		if (adxPublisherReport.keys().size() == 0 && DEBUG) {
+			System.out.println("DEBUG: no entries in adxPublisherReport");
+		}
+
+		for (PublisherCatalogEntry publisherKey : adxPublisherReport.keys()) {
+			AdxPublisherReportEntry entry = adxPublisherReport.getEntry(publisherKey);
+			if (entry.getReservePriceBaseline() != 0.0) {
+				System.out.println(entry.toString());
+				System.out.println("reserved price baseline: " + entry.getReservePriceBaseline());
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param AdNetworkReport
+	 */
+	private void handleAdNetworkReport(AdNetworkReport adnetReport) {
+
+		// System.out.println("Day " + day + " : AdNetworkReport");
+		/*
+		 * for (AdNetworkKey adnetKey : adnetReport.keys()) {
+		 * 
+		 * double rnd = Math.random(); if (rnd > 0.95) { AdNetworkReportEntry
+		 * entry = adnetReport .getAdNetworkReportEntry(adnetKey);
+		 * System.out.println(adnetKey + " " + entry); } }
+		 */
+	}
+
+	// #######################################
+	// UTILS #
+	// #######################################
+
+	public static String getSegmentsInitials(String[] splitedSegments) {
+		char[] letterForSegmet = new char[splitedSegments.length];
+		String segmentToUse = "";
+
+		for (int i = 0; i < splitedSegments.length; i++) {
+			// System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$:
+			// "+splitedSegments[i]);
+			letterForSegmet[i] = splitedSegments[i].charAt(0);
+		}
+
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < letterForSegmet.length; j++) {
+				String segOption;
+				if (i == 0) {
+					segOption = "OY";
+					if (segOption.indexOf(letterForSegmet[j]) != -1)
+						segmentToUse = segmentToUse + Character.toString(letterForSegmet[j]);
+				}
+				if (i == 1) {
+					segOption = "MF";
+					if (segOption.indexOf(letterForSegmet[j]) != -1)
+						segmentToUse = segmentToUse + Character.toString(letterForSegmet[j]);
+				}
+				if (i == 2) {
+					segOption = "HL";
+					if (segOption.indexOf(letterForSegmet[j]) != -1)
+						segmentToUse = segmentToUse + Character.toString(letterForSegmet[j]);
+				}
+
+			}
+		return segmentToUse;
 	}
 
 	private int numOfCampaignsCompleted() {
@@ -549,91 +755,6 @@ public class PineAppleAgent extends Agent {
 			}
 		}
 
-	}
-
-	/**
-	 * On day n ( > 0), the result of the UserClassificationService and Campaign
-	 * auctions (for which the competing agents sent bids during day n -1) are
-	 * reported. The reported Campaign starts in day n+1 or later and the user
-	 * classification service level is applicable starting from day n+1.
-	 */
-	private void handleAdNetworkDailyNotification(AdNetworkDailyNotification notificationMessage) {
-		if (dailyNotificationTime == 0) {
-			System.out.println("FIRST DAILY");
-			dailyNotificationTime = System.currentTimeMillis();
-		} else {
-			dailyNotificationTime = System.currentTimeMillis();
-		}
-
-		adNetworkDailyNotification = notificationMessage;
-
-		System.out.println(
-				"Day " + day + ": Daily notification for campaign " + adNetworkDailyNotification.getCampaignId());
-
-		String campaignAllocatedTo = " allocated to " + notificationMessage.getWinner();
-
-		if ((pendingCampaign.id == adNetworkDailyNotification.getCampaignId())
-				&& (notificationMessage.getCostMillis() != 0)) {
-
-			/* add campaign to list of won campaigns */
-			pendingCampaign.setBudget(notificationMessage.getCostMillis() / 1000.0);
-			currCampaign = pendingCampaign;
-			genCampaignQueries(currCampaign);
-			myCampaigns.put(pendingCampaign.id, pendingCampaign);
-
-			campaignAllocatedTo = " WON at cost (Millis)" + notificationMessage.getCostMillis();
-		}
-
-		System.out.println("Day " + day + ": " + campaignAllocatedTo + ". UCS Level set to "
-				+ notificationMessage.getServiceLevel() + " at price " + notificationMessage.getPrice()
-				+ " Quality Score is: " + notificationMessage.getQualityScore());
-
-		String nameWinner = adNetworkDailyNotification.getWinner();
-		if (nameWinner == null || nameWinner.equals(""))
-			nameWinner = "NOT_ALLOCATED";
-		if (debugFlag)
-			System.out.println("DEBUG: run python - AdNetworkDailyNotification");
-
-		String paramsToSend = " DAILYNOTIFICATION " + Integer.toString(adNetworkDailyNotification.getEffectiveDay())
-				+ " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " "
-				+ Double.toString(adNetworkDailyNotification.getPrice()) + " "
-				+ Double.toString(adNetworkDailyNotification.getQualityScore()) + " "
-				+ Integer.toString(adNetworkDailyNotification.getCampaignId()) + " " + nameWinner + " "
-				+ Long.toString(adNetworkDailyNotification.getCostMillis());
-
-		if (campReportSavedDay == day) {
-			paramsToSend = cmpReportLastParams + paramsToSend;
-			campReportSavedDay = -1;
-			cmpReportLastParams = "";
-		}
-
-		runPythonScript("AdNetworkDailyNotification " + paramsToSend, false);
-
-	}
-
-	/**
-	 * The SimulationStatus message received on day n indicates that the
-	 * calculation time is up and the agent is requested to send its bid bundle
-	 * to the AdX.
-	 */
-	private void handleSimulationStatus(SimulationStatus simulationStatus) {
-		System.out.println("Day " + day + " : Simulation Status Received");
-		sendBidAndAds();
-		System.out.println("from failyNotification to send of bidBundle: " + (System.currentTimeMillis() - dailyNotificationTime));
-		if (day == 60) {
-			// DataToCSV.fillWithZeros(60);
-			System.out.println("quitting");
-			pipe("quit", false);
-			try {
-				inp.close();
-				outputPy.close();
-				stdError.close();
-			} catch (Exception err) {
-				err.printStackTrace();
-			}
-		}
-
-		++day;
 	}
 
 	public static Set<MarketSegment> createSegmentFromPython(String pythonSegName) {
@@ -741,76 +862,7 @@ public class PineAppleAgent extends Agent {
 
 	}
 
-	/**
-	 * Campaigns performance w.r.t. each allocated campaign
-	 */
-	private void handleCampaignReport(CampaignReport campaignReport) {
-		campaignReports.add(campaignReport);
-
-		String paramsToSend = Integer.toString(campaignReport.keys().size());
-		System.out.println("Campaign Report:");
-
-		/*
-		 * for each campaign, the accumulated statistics from day 1 up to day
-		 * n-1 are reported
-		 */
-		for (CampaignReportKey campaignKey : campaignReport.keys()) {
-			int cmpId = campaignKey.getCampaignId();
-			CampaignStats cstats = campaignReport.getCampaignReportEntry(campaignKey).getCampaignStats();
-			myCampaigns.get(cmpId).setStats(cstats);
-
-			String strToPrint = "Day " + day + ": Updating campaign " + cmpId + " stats: " + cstats.getTargetedImps()
-					+ " tgtImps " + cstats.getOtherImps() + " nonTgtImps. Cost of imps is " + cstats.getCost();
-			System.out.println(strToPrint);
-
-			paramsToSend = paramsToSend + " " + Integer.toString(cmpId) + " "
-					+ Double.toString(cstats.getTargetedImps()) + " " + Double.toString(cstats.getOtherImps()) + " "
-					+ Double.toString(cstats.getCost());
-		}
-
-		// if(debugFlag)
-		// System.out.println("DEBUG: run python - CampaignReport");
-		// runPythonScript("CampaignReport " + paramsToSend);
-		cmpReportLastParams = paramsToSend;
-		campReportSavedDay = day;
-
-	}
-
-	/**
-	 * Users and Publishers statistics: popularity and ad type orientation
-	 */
-	private void handleAdxPublisherReport(AdxPublisherReport adxPublisherReport) {
-		System.out.println("Publishers Report: ");
-
-		if (adxPublisherReport.keys().size() == 0 && DEBUG) {
-			System.out.println("DEBUG: no entries in adxPublisherReport");
-		}
-
-		for (PublisherCatalogEntry publisherKey : adxPublisherReport.keys()) {
-			AdxPublisherReportEntry entry = adxPublisherReport.getEntry(publisherKey);
-			if (entry.getReservePriceBaseline() != 0.0) {
-				System.out.println(entry.toString());
-				System.out.println("reserved price baseline: " + entry.getReservePriceBaseline());
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @param AdNetworkReport
-	 */
-	private void handleAdNetworkReport(AdNetworkReport adnetReport) {
-
-		System.out.println("Day " + day + " : AdNetworkReport");
-		/*
-		 * for (AdNetworkKey adnetKey : adnetReport.keys()) {
-		 * 
-		 * double rnd = Math.random(); if (rnd > 0.95) { AdNetworkReportEntry
-		 * entry = adnetReport .getAdNetworkReportEntry(adnetKey);
-		 * System.out.println(adnetKey + " " + entry); } }
-		 */
-	}
-
+	/* UNUSED */
 	@Override
 	protected void simulationSetup() {
 		Random random = new Random();
@@ -826,6 +878,7 @@ public class PineAppleAgent extends Agent {
 
 	}
 
+	/* UNUSED */
 	@Override
 	protected void simulationFinished() {
 		campaignReports.clear();
@@ -915,56 +968,42 @@ public class PineAppleAgent extends Agent {
 		// System.out.println("!!!!!!!!!!!!!!!!!!!!!!"+Arrays.toString(campaignData.campaignQueries)+"!!!!!!!!!!!!!!!!");
 	}
 
-	// run a new proccess and activate the inputed cmd - taken from
-	// http://alvinalexander.com
-	public static String runPythonScript(String queryToRun, boolean waitForAnswer) {
+	// ###################################
+	// OBSOLETE FUNCTIONS #
+	// ###################################
 
-		long startTime = System.currentTimeMillis();
-		String s = null;
-		String stderr = null;
-		String retVal = null;
-
-		try {
-
-			System.out.println("EnterToPipe, send: " + queryToRun + " i am waiting: " + waitForAnswer);
-			retVal = pipe(queryToRun, waitForAnswer);
-			System.out.println("returned from pipe! :)");
-
-			int i = 0;
-
-			/*
-			 * // read any errors from the attempted command while ((s =
-			 * stdError.readLine()) != null) { System.out.println(i++);
-			 * 
-			 * stderr= stderr + "\n" + s;
-			 * 
-			 * }
-			 */
-
-			if (debugFlagStatic) {
-
-				System.out.println("DEBUG: python std outputs:");
-				System.out.println("--------------------------");
-				// System.out.println("the stderr is:");
-				// System.out.println(stderr);
-				System.out.println("the stdout is:");
-				System.out.println(retVal);
-
-			}
-
-		} catch (Exception e) {
-			System.out.println("exception happened (runPythonScript) - here's what I know: ");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		System.out.println(
-				"~~~~~~~~~~~~~~~~~~~~~~~~~~~\t\t\tpyRunning elapsed: " + (System.currentTimeMillis() - startTime));
-
-		return retVal;
-
+	private void handleCampaignAuctionReport(CampaignAuctionReport content) {
+		// ingoring - this message is obsolete
 	}
 
-	public class CampaignData {
+	// ###################################
+	// UNUSED FUNCTIONS #
+	// ###################################
+
+	/**
+	 * currently works for n+2 returns the open campaigns sorted by:
+	 * 
+	 * @return
+	 */
+	// UNUSED
+	private LinkedList<CampaignData> getAllOpenCampaignsAtDayPlus(int n)
+	{
+		int eday = day + n;
+		LinkedList<CampaignData> retList = new LinkedList<>();
+		for (Map.Entry<Integer, CampaignData> entry : myCampaigns.entrySet()) {
+			if (entry.getValue().dayStart <= eday && entry.getValue().dayEnd >= eday) {
+				retList.add(entry.getValue());
+			}
+		}
+		return retList;
+	}
+	
+	//###########################
+	//		Sub-Classes			#
+	//###########################
+	
+	public class CampaignData 
+	{
 		/* campaign attributes as set by server */
 		Long reachImps;
 		long dayStart;
@@ -980,7 +1019,8 @@ public class PineAppleAgent extends Agent {
 		CampaignStats stats;
 		double budget;
 
-		public CampaignData(InitialCampaignMessage icm) {
+		public CampaignData(InitialCampaignMessage icm) 
+		{
 			reachImps = icm.getReachImps();
 			dayStart = icm.getDayStart();
 			dayEnd = icm.getDayEnd();
@@ -1045,5 +1085,4 @@ public class PineAppleAgent extends Agent {
 		 * (int)(Math.ceil(this.impsTogo()/(count*dayToGo))); }
 		 */
 	}
-
 }
