@@ -82,7 +82,7 @@ class Agent:
             if any(seg.segment_demand(day, Campaign.getCampaignList()) != avgDem for seg in bidSegments):
                 eprint("#formBidBundle: demand varies!")
             
-            NORMALING_FACTOR = 50.0 #TODO: think what that should be
+            NORMALING_FACTOR = 70.0 #TODO: think what that should be
             PANIC_FACTOR = 1.0
             if cmp.endDay == day-1:
                 PANIC_FACTOR = 1.1

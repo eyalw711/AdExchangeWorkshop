@@ -402,7 +402,7 @@ public class PineAppleAgent extends Agent {
 			System.out.println("Day " + day + ": Campaign opportunity - " + pendingCampaign);
 
 			String s_tmp = "Day " + day + ": Campaign opportunity - " + pendingCampaign;
-			//DataToCSV.split_to_fields2(s_tmp, false);
+			DataToCSV.split_to_fields2(s_tmp, false);
 
 			/*
 			 * The campaign requires com.getReachImps() impressions. The
@@ -621,7 +621,7 @@ public class PineAppleAgent extends Agent {
 		sendBidAndAds();
 		System.out.println("from failyNotification to send of bidBundle: " + (System.currentTimeMillis() - dailyNotificationTime));
 		if (day == 60) {
-			// DataToCSV.fillWithZeros(60);
+			DataToCSV.fillWithZeros(60);
 			System.out.println("quitting");
 			pipe("quit", false);
 			try {
