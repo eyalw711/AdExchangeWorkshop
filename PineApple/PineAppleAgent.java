@@ -55,7 +55,7 @@ public class PineAppleAgent extends Agent {
 	public boolean DEBUG_UCS = false;
 
 	private final Logger log = Logger.getLogger(PineAppleAgent.class.getName());
-
+	private static int simId;
 	// public static String pathAndCommand = "python3.6
 	// ./PinePy/__pycache__/pyjava_comm.cpython-36.pyc "; //"python
 	// ./PinePy/pyjava_comm.py ";
@@ -166,7 +166,7 @@ public class PineAppleAgent extends Agent {
 			outputStreamPythonApp.flush();
 			if (waitToAns) {
 				while ((ret = inputStreamPythonApp.readLine()) != null) {
-					System.out.println(ret);
+					log_output(ret);
 					return ret;
 				}
 			}
@@ -174,7 +174,7 @@ public class PineAppleAgent extends Agent {
 		}
 
 		catch (Exception err) {
-			System.out.println("exception in function pipe: " + err.toString());
+			log_output("exception in function pipe: " + err.toString());
 		}
 		return "";
 	}
@@ -190,16 +190,16 @@ public class PineAppleAgent extends Agent {
 
 		try 
 		{
-			System.out.println("EnterToPipe, send: " + queryToRun + " i am waiting: " + waitForAnswer);
+			log_output("EnterToPipe, send: " + queryToRun + " i am waiting: " + waitForAnswer);
 			retVal = pipe(queryToRun, waitForAnswer);
-			System.out.println("returned from pipe.");
+			log_output("returned from pipe.");
 
 			int i = 0;
 
 			/*
 			 * // read any errors from the attempted command while ((s =
 			 * errorStreamPythonApp.readLine()) != null) {
-			 * System.out.println(i++);
+			 * log_output(i++);
 			 * 
 			 * stderr= stderr + "\n" + s;
 			 * 
@@ -209,15 +209,15 @@ public class PineAppleAgent extends Agent {
 			if (debugFlagStatic)
 			{
 
-				System.out.println("DEBUG: python  returned after " + (System.currentTimeMillis() - startTime) + " ms with:");
-				// System.out.println("the stderr is:");
-				// System.out.println(stderr);
-				System.out.println(retVal);
+				log_output("DEBUG: python  returned after " + (System.currentTimeMillis() - startTime) + " ms with:");
+				// log_output("the stderr is:");
+				// log_output(stderr);
+				log_output(retVal);
 			}
 		}
 		catch (Exception e)
 		{
-			System.out.println("exception happened (runPythonScript) - here's what I know: ");
+			log_output("exception happened (runPythonScript) - here's what I know: ");
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -227,7 +227,7 @@ public class PineAppleAgent extends Agent {
 	/* constructor */
 	public PineAppleAgent()
 	{
-		System.out.println("PineAppleAgent Constructor called! Have a tropical day!");
+		log_output("PineAppleAgent Constructor called! Have a tropical day!");
 		try {
 			log.fine("Bringing up the python engine process!");
 			pythonProccess = Runtime.getRuntime().exec(pathAndCommand);
@@ -281,11 +281,11 @@ public class PineAppleAgent extends Agent {
 			} else if (content instanceof ReservePriceInfo) {
 				// ((ReservePriceInfo)content).getReservePriceType();
 			} else {
-				System.out.println("UNKNOWN Message Received: " + content);
+				log_output("UNKNOWN Message Received: " + content);
 			}
 		} catch (NullPointerException e) {
 			if (DEBUG) {
-				System.out.println(message.getContent().getClass().toString());
+				log_output(message.getContent().getClass().toString());
 			}
 			this.log.log(Level.SEVERE,
 					"Exception thrown while trying to parse message." + message.getContent().getClass().toString() + e);
@@ -304,9 +304,9 @@ public class PineAppleAgent extends Agent {
 	 * @param content
 	 */
 	private void handleBankStatus(BankStatus content) {
-		System.out.println("Day " + day + " :" + content.toString());
+		log_output("Day " + day + " :" + content.toString());
 		// if(debugFlag)
-		// System.out.println("DEBUG: run python - BankStatus");
+		// log_output("DEBUG: run python - BankStatus");
 		// runPythonScript("BankStatus " +
 		// Double.toString(content.getAccountBalance()));
 	}
@@ -321,13 +321,13 @@ public class PineAppleAgent extends Agent {
 		long startTime = System.currentTimeMillis();
 		this.startInfo = startInfo;
 		this.simulationId = startInfo.getSimulationID();
+		simId = this.simulationId;
 		// TODO: notify python for logging purposes.
 
-		// if(debugFlag)
-		// System.out.println("DEBUG: run python - StartInfo");
-		// runPythonScript("StartInfo " +
-		// Integer.toString(startInfo.getSimulationID()));
-		// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~\t\t\tstart info
+		if(debugFlag)
+			log_output("DEBUG: run python - StartInfo");
+		runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()), false);
+		// log_output("~~~~~~~~~~~~~~~~~~~~~~~~~~\t\t\tstart info
 		// elapse: "+(System.currentTimeMillis()-startTime));
 	}
 
@@ -337,7 +337,7 @@ public class PineAppleAgent extends Agent {
 	 * @param publisherCatalog
 	 */
 	private void handlePublisherCatalog(PublisherCatalog publisherCatalog) {
-		System.out.println("Handling Publishers Catalog");
+		log_output("Handling Publishers Catalog");
 		this.publisherCatalog = publisherCatalog;
 		generateAdxQuerySpace();
 		getPublishersNames();
@@ -351,7 +351,7 @@ public class PineAppleAgent extends Agent {
 	 * days) are also reported in the initial campaign message
 	 */
 	private void handleInitialCampaignMessage(InitialCampaignMessage campaignMessage) {
-		System.out.println("Initial_Campaign_Message:\n" + campaignMessage.toString());
+		log_output("Initial_Campaign_Message:\n" + campaignMessage.toString());
 
 		day = 0;
 
@@ -368,7 +368,7 @@ public class PineAppleAgent extends Agent {
 		 * The initial campaign is already allocated to our agent so we add it
 		 * to our allocated-campaigns list.
 		 */
-		System.out.println("Day " + day + ": Allocated campaign - " + campaignData);
+		log_output("Day " + day + ": Allocated campaign - " + campaignData);
 
 		if (day == 0) {
 			DataToCSV.createCSVFile("temp_" + startInfo.getSimulationID() + ".csv", false, "");
@@ -384,8 +384,8 @@ public class PineAppleAgent extends Agent {
 		String initialsSeg = getSegmentsInitials(splitedSegments);
 
 		if (debugFlag) {
-			System.out.println("DEBUG: run getSegmentsInitials - InitialCampaignMessage");
-			System.out.println("DEBUG: output getSegmentsInitials - InitialCampaignMessage: " + initialsSeg);
+			log_output("DEBUG: run getSegmentsInitials - InitialCampaignMessage");
+			log_output("DEBUG: output getSegmentsInitials - InitialCampaignMessage: " + initialsSeg);
 
 		}
 		String paramString = Integer.toString(initialCampaignMessage.getId()) + " "
@@ -397,9 +397,9 @@ public class PineAppleAgent extends Agent {
 				+ Long.toString(initialCampaignMessage.getBudgetMillis());
 
 		if (debugFlag)
-			System.out.println("DEBUG: run python - InitialCampaignMessage");
+			log_output("DEBUG: run python - InitialCampaignMessage");
 		runPythonScript("InitialCampaignMessage " + paramString, false);
-		System.out.println("DEBUG: returned run python - InitialCampaignMessage");
+		log_output("DEBUG: returned run python - InitialCampaignMessage");
 	}
 
 	/**
@@ -416,7 +416,7 @@ public class PineAppleAgent extends Agent {
 			long cmpBidMillis;
 
 			pendingCampaign = new CampaignData(com);
-			System.out.println("Day " + day + ": Campaign opportunity - " + pendingCampaign);
+			log_output("Day " + day + ": Campaign opportunity - " + pendingCampaign);
 
 			String s_tmp = "Day " + day + ": Campaign opportunity - " + pendingCampaign;
 			// DataToCSV.split_to_fields2(s_tmp, false);
@@ -441,7 +441,7 @@ public class PineAppleAgent extends Agent {
 					+ Integer.toString(com.getDay());
 
 			if (debugFlag) {
-				System.out.println(
+				log_output(
 						"handleICampaignOpportunityMessage: run python - GetUcsAndBudget param: " + paramString);
 			}
 
@@ -452,7 +452,7 @@ public class PineAppleAgent extends Agent {
 						.println("handleICampaignOpportunityMessage: output python - GetUcsAndBudget\n" + outputString);
 
 			if (outputString == null) {
-				System.out.println("handleICampaignOpportunityMessage: GetUcsAndBudget returned null");
+				log_output("handleICampaignOpportunityMessage: GetUcsAndBudget returned null");
 				cmpBidMillis = com.getReachImps() / 5;
 				ucsBid = 0.202;
 				AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
@@ -467,18 +467,18 @@ public class PineAppleAgent extends Agent {
 
 			pendingCampaignBudget = cmpBidMillis;
 
-			System.out.println("handleICampaignOpportunityMessage: Day " + day
+			log_output("handleICampaignOpportunityMessage: Day " + day
 					+ ": Campaign total budget bid (millis): " + cmpBidMillis);
 
 			ucsBid = Double.parseDouble(obj.getString("UCSBid"));
 
-			System.out.println("handleICampaignOpportunityMessage: Day " + day + ": ucsBid reported: " + ucsBid);
+			log_output("handleICampaignOpportunityMessage: Day " + day + ": ucsBid reported: " + ucsBid);
 
 			/* Note: Campaign bid is in millis */
 			AdNetBidMessage bids = new AdNetBidMessage(ucsBid, pendingCampaign.id, cmpBidMillis);
 
 			sendMessage(demandAgentAddress, bids);
-			System.out.println("handleICampaignOpportunityMessage: start of func to after sendMessage elapsed: "
+			log_output("handleICampaignOpportunityMessage: start of func to after sendMessage elapsed: "
 					+ (System.currentTimeMillis() - startTime));
 			dayLastCampOpp = day;
 
@@ -529,10 +529,10 @@ public class PineAppleAgent extends Agent {
 					.println("handleICampaignOpportunityMessage: elapsed: " + (System.currentTimeMillis() - startTime));
 
 		} catch (Exception e) {
-			System.out.println(
+			log_output(
 					"CRITICAL ERROR: exception happened at : handleICampaignOpportunityMessage" + e.getMessage());
 			e.printStackTrace();
-			System.out.println("Exiting program");
+			log_output("Exiting program");
 			System.exit(-1);
 		}
 
@@ -549,7 +549,7 @@ public class PineAppleAgent extends Agent {
 
 		adNetworkDailyNotification = notificationMessage;
 
-		System.out.println("Day " + day + ": Daily notification (results of opportunity) for campaign "
+		log_output("Day " + day + ": Daily notification (results of opportunity) for campaign "
 				+ adNetworkDailyNotification.getCampaignId());
 
 		String campaignAllocatedTo = " allocated to " + notificationMessage.getWinner();
@@ -566,7 +566,7 @@ public class PineAppleAgent extends Agent {
 					+ " at cost (Millis)" + notificationMessage.getCostMillis();
 		}
 
-		System.out.println("Day " + day + ": " + campaignAllocatedTo + ". UCS Level set to "
+		log_output("Day " + day + ": " + campaignAllocatedTo + ". UCS Level set to "
 				+ notificationMessage.getServiceLevel() + " at price " + notificationMessage.getPrice()
 				+ " Quality Score is: " + notificationMessage.getQualityScore());
 
@@ -574,7 +574,7 @@ public class PineAppleAgent extends Agent {
 		if (nameWinner == null || nameWinner.equals(""))
 			nameWinner = "NOT_ALLOCATED";
 		if (debugFlag)
-			System.out.println("DEBUG: run python - AdNetworkDailyNotification");
+			log_output("DEBUG: run python - AdNetworkDailyNotification");
 
 		String paramsToSend = " DAILYNOTIFICATION " + Integer.toString(adNetworkDailyNotification.getEffectiveDay())
 				+ " " + Double.toString(adNetworkDailyNotification.getServiceLevel()) + " "
@@ -598,13 +598,13 @@ public class PineAppleAgent extends Agent {
 	 * to the AdX.
 	 */
 	private void handleSimulationStatus(SimulationStatus simulationStatus) {
-		System.out.println("Day " + day + " : Simulation Status Received");
+		log_output("Day " + day + " : Simulation Status Received");
 		sendBidAndAds();
-		System.out.println(
+		log_output(
 				"from dailyNotification to send of bidBundle: " + (System.currentTimeMillis() - dailyNotificationTime));
 		if (day == 60) {
 			// DataToCSV.fillWithZeros(60);
-			System.out.println("quitting");
+			log_output("quitting");
 			pipe("quit", false);
 			try {
 				inputStreamPythonApp.close();
@@ -625,7 +625,7 @@ public class PineAppleAgent extends Agent {
 		campaignReports.add(campaignReport);
 
 		String paramsToSend = Integer.toString(campaignReport.keys().size());
-		System.out.println("Campaign Report:");
+		log_output("Campaign Report:");
 
 		/*
 		 * for each campaign, the accumulated statistics from day 1 up to day
@@ -638,7 +638,7 @@ public class PineAppleAgent extends Agent {
 
 			String strToPrint = "Day " + day + ": Updating campaign " + cmpId + " stats: " + cstats.getTargetedImps()
 					+ " tgtImps " + cstats.getOtherImps() + " nonTgtImps. Cost of imps is " + cstats.getCost();
-			System.out.println(strToPrint);
+			log_output(strToPrint);
 
 			paramsToSend = paramsToSend + " " + Integer.toString(cmpId) + " "
 					+ Double.toString(cstats.getTargetedImps()) + " " + Double.toString(cstats.getOtherImps()) + " "
@@ -646,7 +646,7 @@ public class PineAppleAgent extends Agent {
 		}
 
 		// if(debugFlag)
-		// System.out.println("DEBUG: run python - CampaignReport");
+		// log_output("DEBUG: run python - CampaignReport");
 		// runPythonScript("CampaignReport " + paramsToSend);
 		cmpReportLastParams = paramsToSend;
 		campReportSavedDay = day;
@@ -657,17 +657,17 @@ public class PineAppleAgent extends Agent {
 	 * Users and Publishers statistics: popularity and ad type orientation
 	 */
 	private void handleAdxPublisherReport(AdxPublisherReport adxPublisherReport) {
-		System.out.println("Publishers Report: ");
+		log_output("Publishers Report: ");
 
 		if (adxPublisherReport.keys().size() == 0 && DEBUG) {
-			System.out.println("DEBUG: no entries in adxPublisherReport");
+			log_output("DEBUG: no entries in adxPublisherReport");
 		}
 
 		for (PublisherCatalogEntry publisherKey : adxPublisherReport.keys()) {
 			AdxPublisherReportEntry entry = adxPublisherReport.getEntry(publisherKey);
 			if (entry.getReservePriceBaseline() != 0.0) {
-				System.out.println(entry.toString());
-				System.out.println("reserved price baseline: " + entry.getReservePriceBaseline());
+				log_output(entry.toString());
+				log_output("reserved price baseline: " + entry.getReservePriceBaseline());
 			}
 		}
 	}
@@ -678,13 +678,13 @@ public class PineAppleAgent extends Agent {
 	 */
 	private void handleAdNetworkReport(AdNetworkReport adnetReport) {
 
-		// System.out.println("Day " + day + " : AdNetworkReport");
+		// log_output("Day " + day + " : AdNetworkReport");
 		/*
 		 * for (AdNetworkKey adnetKey : adnetReport.keys()) {
 		 * 
 		 * double rnd = Math.random(); if (rnd > 0.95) { AdNetworkReportEntry
 		 * entry = adnetReport .getAdNetworkReportEntry(adnetKey);
-		 * System.out.println(adnetKey + " " + entry); } }
+		 * log_output(adnetKey + " " + entry); } }
 		 */
 	}
 
@@ -697,7 +697,7 @@ public class PineAppleAgent extends Agent {
 		String segmentToUse = "";
 
 		for (int i = 0; i < splitedSegments.length; i++) {
-			// System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$:
+			// log_output("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$:
 			// "+splitedSegments[i]);
 			letterForSegmet[i] = splitedSegments[i].charAt(0);
 		}
@@ -733,25 +733,64 @@ public class PineAppleAgent extends Agent {
 				retval++;
 		}
 		if (DEBUG) {
-			System.out.println(
+			log_output(
 					"DEBUG(numOfCampaignsCompleted) - day:" + day + " number of campaigns completed:" + retval);
 		}
 		return retval;
 	}
 
+	
+	public static void close(Closeable c) 
+	{
+		if (c == null)
+			return; 
+		try 
+		{
+				c.close();
+		}
+		catch (IOException e)
+		{
+			System.err.println("Error: " + e.getMessage());
+		}
+	}
+  
+	private static void log_output(final String msg) 
+	{        
+		System.out.println(msg);
+		BufferedWriter out = null;
+		try  
+		{
+			FileWriter fstream = new FileWriter("PineAppleAgent_sim" 
+									+ simId + ".log",
+									true); //true tells to append data.
+			out = new BufferedWriter(fstream);
+			out.write("\n" + msg);
+		}
+		catch (IOException e)
+		{
+			System.err.println("Error: " + e.getMessage());
+		}
+		finally
+		{
+			if(out != null) {
+				close(out);
+			}
+		}
+	}
+
 	private void printProp() {
 		if (DEBUG) {
-			System.out.println("DEBUG(printProp): the day is: " + day);
+			log_output("DEBUG(printProp): the day is: " + day);
 			for (Map.Entry<Integer, CampaignData> entry : myCampaigns.entrySet()) {
-				System.out.println("~~~~~~~~~~~~~~Campain_Properties~~~~~~~~~~~~~~~~~");
-				System.out.println(entry.getValue().budget);
-				System.out.println(entry.getValue().dayStart);
-				System.out.println(entry.getValue().dayEnd);
-				System.out.println(entry.getValue().id);
-				System.out.println(entry.getValue().stats);
-				System.out.println(entry.getValue().targetSegment);
-				System.out.println("impsToGo: " + entry.getValue().impsTogo());
-				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				log_output("~~~~~~~~~~~~~~Campain_Properties~~~~~~~~~~~~~~~~~");
+				log_output("" + entry.getValue().budget);
+				log_output("" + entry.getValue().dayStart);
+				log_output("" + entry.getValue().dayEnd);
+				log_output("" + entry.getValue().id);
+				log_output("" + entry.getValue().stats);
+				log_output("" + entry.getValue().targetSegment);
+				log_output("impsToGo: " + entry.getValue().impsTogo());
+				log_output("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			}
 		}
 
@@ -781,21 +820,21 @@ public class PineAppleAgent extends Agent {
 		try {
 
 			// if(debugFlag)
-			// System.out.println("DEBUG: run python - GetBidBundle");
+			// log_output("DEBUG: run python - GetBidBundle");
 
 			// String outputString = runPythonScript("GetBidBundle");
 
 			// String outputString = bidBundleScriptOutput;
 
 			// if(debugFlag)
-			// System.out.println("DEBUG: output python - GetBidBundle\n" +
+			// log_output("DEBUG: output python - GetBidBundle\n" +
 			// outputString);
 			if (dayLastCampOpp != day) {
 				if (debugFlag)
-					System.out.println("DEBUG: run python - GetBidBundle");
+					log_output("DEBUG: run python - GetBidBundle");
 
 				String outputString = runPythonScript("GetBidBundle", true);
-				System.out.println("sendBidAndAds: got outputString with: " + outputString);
+				log_output("sendBidAndAds: got outputString with: " + outputString);
 
 				if (outputString != null) {
 
@@ -844,18 +883,18 @@ public class PineAppleAgent extends Agent {
 				}
 
 				else {
-					System.out.println("getBidBundle returned null");
+					log_output("getBidBundle returned null");
 					return;
 				}
 			}
 
 			if (bidBundle != null) {
-				System.out.println("Day " + day + ": Sending BidBundle");
+				log_output("Day " + day + ": Sending BidBundle");
 				sendMessage(adxAgentAddress, bidBundle);
 			}
 
 		} catch (Exception e) {
-			System.out.println("exception happened at sendBidAndAds " + e.getMessage());
+			log_output("exception happened at sendBidAndAds " + e.getMessage());
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -965,7 +1004,7 @@ public class PineAppleAgent extends Agent {
 
 		campaignData.campaignQueries = new AdxQuery[campaignQueriesSet.size()];
 		campaignQueriesSet.toArray(campaignData.campaignQueries);
-		// System.out.println("!!!!!!!!!!!!!!!!!!!!!!"+Arrays.toString(campaignData.campaignQueries)+"!!!!!!!!!!!!!!!!");
+		// log_output("!!!!!!!!!!!!!!!!!!!!!!"+Arrays.toString(campaignData.campaignQueries)+"!!!!!!!!!!!!!!!!");
 	}
 
 	// ###################################

@@ -18,7 +18,7 @@ import time
 
 def eprint(*args, **kwargs):
 #    print(*args, file=sys.stderr, **kwargs)
-    with open("runlog.log", "a+") as logFile:
+    with open("PinePyEngine_Sim{}.log".format(Communicator.simId), "a+") as logFile:
         print(*args, file=logFile, **kwargs)
 #        logFile.write(*args)
 
@@ -35,6 +35,9 @@ class Game:
         self.campaignOffer = None
         self.day = 0
         
+        #debug fields:
+        self.ucs_level_requested_yesterday = -1
+        
     def getGameActiveCampaignsCampaignsList(self):
         '''active campaigns today'''
         return list(filter(lambda x: x.activeAtDay(self.day), list(self.campaigns.values())))
@@ -50,6 +53,7 @@ class Game:
         
         eprint([(segByName(name).name, segByName(name).size, segByName(name).segment_demand(self.day, self.getGameActiveCampaignsCampaignsList())) for name in MarketSegment.segment_names])
         
+        eprint("Daily UCS Level {}, Yesterday wished for Level {}".format(self.agent.dailyUCSLevel, self.ucs_level_requested_yesterday))
         eprint("\nAll Active Campaigns in the Game ({} Campaigns)".format(len(self.getGameActiveCampaignsCampaignsList())))
         for agent in [self.agent]+self.opponents:
             agentActiveCampsList = list(filter( lambda x: x.activeAtDay(self.day), list(agent.my_campaigns.values())))
@@ -59,12 +63,14 @@ class Game:
 
 
 class Communicator:
+    simId = 0
     
     def __init__(self, queryName, argsList, game):
         self.queryName = queryName
         self.argsList = argsList
         self.game = game
-    
+        
+    ''' UNUSED '''
     def loadPickle(self):
         loaded = True
         try:
@@ -86,6 +92,7 @@ class Communicator:
             eprint("loadPickle: Error Loading Pickle: ", message)  
             
             
+    ''' UNUSED '''
     def dumpPickle(self):
         if self.queryName == "StartInfo":
             return
@@ -126,7 +133,8 @@ class Communicator:
         ongoingCamps = self.game.agent.getOnGoingCampaigns(day+1)
         ucsLevel = ucsManager.get_desired_UCS_level(day+1, ongoingCamps)
         eprint("handleGetUcsAndBudget: get_desired_UCS_level out")
-       
+        self.game.ucs_level_requested_yesterday = ucsLevel
+        
         numberOfActiveNetworks = sum(
                 [1 for opponent in self.game.opponents if any(camp.activeAtDay(day+1)
                     for camp in opponent.getOnGoingCampaigns(day+1))])
@@ -167,7 +175,7 @@ class Communicator:
         vidCoeff = float(self.argsList[5])
         mobileCoeff = float(self.argsList[6])
         budgetMillis = float(self.argsList[7])
-        initialCampaign = Campaign(cid, startDay, endDay, segmentNamesList, #TODO: names
+        initialCampaign = Campaign(cid, startDay, endDay, segmentNamesList,
                                    reach, vidCoeff, mobileCoeff)
         
         initialCampaign.assignCampaign(self.game.agent,
@@ -175,19 +183,18 @@ class Communicator:
                                        budgetMillis,
                                        game = self.game)
         
-        #TODO currently experiement - later maybe set as statistic campaigns:
         eprint("handleInitialCampaignMessage: NOTICE: making a wild assumption about initial campaigns! Think about this!")
         otherInitialCampaigns = [Campaign("{}".format(i+1), startDay, endDay,
                                           segmentNamesList, reach, vidCoeff,
-                                          mobileCoeff) for i in range(7)] #TODO: what are the other IDs???
+                                          mobileCoeff) for i in range(7)]
         for (inx,camp) in enumerate(otherInitialCampaigns):
             camp.assignCampaign(self.game.opponents[inx], None, budgetMillis, game = self.game)
         
-        eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
+        eprint("handleInitialCampaignMessage: all my CIDs are ", self.game.agent.my_campaigns.keys())
             
     def handleGetBidBundle(self, doPrint = True):
         '''returns a bidbundle'''
-        eprint("handleGetBidBundle: all my CIDs are ", self.game.agent.my_campaigns.keys()) #TODO: remove
+        eprint("handleGetBidBundle: all my CIDs are ", self.game.agent.my_campaigns.keys())
         bidBundle = self.game.agent.formBidBundle(self.game.day+1)    
             
         if not doPrint:
@@ -236,8 +243,8 @@ class Communicator:
         
         '''
         inputs:
-            0 - AdNetworkDailyNotification.effectiveDay
-        		1 - AdNetworkDailyNotification.serviceLevel
+           0 - AdNetworkDailyNotification.effectiveDay
+        	1 - AdNetworkDailyNotification.serviceLevel
     			2 - AdNetworkDailyNotification.price
     			3 - AdNetworkDailyNotification.qualityScore
     			4 - AdNetworkDailyNotification.campaignId
@@ -314,12 +321,15 @@ class Communicator:
         pass
     
     def handleStartInfo(self):
-        try:
-            os.remove("pickle//game.p")
-            os.remove("runlog.log")
-            eprint("removed last pickle")
-        except OSError:
-            eprint("Unable to remove pickle")
+        if len(self.argsList) > 0:
+            Communicator.simId = self.argsList[0]
+            Agent.simId = self.argsList[0]
+#        try:
+#            os.remove("pickle//game.p")
+#            os.remove("runlog.log")
+#            eprint("removed last pickle")
+#        except OSError:
+#            eprint("Unable to remove pickle")
     
     def handleBankStatus(self):
         '''currently undefined impl'''

@@ -15,14 +15,13 @@ import math
 #from sklearn.metrics import classification_report
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
-import sys
 
 
-def eprint(*args, **kwargs):
-#    print(*args, file=sys.stderr, **kwargs)
-    with open("runlog.log", "a+") as logFile:
-        print(*args, file=logFile, **kwargs)
-#        logFile.write(*args)
+#def eprint(*args, **kwargs):
+##    print(*args, file=sys.stderr, **kwargs)
+#    with open("runlog.log", "a+") as logFile:
+#        print(*args, file=logFile, **kwargs)
+##        logFile.write(*args)
 
 class Campaign:
     
@@ -206,7 +205,7 @@ class Campaign:
     
     
     def predict_campaign_profitability(self, day, budget, quality):
-        eprint("predict_campaign_profitability inside")
+#        eprint("predict_campaign_profitability inside")
         campaigns = Campaign.getCampaignList() + Campaign.getStatisticsCampaignListAtDays(self.startDay, self.endDay)
         max_budget = self.reach*quality
         budget = budget / 1000.0
@@ -224,11 +223,13 @@ class Campaign:
                 "YML":self.contains_segment("YML"), "YMH":self.contains_segment("YMH"),
                 "YFL":self.contains_segment("YFL"), "YFH":self.contains_segment("YFH")}]
     
-        '''test = [{
+        '''
+        test = [{
                 "budget":budget,
                 "reach":self.reach,
-}]'''                                          
-        eprint("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
+                }]
+        '''                                          
+#        eprint("#predict_campaign_profitability: ada boost predict_proba results for campagin number %d: the campagin is profitible with probability:%s" % (self.cid,str(Campaign.bdt.predict_proba(pd.DataFrame(test))[0,1])))
         b = budget
         y_pred = Campaign.bdt.predict(pd.DataFrame(test))
 #        for b in np.arange(budget, max_budget, 0.5):
@@ -237,7 +238,7 @@ class Campaign:
 #            if int(y_pred[0])== 1:
 #                eprint("predict_campaign_profitability return")
 #                return int(y_pred[0]), b*1000.0  
-        eprint("predict_campaign_profitability return")
+#        eprint("predict_campaign_profitability return")
         return int(y_pred[0]), b*1000.0
     
     def is_last_day(self, day):

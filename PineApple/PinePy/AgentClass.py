@@ -4,25 +4,27 @@ Created on Wed Feb 22 00:12:36 2017
 
 @author: Eyal
 """
-import sys
+
 from CampaignClass import Campaign
 from UcsManagerClass import ucsManager
 import itertools
 
 def eprint(*args, **kwargs):
 #    print(*args, file=sys.stderr, **kwargs)
-    with open("runlog.log", "a+") as logFile:
+    with open("PinePyEngine_Sim{}.log".format(Agent.simId), "a+") as logFile:
         print(*args, file=logFile, **kwargs)
 #        logFile.write(*args)
 
 class Agent:
+    simId = 0
+       
     def __init__(self, name):
         self.name = name
         self.quality = 1.0 #starting quality is 1.0
         ''' powers of 0.9 '''
         self.dailyUCSLevel = 0.9 #starting UCS Level is 0.9 
         self.my_campaigns = {}
-        
+         
     def __repr__(self):
         return "Agent {}: Q: {} Campaigns: {}".format(self.name, self.quality, self.my_campaigns.values())
     
@@ -83,11 +85,13 @@ class Agent:
                 eprint("#formBidBundle: demand varies!")
             
             NORMALING_FACTOR = 50.0 #TODO: think what that should be
+            
             PANIC_FACTOR = 1.0
             if cmp.endDay == day-1:
                 PANIC_FACTOR = 1.1
             elif cmp.endDay == day:
                 PANIC_FACTOR = 1.2
+            
             p = cmp.avg_p_per_imp
             eprint("#formBidBundle: for camp {} the p is {} and avgDem is {}".format(cmp.cid, p, avgDem))
             for x in itertools.product(bidSegments + [None], ["Text","Video"], ["Desktop", "Mobile"]):

@@ -10,15 +10,13 @@ import CampaignClass as cc
 import SegmentClass as sc
 import pandas as pd
 from sklearn import svm
-import sys
 
-#import pickle
 
-def eprint(*args, **kwargs):
-#    print(*args, file=sys.stderr, **kwargs)
-    with open("runlog.log", "a+") as logFile:
-        print(*args, file=logFile, **kwargs)
-#        logFile.write(*args)
+#def eprint(*args, **kwargs):
+##    print(*args, file=sys.stderr, **kwargs)
+#    with open("runlog.log", "a+") as logFile:
+#        print(*args, file=logFile, **kwargs)
+##        logFile.write(*args)
     
 class ucsManager:
     
@@ -38,13 +36,13 @@ class ucsManager:
         returns level in 0..7
         '''
         if len(ongoing_camps) == 0:
-            eprint ("#get_desired_UCS_level: No ongoing campaigns")
+#            eprint ("#get_desired_UCS_level: No ongoing campaigns")
             return 7
         ''' setting lvl to argmax I_target .... as defined in the document '''
         camp = sorted(ongoing_camps, key=lambda x: (x.impressions_goal - x.targetedImpressions)/((x.endDay - day  + 1)*x.sizeOfSegments()) , reverse=True)[0]        
         level_no_round = (camp.impressions_goal - camp.targetedImpressions)/((camp.endDay - day + 1)*camp.sizeOfSegments())
         if level_no_round < 0:
-            eprint("get_desired_UCS_level: impressions_goal={}, targetedImpressions={}. set level_no_round to 0".format(camp.impressions_goal, camp.targetedImpressions))
+#            eprint("get_desired_UCS_level: impressions_goal={}, targetedImpressions={}. set level_no_round to 0".format(camp.impressions_goal, camp.targetedImpressions))
             level_no_round = 0
         
         
@@ -55,7 +53,7 @@ class ucsManager:
             lvlacc = lvlacc / 0.9
             lvl -= 1
         #print("#get_desired_UCS_level: desired level {}".format(lvl))
-        eprint ("#get_desired_UCS_level: level_no_round = {}, returned lvl = {}".format(level_no_round, lvl))
+#        eprint ("#get_desired_UCS_level: level_no_round = {}, returned lvl = {}".format(level_no_round, lvl))
         return lvl
     
     def predict_required_price_to_win_desired_UCS_level(ucs_level, day, number_of_active_networks, number_of_last_day_networks):
