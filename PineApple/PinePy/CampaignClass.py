@@ -102,6 +102,10 @@ class Campaign:
                 campaignsAtDay.append(camp)
         return campaignsAtDay
 
+    def getCompletionRate(self):
+        return self.targetedImpressions / self.reach
+    
+    
     def activePeriodLength(self):
         return self.endDay - self.startDay + 1
     
@@ -125,8 +129,10 @@ class Campaign:
             f = lambda x: -self.campaign_profit_for_ImpsTarget_estim(x, Q_old)
             x0 = [self.reach]
             res = optimize.basinhopping(f, x0, niter=1)
-
-            self.impressions_goal = res.x.flatten()[0] #res.x[0]
+            
+            self.impressions_goal = res.x.flatten()[0]  #res.x[0]
+            if self.impressions_goal  > self.reach * 1.5:
+                self.impressions_goal = self.reach * 1.5
             self.avg_p_per_imp = B*demand/self.impressions_goal #B*demand*self.impressions_goal/R
         
     def getCampaignList():
@@ -156,11 +162,14 @@ class Campaign:
     
     def campaign_profit_for_ImpsTarget_estim(self, imps, Q_old):
         eta = 0.6
-        alpha = 0.98 #todo: think about it
+        alpha = 0.995 #todo: think about it
         B = self.budget
         R = self.reach
         demand = self.campaign_demand_temp()
         return (self.ERR(imps)*B - math.pow(B*demand*imps/R, alpha))*((1-eta)*Q_old + eta*self.ERR(imps))
+           
+            
+        
     
     def contains_segment(self, segment_name):
         if segment_name in [segment.name for segment in self.segments]:
@@ -174,8 +183,8 @@ class Campaign:
         return sum(seg.size for seg in self.segments)
     
     def initial_budget_bid(self):
-        alpha = 1#math.pow(random.gauss(1,0.1),2)
-        return self.campaign_demand_temp()*self.reach*alpha
+        alpha = 0.96
+        return math.pow(self.campaign_demand_temp()*self.reach, alpha)
 
     def imps_to_go(self):
         return self.impressions_goal - self.targetedImpressions

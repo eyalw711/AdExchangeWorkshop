@@ -8,6 +8,7 @@ Created on Wed Feb 22 00:12:36 2017
 from CampaignClass import Campaign
 from UcsManagerClass import ucsManager
 import itertools
+import math
 
 def eprint(*args, **kwargs):
 #    print(*args, file=sys.stderr, **kwargs)
@@ -37,6 +38,7 @@ class Agent:
     
     def campaignOpportunityBid(self, campaign): # as defined in the document
         COB = campaign.initial_budget_bid()
+        
         if (COB < campaign.reach*self.quality) and (COB > campaign.reach/(10*self.quality)): #inside interval
                 return COB
         elif COB >= campaign.reach*self.quality:                                            #greater than maximum
@@ -62,9 +64,12 @@ class Agent:
             cid = cmp.cid
             eprint("#formBidBundle: forming bids for cid {}".format(cid))
             cmpSegmentsSize = cmp.sizeOfSegments()
-            goal_targeted_number_of_imps_for_day = min(cmpSegmentsSize*lvl_accuracy, (cmp.impressions_goal - cmp.targetedImpressions)*lvl_accuracy)
-            eprint("#formBidBundle: goal_targeted_number_of_imps_for_day is {}, impressionsGoal = {}, targetedImps = {}, level_accuracy = {}".format(
-                    goal_targeted_number_of_imps_for_day, cmp.impressions_goal, cmp.targetedImpressions, lvl_accuracy))
+            goal_targeted_number_of_imps_for_day = max(min(cmpSegmentsSize*lvl_accuracy, (cmp.impressions_goal - cmp.targetedImpressions)*lvl_accuracy) ,0)
+            if goal_targeted_number_of_imps_for_day < 1:
+                continue
+                
+            eprint("#formBidBundle: cid:{} goal_targeted_number_of_imps_for_day is {}, impressionsGoal = {}, targetedImps = {}, level_accuracy = {}".format(
+                    cid, goal_targeted_number_of_imps_for_day, cmp.impressions_goal, cmp.targetedImpressions, lvl_accuracy))
             # sort segments of campaign based on segment demand
 #            cmpSegmentsList = sorted(cmp.segments, key = lambda x: x.segment_demand(day, Campaign.getCampaignList()))
             cmp.segments.sort(key = lambda x: x.segment_demand(day, Campaign.getCampaignList()))
@@ -116,7 +121,7 @@ class Agent:
                     bid = 0.005
                     
                     #this stands for the impressions we don't expect to catch because of lack of ucs
-                    s = min(cmpSegmentsSize, (cmp.impressions_goal - cmp.targetedImpressions)) - goal_targeted_number_of_imps_for_day
+                    s = max(min(cmpSegmentsSize, (cmp.impressions_goal - cmp.targetedImpressions)) - goal_targeted_number_of_imps_for_day,0)
                     
                     query = {
                              "marketSegments" : [{"segmentName":"Unknown"}],
@@ -128,7 +133,8 @@ class Agent:
                     demand = seg.segment_demand(day, Campaign.getCampaignList())
                     #eprint("#formBidBundle: for segment {}, (demand - avgDem) is {}".format(seg, demand - avgDem))
                     
-                    bid = float((p * (demand / avgDem) * NORMALING_FACTOR) * coeffsMult * PANIC_FACTOR * outputCoeff)
+                    bid = float(max((p * (demand / avgDem) * NORMALING_FACTOR) * coeffsMult * PANIC_FACTOR * outputCoeff , 0))
+                    
 #                    if bid < 0:
 #                        eprint("formBidBundle: warning (demand - avgDem) turned the bid to negative. fixed it somehow")
 #                        bid = p * PANIC_FACTOR * outputCoeff
@@ -136,11 +142,7 @@ class Agent:
                     if (not seg is bidSegments[-1]):
                         s = seg.size
                     else:
-                        s = goal_targeted_number_of_imps_for_day - sum(segTag.size for segTag in bidSegments[:-1]) 
-                        if s < 0:
-                            eprint("#formBidBundle: s = {}, goal_targeted_number_of_imps_for_day = {}, sum Of all segments but the last = {}, sum of all segments = {}, number of segments = {}".format(
-                                    s, goal_targeted_number_of_imps_for_day, sum(segTag.size for segTag in bidSegments[:-1]), 
-                                    sum(segTag.size for segTag in bidSegments), len(bidSegments )))
+                        s = max(goal_targeted_number_of_imps_for_day - sum(segTag.size for segTag in bidSegments[:-1]), 0)
                 
                     query = {
                             "marketSegments" : [{"segmentName":seg.name}],
@@ -151,7 +153,7 @@ class Agent:
                 bidsArray += [{"query" : query, 
                          "bid" : str(bid), 
                          "campaignId" : int(cid), 
-                         "weight" : int(cmp.imps_to_go()), 
+                         "weight" : int(math.sqrt(cmp.imps_to_go()) if cmp.imps_to_go() > 0 else 0), 
                          "dailyLimit" : str(float(bid*s*lvl_accuracy))}]
         eprint("#formBidBundle: out of this func")
         return bidsArray

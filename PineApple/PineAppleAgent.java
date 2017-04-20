@@ -190,7 +190,7 @@ public class PineAppleAgent extends Agent {
 
 		try 
 		{
-			log_output("EnterToPipe, send: " + queryToRun + " i am waiting: " + waitForAnswer);
+			log_output("EnterToPipe, send: " + queryToRun + " wait4answer = " + waitForAnswer);
 			retVal = pipe(queryToRun, waitForAnswer);
 			log_output("returned from pipe.");
 
