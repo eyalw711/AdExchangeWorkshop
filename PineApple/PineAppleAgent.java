@@ -61,10 +61,10 @@ public class PineAppleAgent extends Agent {
 	// ./PinePy/pyjava_comm.py ";
 
 	// Python engine and streams:
-	public static Process pythonProccess;
-	public static BufferedReader inputStreamPythonApp;
-	public static BufferedWriter outputStreamPythonApp;
-	public static BufferedReader errorStreamPythonApp;
+	public Process pythonProccess;
+	public BufferedReader inputStreamPythonApp;
+	public BufferedWriter outputStreamPythonApp;
+	public BufferedReader errorStreamPythonApp;
 	public static final String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py ";
 
 	// Communication w/ server
@@ -145,11 +145,11 @@ public class PineAppleAgent extends Agent {
 	private long pendingCampaignBudget;
 
 	// Times
-	public static long dailyNotificationTime = 0;
+	public long dailyNotificationTime = 0;
 
-	public static String cmpReportLastParams = "";
-	public static int campReportSavedDay = -1;
-	public static int dayLastCampOpp = -1;
+	public String cmpReportLastParams = "";
+	public int campReportSavedDay = -1;
+	public int dayLastCampOpp = -1;
 
 	// #############################
 	// Function declarations #
@@ -157,7 +157,7 @@ public class PineAppleAgent extends Agent {
 
 	// Communication w/ python engine
 
-	public static String pipe(String msg, boolean waitToAns) {
+	public String pipe(String msg, boolean waitToAns) {
 		String ret = null;
 		String lastRet = null;
 
@@ -175,13 +175,23 @@ public class PineAppleAgent extends Agent {
 
 		catch (Exception err) {
 			log_output("exception in function pipe: " + err.toString());
+			try
+			{				
+				initializePythonProcess();
+			}
+			catch (IOException e)
+			{
+				System.err.println("I give up thank you. RIP. ");
+				System.exit(-1);
+			}
+			runPythonScript("StartInfo " + Integer.toString(startInfo.getSimulationID()), false);
 		}
 		return "";
 	}
 
 	// run a new proccess and activate the inputed cmd - taken from
 	// http://alvinalexander.com
-	public static String runPythonScript(String queryToRun, boolean waitForAnswer) 
+	public String runPythonScript(String queryToRun, boolean waitForAnswer) 
 	{
 
 		long startTime = System.currentTimeMillis();
@@ -230,13 +240,10 @@ public class PineAppleAgent extends Agent {
 		log_output("PineAppleAgent Constructor called! Have a tropical day!");
 		try {
 			log.fine("Bringing up the python engine process!");
-			pythonProccess = Runtime.getRuntime().exec(pathAndCommand);
-			outputStreamPythonApp = new BufferedWriter(new OutputStreamWriter(pythonProccess.getOutputStream()));
-			inputStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getInputStream()));
+			initializePythonProcess();
 			//while ((inputStreamPythonApp.read()) != -1)
 			//{
 			//}
-			errorStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getErrorStream()));
 
 		} catch (Exception err) {
 			log.severe("Failed to bring up the python engine!");
@@ -244,6 +251,15 @@ public class PineAppleAgent extends Agent {
 		}
 		campaignReports = new LinkedList<CampaignReport>();
 		pendingCampaignBudget = 0;
+	}
+	
+	public void initializePythonProcess() throws IOException
+	{
+		pythonProccess = Runtime.getRuntime().exec(pathAndCommand);
+		outputStreamPythonApp = new BufferedWriter(new OutputStreamWriter(pythonProccess.getOutputStream()));
+		inputStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getInputStream()));
+		errorStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getErrorStream()));			
+		return;
 	}
 
 	/**
@@ -451,10 +467,9 @@ public class PineAppleAgent extends Agent {
 			String outputString = runPythonScript("GetUcsAndBudget " + paramString, true);
 
 			if (debugFlag)
-				System.out
-						.println("handleICampaignOpportunityMessage: output python - GetUcsAndBudget\n" + outputString);
+				log_output("handleICampaignOpportunityMessage: output python - GetUcsAndBudget\n" + outputString);
 
-			if (outputString == null) {
+			if (outputString == null || outputString.equals("")) {
 				log_output("handleICampaignOpportunityMessage: GetUcsAndBudget returned null");
 				cmpBidMillis = com.getReachImps() / 5;
 				ucsBid = 0.202;
@@ -532,7 +547,7 @@ public class PineAppleAgent extends Agent {
 				}
 			}
 
-			System.out.println("handleICampaignOpportunityMessage: elapsed: " + (System.currentTimeMillis() - startTime));
+			log_output("handleICampaignOpportunityMessage: elapsed: " + (System.currentTimeMillis() - startTime));
 
 		} catch (Exception e) {
 			log_output(
@@ -849,7 +864,7 @@ public class PineAppleAgent extends Agent {
 				String outputString = runPythonScript("GetBidBundle", true);
 				log_output("sendBidAndAds: got outputString with: " + outputString);
 
-				if (outputString != null) {
+				if (outputString != null && !outputString.equals("")) {
 
 					bidBundle = new AdxBidBundle();
 

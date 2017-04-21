@@ -254,8 +254,8 @@ class Campaign:
 #                eprint("predict_campaign_profitability return")
 #                return int(y_pred[0]), b*1000.0  
 #        eprint("predict_campaign_profitability return")
-        min_budget = self.reach/(quality*10.0)+5
-        if self.is_big_campaign:
+        min_budget = self.reach/(quality*10.0)+1
+        if self.is_big_campaign or day <= 5:
             return 1, min_budget
         return int(y_pred[0]), b*1000.0
     

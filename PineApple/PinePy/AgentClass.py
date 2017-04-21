@@ -94,6 +94,8 @@ class Agent:
             
             NORMALING_FACTOR = 38.0 #TODO: think what that should be
             PANIC_FACTOR = 1.0
+#            if cmp.startDay == 1:
+#                PANIC_FACTOR *= 1.5
             if cmp.endDay == day-1:
                 PANIC_FACTOR = 1.15
             elif cmp.endDay == day:
