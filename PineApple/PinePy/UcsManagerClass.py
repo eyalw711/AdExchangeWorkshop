@@ -87,8 +87,8 @@ class ucsManager:
         
         y_pred = clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+segment_networks])
         pred = float(y_pred)
-        if day<3:
-            return pred * 1.15
+        if day<4:
+            return pred * 1.27
         elif day<18:
             return pred
         elif day<45:

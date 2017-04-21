@@ -39,6 +39,7 @@ class Game:
         #debug fields:
         self.ucs_level_requested_yesterday = -1
         
+
     def getGameActiveCampaignsCampaignsList(self):
         '''active campaigns today'''
         return list(filter(lambda x: x.activeAtDay(self.day), list(Campaign.campaigns.values())))
@@ -71,6 +72,20 @@ class Communicator:
         self.argsList = argsList
         self.game = game
         
+        
+    def is_overlap_campaign(self, startDay, endDay, segmentNamesList):
+        my_campaigns = self.game.agent.my_cids
+        for name in segmentNamesList:
+            names = []
+            for cid in my_campaigns:
+                    if Campaign.campaigns[cid].startDay <= startDay and Campaign.campaigns[cid].endDay >= endDay:
+                            names += [seg.name for seg in Campaign.campaigns[cid].segments]
+            if name not in names:
+                    return False
+        
+        return True
+        
+        
     
     def handleGetUcsAndBudget(self):
         eprint("handleGetUcsAndBudget: ArgsList is {}".format(self.argsList))
@@ -96,7 +111,7 @@ class Communicator:
         profitability, final_budget  = camp.predict_campaign_profitability(day,initialBudget,self.game.agent.quality)
         eprint("handleGetUcsAndBudget: predict_campaign_profitability out")
         
-        if (profitability == -1):
+        if (profitability == -1) or self.is_overlap_campaign(startDay, endDay, segmentNamesList):
             answer["budgetBid"] = str(int((camp.reach*self.game.agent.quality) - 1))
         else:
             answer["budgetBid"] = str(int(final_budget))
