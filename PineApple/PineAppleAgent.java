@@ -760,15 +760,22 @@ public class PineAppleAgent extends Agent {
 		BufferedWriter out = null;
 		try  
 		{
-			FileWriter fstream = new FileWriter("PineAppleAgent_sim" 
-									+ simId + ".log",
-									true); //true tells to append data.
+			String path = "myLogs/sim"+ simId +"/";
+			File dir = new File(path);
+			if (! dir.exists())
+			{
+				dir.mkdirs();
+			}
+			String logName = "PineAppleAgent_sim" + simId + ".log";
+			File logFile = new File(path + logName);
+			FileWriter fstream = new FileWriter(logFile.getAbsoluteFile(), true); //true tells to append data.
 			out = new BufferedWriter(fstream);
 			out.write("\n" + msg);
 		}
 		catch (IOException e)
 		{
 			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 		finally
 		{

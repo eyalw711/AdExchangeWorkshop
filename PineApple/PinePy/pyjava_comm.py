@@ -16,9 +16,10 @@ from SegmentClass import MarketSegment
 from UcsManagerClass import ucsManager
 import time
 
+
 def eprint(*args, **kwargs):
 #    print(*args, file=sys.stderr, **kwargs)
-    with open("PinePyEngine_Sim{}.log".format(Communicator.simId), "a+") as logFile:
+    with open("../myLogs/sim{0}/PinePyEngine_Sim{0}.log".format(Agent.simId), "a+") as logFile:
         print(*args, file=logFile, **kwargs)
 #        logFile.write(*args)
 
