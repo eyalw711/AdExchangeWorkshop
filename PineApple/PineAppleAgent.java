@@ -233,6 +233,9 @@ public class PineAppleAgent extends Agent {
 			pythonProccess = Runtime.getRuntime().exec(pathAndCommand);
 			outputStreamPythonApp = new BufferedWriter(new OutputStreamWriter(pythonProccess.getOutputStream()));
 			inputStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getInputStream()));
+			//while ((inputStreamPythonApp.read()) != -1)
+			//{
+			//}
 			errorStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getErrorStream()));
 
 		} catch (Exception err) {
@@ -522,11 +525,14 @@ public class PineAppleAgent extends Agent {
 					bidBundle.addQuery(query, Double.parseDouble(JbidBundleElement.getString("bid")), new Ad(null),
 							JbidBundleElement.getInt("campaignId"), JbidBundleElement.getInt("weight"),
 							Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
+                                        //log_output("------the bidbundle is associated with cid:");
+                                        //log_output("\n"+bidBundle.getCampaignId(query));
+                                        //log_output("\n"+JbidBundleElement.getInt("campaignId"));
+                                        //log_output("\n"+(JbidBundleElement.getInt("campaignId")==bidBundle.getCampaignId(query)));
 				}
 			}
 
-			System.out
-					.println("handleICampaignOpportunityMessage: elapsed: " + (System.currentTimeMillis() - startTime));
+			System.out.println("handleICampaignOpportunityMessage: elapsed: " + (System.currentTimeMillis() - startTime));
 
 		} catch (Exception e) {
 			log_output(
@@ -884,6 +890,11 @@ public class PineAppleAgent extends Agent {
 									new Ad(null), JbidBundleElement.getInt("campaignId"),
 									JbidBundleElement.getInt("weight"),
 									Double.parseDouble(JbidBundleElement.getString("dailyLimit")));
+                                                        //log_output("------the bidbundle is associated with cid:");
+//                                                      //log_output("\n"+bidBundle.getCampaignId(query));
+                                                        //log_output("\n"+JbidBundleElement.getInt("campaignId"));
+                                                        //log_output("\n"+(JbidBundleElement.getInt("campaignId")==bidBundle.getCampaignId(query)));
+                                                        
 						}
 
 					}
@@ -898,6 +909,7 @@ public class PineAppleAgent extends Agent {
 			if (bidBundle != null) {
 				log_output("Day " + day + ": Sending BidBundle");
 				sendMessage(adxAgentAddress, bidBundle);
+				//log_output("------the bid is: \n"+bidBundle);
 			}
 
 		} catch (Exception e) {
