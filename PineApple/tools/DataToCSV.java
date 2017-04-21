@@ -53,6 +53,15 @@ public class DataToCSV {
 		}
 	}
 	
+        public static void fillWithZeros(int to){
+		for (int i = lastDayWithCamp; i<to; i++) {
+			for (String el : segments) {
+				String line_to_write = Integer.toString(index) + ',' + Integer.toString(i) + ',' + el + ',' + "0" + ',' + "0" + ',' + "0" +',' + "0" +',' + "0" + ',' + "0";
+				DataToCSV.createCSVFile(curr_filename, true, line_to_write);
+			}
+		}
+	}
+	
 	
 	public static String[] parseSegment(String segment){
 		String[] arr = segment.split(" ");
@@ -165,15 +174,6 @@ public class DataToCSV {
 			System.out.println("&&&&&&&&");
 		
 		lastDayWithCamp++;
-	}
-	
-	public static void fillWithZeros(int to){
-		for (int i = lastDayWithCamp; i<to; i++) {
-			for (String el : segments) {
-				String line_to_write = Integer.toString(index) + ',' + Integer.toString(i) + ',' + el + ',' + "0" + ',' + "0" + ',' + "0" +',' + "0" +',' + "0" + ',' + "0";
-				DataToCSV.createCSVFile(curr_filename, true, line_to_write);
-			}
-		}
 	}
 	
 	public static void createCampStatistics() {
