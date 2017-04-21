@@ -39,12 +39,8 @@ class ucsManager:
 #            eprint ("#get_desired_UCS_level: No ongoing campaigns")
             return 7
         ''' setting lvl to argmax I_target .... as defined in the document '''
-        camp = sorted(ongoing_camps, key=lambda x: (x.impressions_goal - x.targetedImpressions)/((x.endDay - day  + 1)*x.sizeOfSegments()) , reverse=True)[0]        
-        level_no_round = (camp.impressions_goal - camp.targetedImpressions)/((camp.endDay - day + 1)*camp.sizeOfSegments())
-        if level_no_round < 0:
-#            eprint("get_desired_UCS_level: impressions_goal={}, targetedImpressions={}. set level_no_round to 0".format(camp.impressions_goal, camp.targetedImpressions))
-            level_no_round = 0
-        
+        camp = sorted(ongoing_camps, key=lambda x: max((x.impressions_goal - x.targetedImpressions), 0)/((x.endDay - day  + 1)*x.sizeOfSegments()) , reverse=True)[0]        
+        level_no_round = max((camp.impressions_goal - camp.targetedImpressions), 0)/((camp.endDay - day + 1)*camp.sizeOfSegments())
         
         #find rounded level
         lvlacc = math.pow(0.9,7) #lowest
@@ -67,7 +63,6 @@ class ucsManager:
         if ucs_level >= 7:
             return 0
         
-        #from here not needed
         training = pd.read_csv('..//data//ucs_level_statistics.csv')
         
         X = list(training.columns[2:-7])
@@ -78,12 +73,6 @@ class ucsManager:
         #print("#predict_required_price_to_win_desired_UCS_level: ", y)
         clf = svm.SVR()
         clf.fit(training[X], training[y].values.ravel())
-        #until here not needed
-        
-#        with open( "pickle//ucs_clf.p", "wb" ) as pickleFile:
-#            pickle.dump( clf, pickleFile) 
-        
-        #TODO: clf load here
         
         y_pred = clf.predict([[day, number_of_active_networks,number_of_last_day_networks]+segment_networks])
         pred = float(y_pred)

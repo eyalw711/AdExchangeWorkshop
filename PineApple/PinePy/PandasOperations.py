@@ -24,7 +24,7 @@ def compute_campaign_desicion(profit, completion):
 #TODO: get rid of the pandas
 def campagin_statistics_assignment():
     first = True
-    dir_path = "..\data\statistics"
+    dir_path = "..//data//statistics"
     number_of_files = len(glob.glob1(dir_path,"*.csv"))
     counters = [0]*488
     for file in os.listdir(dir_path):
@@ -44,19 +44,19 @@ def campagin_statistics_assignment():
                         data.iat[i,j] = (float(data.iat[i,j])*counters[i]+(float(data2.iat[i,j])))/(1+counters[i])
                     counters[i] += 1
                 data.iat[i,8] += float(data2.iat[i,8])/number_of_files
-    data.to_csv('..\data\campaign_statistics.csv',index = False)
+    data.to_csv('..//data//campaign_statistics.csv',index = False)
     
     #TODO: get rid of the pandas
 def campagin_protabiloity_assign_desicion():
-    data = pd.read_csv('..\data\campaigns_profitability.csv')
+    data = pd.read_csv('..//data//campaigns_profitability.csv')
     number_of_rows = data.shape[0]
     for i in range (0,number_of_rows):
-        data.at[i,"decision"] = Campaign.compute_campaign_desicion(data.at[i,"profit"],data.at[i,"completion_percentage"])
-    data.to_csv('..\data\campaigns_profitability.csv',index = False)
+        data.at[i,"decision"] = compute_campaign_desicion(data.at[i,"profit"],data.at[i,"completion_percentage"])
+    data.to_csv('..//data//campaigns_profitability.csv',index = False)
     
     #TODO: get rid of the pandas
 def campagin_protabiloity_assign_demand():
-    data = pd.read_csv('..\data\campaigns_profitability.csv')
+    data = pd.read_csv('..//data//campaigns_profitability.csv')
     number_of_rows = data.shape[0]
 
     i = 0
@@ -101,4 +101,4 @@ def campagin_protabiloity_assign_demand():
         
                       
     # write to CSV:     
-    data.to_csv('..\data\campaigns_profitability.csv', index = False)
+    data.to_csv('..//data//campaigns_profitability.csv', index = False)

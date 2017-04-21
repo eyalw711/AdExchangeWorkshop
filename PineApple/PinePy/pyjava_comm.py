@@ -8,7 +8,6 @@ from __future__ import print_function
 import sys
 import os
 import traceback
-import pickle
 import json
 from CampaignClass import Campaign
 from AgentClass import Agent
