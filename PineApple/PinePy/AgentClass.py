@@ -101,7 +101,7 @@ class Agent:
                 
             outputCoeff = 1
             dailyImpsAvg = cmp.impressions_goal / cmp.activePeriodLength()
-            dailyImpsAvgTogo = (cmp.impressions_goal - cmp.targetedImpressions) / (cmp.endDay - day + 1)
+            dailyImpsAvgTogo = max((cmp.impressions_goal - cmp.targetedImpressions),0) / (cmp.endDay - day + 1)
             if dailyImpsAvgTogo > dailyImpsAvg:
                 outputCoeff = dailyImpsAvgTogo / dailyImpsAvg
             
