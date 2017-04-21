@@ -1,9 +1,18 @@
-# AdExchangeWorkshop
-Workshop at AdExchange Agents
+# AdExchangeWorkshop - PineApple Agent
+Workshop at AdExchange Agents - Tel-Aviv University
 
-Python version 3.6 - comes when installing Anaconda
+In the repository is the PineApple Agent, which competes in the AdX competition.
+Game Site: https://sites.google.com/site/gameadx/
+Game Framework on GitHub: https://github.com/tomergreenwald/tac-adx/tree/master/AdX
 
-required packages:
+Requirements:
+The PineApple Agent requires:
+* Java 8
+* Python 3.6
+For the python it is recomended to install anaconda: https://www.continuum.io/downloads
+It is important to have python3.6 on PATH environment variable.
+
+Python Packages used worth mentioning:
 scipy:
   - installed automatically in Anaconda, or
   - https://www.scipy.org/install.html#installing-via-pip
@@ -16,10 +25,5 @@ pandas:
   - installed automatically in Anaconda, or
   - http://pandas.pydata.org/pandas-docs/stable/install.html#installing-from-pypi
 
-pickle:
-  - if I remember correctly, isn't installed with Anaconda and
-    you can type:
-    >> pip install pickle
+matplotlib (only for testing)
 
-matplotlib (only for testing):
- - don't know
