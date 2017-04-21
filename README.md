@@ -2,10 +2,9 @@
 Workshop at AdExchange Agents - Tel-Aviv University
 
 In the repository is the PineApple Agent, which competes in the AdX competition.
-Game Site: https://sites.google.com/site/gameadx/
-Game Framework on GitHub: https://github.com/tomergreenwald/tac-adx/tree/master/AdX
+* Game Site: https://sites.google.com/site/gameadx/
+* Game Framework on GitHub: https://github.com/tomergreenwald/tac-adx/tree/master/AdX
 
-Requirements:
 The PineApple Agent requires:
 * Java 8
 * Python 3.6
