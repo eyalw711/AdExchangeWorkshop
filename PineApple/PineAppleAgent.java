@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Properties;
 import java.io.*;
 
 import se.sics.isl.transport.Transportable;
@@ -56,6 +57,7 @@ public class PineAppleAgent extends Agent {
 
 	private final Logger log = Logger.getLogger(PineAppleAgent.class.getName());
 	private static int simId;
+	
 	// public static String pathAndCommand = "python3.6
 	// ./PinePy/__pycache__/pyjava_comm.cpython-36.pyc "; //"python
 	// ./PinePy/pyjava_comm.py ";
@@ -65,7 +67,8 @@ public class PineAppleAgent extends Agent {
 	public BufferedReader inputStreamPythonApp;
 	public BufferedWriter outputStreamPythonApp;
 	public BufferedReader errorStreamPythonApp;
-	public static final String pathAndCommand = "python3.6 ./PinePy/pyjava_comm.py ";
+	private String python_exec;
+	public static final String python_command = " ./PinePy/pyjava_comm.py ";
 
 	// Communication w/ server
 	/**
@@ -238,6 +241,45 @@ public class PineAppleAgent extends Agent {
 	public PineAppleAgent()
 	{
 		log_output("PineAppleAgent Constructor called! Have a tropical day!");
+		
+		// Loading python exec string:
+		Properties prop = new Properties();
+		FileInputStream prop_input = null;
+		
+		try 
+		{
+
+			prop_input = new FileInputStream("config//python_exec.properties");
+
+			// load a properties file
+			prop.load(prop_input);
+
+			// get the property value and print it out
+			python_exec = prop.getProperty("python_version");
+
+		} 
+		catch (IOException io) 
+		{
+			io.printStackTrace();
+		} 
+		finally 
+		{
+			if (prop_input != null) 
+			{
+				try 
+				{
+					prop_input.close();
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+
+		}
+		
+		
+		
 		try {
 			log.fine("Bringing up the python engine process!");
 			initializePythonProcess();
@@ -255,7 +297,7 @@ public class PineAppleAgent extends Agent {
 	
 	public void initializePythonProcess() throws IOException
 	{
-		pythonProccess = Runtime.getRuntime().exec(pathAndCommand);
+		pythonProccess = Runtime.getRuntime().exec(python_exec + python_command);
 		outputStreamPythonApp = new BufferedWriter(new OutputStreamWriter(pythonProccess.getOutputStream()));
 		inputStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getInputStream()));
 		errorStreamPythonApp = new BufferedReader(new InputStreamReader(pythonProccess.getErrorStream()));			
